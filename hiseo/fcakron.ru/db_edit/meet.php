@@ -1,124 +1,230 @@
 <?php
-/* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
- * Редактирование базы данных команд
- * ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
- */
+//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+//  РЕДАКТИРОВАНИЕ ТАБЛИЦЫ МАТЧЕЙ
+//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once( dirname( __FILE__  ) . '/functions_db.php' );  // функции для работы с базой данных
+require_once(dirname(__FILE__) . '/functions_db.php');  // функции для работы с базой данных
+
+$code_team = get_team_code();  // код --> команда (для select)
+$code_tourney = get_tourney_code();  // код --> турнир (для select)
 
 
 
-/* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
- * Редактирование команд
- * ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
- */
+
+//  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
+//
+//  GET запрос наличие переменной add без значения
+//  https://fcakron.ru/wp-admin/admin.php?page=meet&add
+
+if (isset($_GET['add'])) { ?>
+
+    <h2>Новый матч</h2>
+    <div class="meet_add">
+
+        <div class="add_rec">
+            <table>
+                <tr>
+                    <td>Название:<input class="name" type="text" name="name" value="" maxlength="32" required></td>
+                </tr>
+                <tr>
+                    <td>Турнир:
+                        <select class="tourney" name="tourney" required>
+                            <option value="">Выбрать турнир</option>
+                            <? foreach ($code_tourney as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?></option>
+                            <? } ?>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Команда 1:
+                        <select class="team_1" name="team_1" required>
+                            <option value="">Выбрать команду</option>
+                            <? foreach ($code_team as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?></option>
+                            <? } ?>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Команда 2:
+                        <select class="team_2" name="team_2" required>
+                            <option value="">Выбрать команду</option>
+                            <? foreach ($code_team as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?></option>
+                            <? } ?>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Город: <input class="city" type="text" name="city" value="" maxlength="32"></td>
+                </tr>
+                <tr>
+                    <td>Стадион:<input class="stadium" type="text" name="stadium" value="" maxlength="32"></td>
+                </tr>
+
+                <tr>
+                    <td> Дата встречи: <input class="date_meet" type="date" name="date_meet" value=""></td>
+                </tr>
+                <tr>
+                    <td>Время: <input class="time_meet" type="time" name="time_meet" value=""></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <hr class="hr_db">
+
+    <button class="load_rec">Загрузить в базу</button>
+    <div class="err">Поля в красной рамке обязательны для заполнения.</div>
+
+    <script>
+        jQuery(function($) {
+
+            $(document).on('click', '.load_rec', function() {
+
+                form_data = new FormData(); // создание формы
+
+                if ($('.name').val() == "" ||
+                    $('.tourney').val() == "" ||
+                    $('.team_1').val() == "" ||
+                    $('.team_2').val() == "") {
+                    $(".err").text("Не заполнены обязательные поля !");
+                    return false;
+                }
+                form_data.append('name', $('.name').val());
+                form_data.append('tourney', $('.tourney').val());
+                form_data.append('team_1', $('.team_1').val());
+                form_data.append('team_2', $('.team_2').val());
+                form_data.append('city', $('.city').val());
+                form_data.append('stadium', $('.stadium').val());
+                form_data.append('date_meet', $('.date_meet').val());
+                form_data.append('time_meet', $('.time_meet').val());
+
+                form_data.append('action', 'load_meet'); // функция обработки 
+                form_data.append('nonce_code', my_ajax_noncerr); // ключ
+
+                $.ajax({
+                    method: "POST",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    url: ajaxurl,
+                    data: form_data,
+                }).done(function(msg) {
+                    console.log(msg);
+                    if (msg == '') {
+                        document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=meet";
+                    } else {
+                        $('.err').text(msg);
+                    }
+                });
+            });
+        });
+    </script>
+<?php
+    wp_die();
+}
 
 
 
-$fields = array('name','city','website');
+//
+//  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰
+//
 ?>
-<button class="team_add">Добавить команду</button>
 
-<div class="teams_table">
-<?
-foreach(get_team() as $team){ ?>
-    <div class="team" data-code="<?= $team['code'] ?>">
+<div>
+    <button class="btn_add_rec">Добавить встречу</button>
+</div>
 
-        <div class="name_l">Название команды</div>
-        <input class="name" type ="text" name="name" value="<?= $team['name'] ?>" >
-        
-        <div class="city_l">Город</div>
-        <input class="city" type ="text" name="city" value="<?= $team['city'] ?>" >
-        
-        <img class="logo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/team/<?= $team['code'] ?>.png" alt="<?= $team['name'] ?>">
-        <input class="load_logo" type="file" name="photo">
+<div class="meet_table">
+    <?
+    foreach (get_meet() as $rec) { ?>
+        <hr class="hr_db">
+        <div class="meet" data-code="<?= $rec['code'] ?>">
 
-    </div> 
-    <hr><? 
-} ?>
+            <div class="name_lbl">Название встречи:</div>
+            <input class="name" type="text" name="name" value="<?= $rec['name'] ?>">
+
+            <select class="tourney" name="tourney">
+                <? foreach ($code_tourney as $opt) { ?>
+                    <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['tourney']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                <? } ?>
+            </select>
+
+            <select class="team" name="team_1">
+                <? foreach ($code_team as $opt) { ?>
+                    <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_1']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                <? } ?>
+            </select>
+
+            <div class="goal">Голы:
+                <input type="number" name="goal_1" value="<?= $rec['goal_1'] ?>">
+            </div>
+
+            <select class="team" name="team_2">
+                <? foreach ($code_team as $opt) { ?>
+                    <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_2']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                <? } ?>
+            </select>
+
+            <div class="goal">Голы:
+                <input type="number" name="goal_2" value="<?= $rec['goal_1'] ?>">
+            </div>
+
+            <div class="city_lbl">Город:</div>
+            <input class="city" type="text" name="city" value="<?= $rec['city'] ?>">
+
+            <div class="stadium_lbl">Стадион:</div>
+            <input class="stadium" type="text" name="stadium" value="<?= $rec['stadium'] ?>">
+
+
+            <input class="date_meet" type="date" name="date_meet" value="<?= $rec['date_meet'] ?>">
+            <input class="time_meet" type="time" name="time_meet" value="<?= $rec['time_meet'] ?>">
+
+        </div>
+    <?
+    } ?>
+    <hr class="hr_db">
 </div>
 
 <script>
-jQuery(function($){
-    
-    $( "input[type=text]" ).change(function() { // значение поля изменилось
+    jQuery(function($) {
 
-        let table = 'team',
-            name = $(this).attr("name"), 
-            value = $(this).val(),
-            code = $(this).closest(".team").data("code");
-            
-        console.log(table, code, name, value);
+        //  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
+        $(document).on('click', '.btn_add_rec', function() { // кнопка добавления записи
+            document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=meet&add";
+        });
 
-        let data_lib = {
-            action: 'data_change',
-            nonce_code : my_ajax_noncerr,
-            table: table,
-            code: code,
-            name: name,
-            value: value
-        };
-        
-        jQuery.ajax({
-            method: "POST",
-            url: ajaxurl,
-            data: data_lib
-        }).done(function( data ) {
-            console.log(data);
+        //  ▰▰▰▰ РЕДАКТИРОВАТЬ ЗАПИСЬ ▰▰▰▰
+        $("input, select").change(function() { // значение поля изменилось
+
+            let table = 'meet';
+            let name = $(this).attr("name");
+            let value = $(this).val();
+            let code = $(this).closest(".meet").data("code");
+
+            console.log(table, code, name, value);
+
+            let data_lib = {
+                action: 'data_change',
+                nonce_code: my_ajax_noncerr,
+                table: table,
+                code: code,
+                name: name,
+                value: value
+            };
+
+            jQuery.ajax({
+                method: "POST",
+                url: ajaxurl,
+                data: data_lib
+            }).done(function(data) {
+                console.log(data);
+            });
         });
     });
-    
-    // загрузка логотипа
-    
-    $(document).on('change', '.load_logo', function(){
-
-        file_data = $(this).prop('files')[0]; // ссылка на файл
-
-        if (file_data.type != 'image/png') {
-            alert('Тип файла не png');
-            return false;
-        }
-
-        if (file_data.size > 100000) {
-            alert('Логотип не более 100 Кбайт.');
-            return false;
-        }
-
-        code = $(this).closest(".team").data("code");
-        path_file = '/images/db/team/' + code + '.png';
-        console.log(path_file);
-        
-        form_data = new FormData(); // создание формы
-        form_data.append('path_file', path_file); //
-        form_data.append('file', file_data);
-        form_data.append('action', 'load_file'); // функция обработки 
-        form_data.append('nonce_code', my_ajax_noncerr); // ключ
-        
-        $.ajax({
-            method: "POST",
-            cache: false,
-            contentType: false,
-            processData: false,
-            url: ajaxurl,
-            data: form_data,
-        }).done(function( msg ) {
-            if (msg!="") {
-                alert(msg);
-            } else{
-               console.log("обновить страницу, если фото не получится");
-            }
-        });
-    });
-
-});
 </script>
-<!-- 
-Сделать клик на кнопки
-       
-
-
--->

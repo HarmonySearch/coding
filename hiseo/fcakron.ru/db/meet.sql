@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Окт 10 2019 г., 21:54
+-- Время создания: Окт 13 2019 г., 13:05
 -- Версия сервера: 5.7.25
 -- Версия PHP: 7.0.33-0+deb9u1
 
@@ -28,14 +28,14 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `meet` (
   `code` int(10) UNSIGNED NOT NULL COMMENT 'уникальный код',
-  `name` varchar(30) DEFAULT NULL COMMENT 'название игры',
+  `name` varchar(32) DEFAULT NULL COMMENT 'название игры',
   `tourney` int(10) UNSIGNED DEFAULT NULL COMMENT 'турнир (код из таблицы tourney)',
   `team_1` int(10) UNSIGNED DEFAULT NULL COMMENT 'команда 1 (код из таблицы team)',
   `goal_1` int(2) NOT NULL DEFAULT '0' COMMENT 'голы 1 команда',
   `team_2` int(10) UNSIGNED DEFAULT NULL COMMENT 'команда 2 (код из таблицы team)',
   `goal_2` int(2) NOT NULL DEFAULT '0' COMMENT 'голы 2 команда',
-  `city` varchar(30) DEFAULT '' COMMENT 'город',
-  `stadium` varchar(30) DEFAULT '' COMMENT 'название стадиона',
+  `city` varchar(32) DEFAULT '' COMMENT 'город',
+  `stadium` varchar(32) DEFAULT '' COMMENT 'название стадиона',
   `date_meet` date DEFAULT NULL COMMENT 'дата проведения игры',
   `time_meet` time DEFAULT NULL COMMENT 'время проведения игры'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='матч';

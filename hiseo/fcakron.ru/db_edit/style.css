@@ -1,43 +1,48 @@
-/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+ /*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
     АДМИНКА - РЕДАКИРОВАНИЕ БАЗЫ ДАННЫХ
     ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ */
 
-.load_rec {
-    margin-top: 20px;
-}
-    
+input:required, select:required { border-color: red; }
 
-
-    /*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ТУРНИРЫ ▰▰▰▰ */
-
-.tourney .logo {
-    height: 50px;
-}
-.tourney .tourney_lbl {
-    font-weight: 700 ;
+.err {
+    color: red;
+    font-size: 1.2em;
+    margin-top: 5px;
 }
 
-.tourney_add .name {
-    border-color: red;
-    width: 250px;
-} 
 
-.tourney .name {
-    width: 250px;
-}
 .hr_db {
     border: 0;
     height: 2px;
     background: green;
 }
 
-/*▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ */
-/*  ВСТРЕЧИ                                   */
-/*▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ */
+button.load_rec {
+    margin-top: 5px;
+}
 
-/*▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰*/
+/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ТУРНИРЫ ▰▰▰▰ */
+
+.tourney_add .add_rec .name{
+    width: 100%;
+}
+.tourney_table .tourney .logo {
+    height: 70px;
+}
+
+.tourney_table .tourney input[type="file"] {
+    display: none;
+}
+/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ВСТРЕЧА ▰▰▰▰ */
+
+
+
+/*  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰*/
+
+
 
 .meet_add .name,
+.meet_add .tourney,
 .meet_add .team_1,
 .meet_add .team_2,
 .meet_add .city,
@@ -74,6 +79,18 @@
 /*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ */
 /*  КОМАНДЫ                                     */
 /*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ */
+
+.team_add .add_rec .name, .team_add .add_rec .city{
+    width: 100%;
+}
+
+
+
+
+
+
+
+
 
 .teams_table .team {
     display: grid;
@@ -134,28 +151,29 @@
 
 /*▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰*/
 
-.player_form_add {
-    display: grid;
-    grid-template-columns: 130px 300px ;
-    row-gap: 2px;
-    grid-auto-rows: 32px;
-    align-items:center;
+.player_add .add_rec .instagram,
+.player_add .add_rec .vc,
+.player_add .add_rec .country,
+.player_add .add_rec .positions,
+.player_add .add_rec .name,
+.player_add .add_rec .lastname,
+.player_add .add_rec .team
+{
+    width: 100%;
 }
 
-.player_form_add .team,
-.player_form_add .lastname {
-    border-color: red;
+.player_add .add_rec .number,
+.player_add .add_rec .weight,
+.player_add .add_rec .growing
+{
+    width: 50px;
 }
 
-.load_player {
-    margin-top: 20px;
-}
-.attention, .err {
-    font-size: 18px;
-    color: red;  
-    margin-top: 20px;
-    height: 20px;
-}
+
+
+
+
+
 
     
 /* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★

@@ -1,0 +1,7 @@
+Посмотреть что работает https://fcakron.ru/wp-admin/
+https://fcakron.ru/wp-admin/admin.php?page=tourney&add
+окрасить все поля обязательные для заполения чрез css
+
+
+
+

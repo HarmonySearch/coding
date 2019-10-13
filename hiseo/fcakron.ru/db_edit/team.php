@@ -1,8 +1,7 @@
 <?php
-/* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
- * Редактирование базы данных команд
- * ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
- */
+//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+//  РЕДАКТИРОВАНИЕ ТАБЛИЦЫ КОМАНД
+//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -11,19 +10,102 @@ error_reporting(E_ALL);
 require_once( dirname( __FILE__  ) . '/functions_db.php' );  // функции для работы с базой данных
 
 
+//  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
+//
+//  GET запрос наличие переменной add без значения
+//  https://fcakron.ru/wp-admin/admin.php?page=team&add
 
-/* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
- * Редактирование команд
- * ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
- */
+
+if (isset($_GET['add'])) { ?>
+
+    <h2>Добавить команду</h2>
+    <div class="team_add">
+
+        <div class="add_rec">
+            <table>
+                <tr>
+                    <td>Название: <input class="name" type="text" name="name" value="" maxlength="32" required></td>
+                </tr>
+                <tr>
+                    <td>Город: <input class="city" type="text" name="city" value="" maxlength="32" required></td>
+                </tr>
+                <tr>
+                    <td>Логотип: ( PNG не более 100 Кбайт)<br>
+                        <input class="load_logo" type="file" name="logo">
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <hr class="hr_db">
+
+    <button class="load_rec">Загрузить в базу</button>
+    <div class="err">Поля в красной рамке обязательны для заполнения.</div>
+
+    <script>
+        jQuery(function($) {
+
+            $(document).on('click', '.load_rec', function() {
+
+                form_data = new FormData(); // создание формы
+
+                if ($('.name').val() == '' || 
+                    $('.city').val() == '') {
+                    $(".err").text("Не заполнены обязательные поля !");
+                    return false;
+                }
+                form_data.append('name', $('.name').val());
+                form_data.append('city', $('.city').val());
+
+                if ($('.load_logo').val() != '') { // файл загружен ?
+
+                    file_data = $('.load_logo').prop('files')[0]; // ссылка на объект файла
+                    if (file_data.type != 'image/png') {
+                        $(".err").text("Логотп не в формате PNG.");
+                        return false;
+                    }
+                    if (file_data.size > 100000) {
+                        $(".err").text("Логотип не более 100 Кбайт.");
+                        return false;
+                    }
+                    form_data.append('file', file_data);
+                }
+
+                form_data.append('action', 'load_team'); // функция обработки 
+                form_data.append('nonce_code', my_ajax_noncerr); // ключ
+
+                $.ajax({
+                    method: "POST",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    url: ajaxurl,
+                    data: form_data,
+                }).done(function(msg) {
+                    console.log(msg);
+                    if (msg == '') {
+                        document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=team";
+                    } else {
+                        $('.err').text(msg);
+                    }
+                });
+            });
+        });
+    </script>
+<?php
+    wp_die();
+}
 
 
+
+//
+//  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰
+//
 
 $fields = array('name','city','website');
 ?>
 <div>
-    <button class="tourney_add">Добавить команду</button>
-    Кнопка временно отключена. Корректируется структура таблиц.
+    <button class="btn_add_rec">Добавить команду</button>
 </div>
 
 <div class="teams_table">
@@ -48,6 +130,12 @@ foreach(get_team() as $team){ ?>
 <script>
 jQuery(function($){
     
+        //  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
+        $(document).on('click', '.btn_add_rec', function() { // кнопка добавления записи
+            document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=team&add";
+        });
+
+        //  ▰▰▰▰ РЕДАКТИРОВАТЬ ЗАПИСЬ ▰▰▰▰
     $( "input[type=text]" ).change(function() { // значение поля изменилось
 
         let table = 'team',
