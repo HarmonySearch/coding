@@ -121,10 +121,9 @@ DROP TABLE IF EXISTS team;
 
 CREATE TABLE team (
   code INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'уникальный код',
-  name VARCHAR(30) DEFAULT '' COMMENT 'название',
-  city VARCHAR(30) DEFAULT '' COMMENT 'город',
-  logo VARCHAR(30) DEFAULT '' COMMENT 'URL логотипа',
-  website VARCHAR(50) DEFAULT '' COMMENT 'офсайт',
+  `name` VARCHAR(32) DEFAULT '' COMMENT 'название',
+  city VARCHAR(32) DEFAULT '' COMMENT 'город',
+  website VARCHAR(32) DEFAULT '' COMMENT 'офсайт',
   
   PRIMARY KEY (code)
 )
@@ -146,12 +145,12 @@ DROP TABLE IF EXISTS meet
 
 CREATE TABLE meet (
   code INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'уникальный код',
-  name VARCHAR(30) DEFAULT NULL COMMENT 'название игры',
+  name VARCHAR(32) DEFAULT NULL COMMENT 'название игры',
   tourney INT(10) UNSIGNED DEFAULT NULL COMMENT 'турнир (код из таблицы tourney)',
   team_1 INT(10) UNSIGNED DEFAULT NULL COMMENT 'команда 1 (код из таблицы team)',
   team_2 INT(10) UNSIGNED DEFAULT NULL COMMENT 'команда 2 (код из таблицы team)',
-  city VARCHAR(30) DEFAULT '' COMMENT 'город',
-  stadium VARCHAR(30) DEFAULT '' COMMENT 'название стадиона',
+  city VARCHAR(32) DEFAULT '' COMMENT 'город',
+  stadium VARCHAR(32) DEFAULT '' COMMENT 'название стадиона',
   date_meet DATE DEFAULT NULL COMMENT 'дата проведения игры',
   time_play TIME DEFAULT NULL COMMENT 'время проведения игры',
   
@@ -174,7 +173,7 @@ DROP TABLE IF EXISTS tourney;
 
 CREATE TABLE tourney (
   code INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'уникальный код',
-  name VARCHAR(30) DEFAULT NULL COMMENT 'название турнира',
+  name VARCHAR(32) DEFAULT NULL COMMENT 'название турнира',
   date_start DATE DEFAULT NULL COMMENT 'дата начала турнира',
   date_end DATE DEFAULT NULL COMMENT 'дата окончания турнира',
   

@@ -1,4 +1,4 @@
-<?php 
+<? 
 /* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ КВА 2019.09.27
  * Редактирования таблиц базы данных
  * ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
@@ -14,15 +14,13 @@ add_action( 'admin_enqueue_scripts', 'myajax_data', 99 ); // событие 'adm
 
 function myajax_data(){  //Создает уникальный защитный ключ на короткий промежуток времени	?>
     <script> var my_ajax_noncerr = '<?= wp_create_nonce( 'my_ajax_nonce' ); ?>'</script>
-<?php   
+<?   
 }
 // проверка условия разрешения редактирования информации
 if( wp_doing_ajax() ){ 
 	// if(current_user_can('edit_user_data')){ 
 		add_action('wp_ajax_data_change', 'data_change_callback');
 		add_action('wp_ajax_load_file', 'load_file_callback');
-		add_action('wp_ajax_load_tourney', 'load_tourney_callback');
-		add_action('wp_ajax_load_meet', 'load_meet_callback');
 		add_action('wp_ajax_load_player', 'load_player_callback');
         
 	// }
@@ -94,85 +92,6 @@ function load_file_callback(){
     if( ! $result )
         echo 'ошибка загрузки', $pach;
 	wp_die();
-}
-
-
-
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
-//  ДОбАВИТЬ ЗАПИСЬ ТУРНИРА
-//
-//  Все проверки на уровне клиента. Здесь только запись.
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
-
-function load_tourney_callback(){
-
-	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
-	if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
-
-
-    if(isset($_FILES['file'])) {
-        if ( $_FILES['file']['error'] < 0 ) {
-            wp_die ('Логотип: ошибка ' . $_FILES['file']['error']);
-        }
-    }
-
-    $data_a = array(
-        'name' => clean($_POST['name']));
-
-        global $wpdb;
-
-        $result = $wpdb->insert('tourney', $data_a);
-        
-        if ($result <= 0) {
-            wp_die('ошибка записи');
-        }
-
-        $id = $wpdb->insert_id; // код новой записи
-    
-        // грузим файлы если они существуют
-
-        if(isset($_FILES['file'])) {    
-            $pach = get_template_directory()."/images/db/tourney/$id.png";
-            // echo "Файл $pach";
-            $result = move_uploaded_file($_FILES['file']['tmp_name'], $pach);
-            if(! $result )
-                wp_die ('Логотип: ошибка загрузки.', $pach_file);
-        }
-
-        wp_die(''); // если всё ок, то возвращаем ""
-}
-
-
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
-//  ДОбАВИТЬ ЗАПИСЬ ВСТРЕЧИ
-//
-//  Все проверки на уровне клиента. Здесь только запись.
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
-
-function load_meet_callback(){
-
-	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
-	if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
-
-    $data_a = array(
-        'name' => clean($_POST['name']),
-        'city' => clean($_POST['city']),
-        'stadium' => clean($_POST['stadium']),
-        'date_meet' => clean($_POST['date_meet']),
-        'time_meet' => clean($_POST['time_meet']),
-        'tourney' => clean($_POST['tourney']),
-        'team_1' => clean($_POST['team_1']),
-        'team_2' => clean($_POST['team_2']));
-        $format = array( '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d' );
-
-        global $wpdb;
-
-        $result = $wpdb->insert('meet', $data_a, $format);
-        
-        if ($result <= 0) {
-            wp_die('ошибка записи');
-        }
-        wp_die(''); // если всё ок, то возвращаем ""
 }
 
 /* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
