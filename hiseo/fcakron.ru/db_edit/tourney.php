@@ -92,7 +92,7 @@ if (isset($_GET['add'])) { ?>
 
 
 //
-// ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАбЛИЦЫ ▰▰▰▰
+// ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰
 //
 ?>
 
@@ -120,7 +120,6 @@ if (isset($_GET['add'])) { ?>
                     <td><input class="logo" id="logo<?= $code ?>" type="file" name="photo"></td>
                 </tr>
             </table>
-
         </div>
     <?php
     } ?>
@@ -195,7 +194,7 @@ if (isset($_GET['add'])) { ?>
                 data: form_data,
             }).done(function(msg) {
                 if (msg != "") {
-                    alert(msg);
+                    $(".err").text(msg);
                 } else {
                     // обновление img
                     let img = $(".num" + code);

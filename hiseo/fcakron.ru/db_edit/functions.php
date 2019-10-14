@@ -260,12 +260,12 @@ function my_admin_menu() {
         // }
         ?>
         <h1>
-            <?php echo 'Только в разработке. Пока не нажимать, чтобы ничего не испортить.'; ?>
+            <?php echo 'В режиме опытной эксплуатации.'; ?>
         </h1>
         <?php
     }
 
-    add_submenu_page('db_fcakron','Редактирование турниров', 'Турнир', 1, 'tourney', 'tourney_edit');
+    add_submenu_page('db_fcakron','Редактирование турниров', 'Турниры', 1, 'tourney', 'tourney_edit');
     function tourney_edit() {
         // редактирование команд
         ?>
@@ -276,7 +276,7 @@ function my_admin_menu() {
         require_once( dirname( __FILE__ ) . '/db_edit/tourney.php' );
     }
     
-    add_submenu_page('db_fcakron','Редактирование матчей', 'Встреча', 1, 'meet', 'meet_edit');
+    add_submenu_page('db_fcakron','Редактирование матчей', 'Матчи', 1, 'meet', 'meet_edit');
     function meet_edit() {
         // редактирование матчей
         ?>
@@ -290,7 +290,7 @@ function my_admin_menu() {
 
     
     
-    add_submenu_page('db_fcakron','Редактирование команд', 'Команда', 1, 'team', 'team_edit');
+    add_submenu_page('db_fcakron','Редактирование команд', 'Команды', 1, 'team', 'team_edit');
     function team_edit() {
         // редактирование команд
         ?>
@@ -301,7 +301,7 @@ function my_admin_menu() {
         require_once( dirname( __FILE__ ) . '/db_edit/team.php' );
     }
     
-    add_submenu_page('db_fcakron','Редактирование игроков', 'Игрок', 1, 'player', 'player_edit');
+    add_submenu_page('db_fcakron','Редактирование игроков', 'Игроки', 1, 'player', 'player_edit');
     function player_edit() {
         // редактирование команд
         ?>
@@ -595,7 +595,8 @@ add_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_price
 //remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20 );
 //add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 35 );
 
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ КВА ▰▰▰▰
-//  Секция редактирования таблиц базы данных
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
-require get_template_directory() . '/db_edit/table_edit.php';
+/* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ КВА 2019.09.27
+ * Секция редактирования таблиц базы данных
+ * ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+ */
+require_once( dirname( __FILE__ ) . '/db_edit/table_edit.php' );

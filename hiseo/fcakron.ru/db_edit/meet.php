@@ -137,58 +137,73 @@ if (isset($_GET['add'])) { ?>
 ?>
 
 <div>
-    <button class="btn_add_rec">Добавить встречу</button>
+    <button class="btn_add_rec">Добавить матч</button>
 </div>
 
 <div class="meet_table">
-    <?
-    foreach (get_meet() as $rec) { ?>
+    <?php
+    foreach (get_meet() as $rec) {
+        $code = $rec['code']; ?>
         <hr class="hr_db">
         <div class="meet" data-code="<?= $rec['code'] ?>">
 
-            <div class="name_lbl">Название встречи:</div>
-            <input class="name" type="text" name="name" value="<?= $rec['name'] ?>">
 
-            <select class="tourney" name="tourney">
-                <? foreach ($code_tourney as $opt) { ?>
-                    <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['tourney']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
-                <? } ?>
-            </select>
+            <table>
+                <tr>
+                <th>Матч</th>
+                <th>Место проведения</th>
+                <th>Команда 1</th>
+                <th>Команда 2</th>
+                </tr>
+                <tr>
+                    <td><input class="name" type="text" name="name" value="<?= $rec['name'] ?>"></td>
+                    <td>Город: <input class="city" type="text" name="city" value="<?= $rec['city'] ?>"></td>
+                    <td>
+                        <select class="team" name="team_1">
+                            <? foreach ($code_team as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_1']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                            <? } ?>
+                        </select>
 
-            <select class="team" name="team_1">
-                <? foreach ($code_team as $opt) { ?>
-                    <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_1']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
-                <? } ?>
-            </select>
+                    </td>
+                    <td>
+                        <select class="team" name="team_2">
+                            <? foreach ($code_team as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_2']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                            <? } ?>
+                        </select>
 
-            <div class="goal">Голы:
-                <input type="number" name="goal_1" value="<?= $rec['goal_1'] ?>">
-            </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <select class="tourney" name="tourney">
+                            <? foreach ($code_tourney as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['tourney']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                            <? } ?>
+                        </select>
 
-            <select class="team" name="team_2">
-                <? foreach ($code_team as $opt) { ?>
-                    <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_2']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
-                <? } ?>
-            </select>
-
-            <div class="goal">Голы:
-                <input type="number" name="goal_2" value="<?= $rec['goal_1'] ?>">
-            </div>
-
-            <div class="city_lbl">Город:</div>
-            <input class="city" type="text" name="city" value="<?= $rec['city'] ?>">
-
-            <div class="stadium_lbl">Стадион:</div>
-            <input class="stadium" type="text" name="stadium" value="<?= $rec['stadium'] ?>">
-
-
-            <input class="date_meet" type="date" name="date_meet" value="<?= $rec['date_meet'] ?>">
-            <input class="time_meet" type="time" name="time_meet" value="<?= $rec['time_meet'] ?>">
-
+                    </td>
+                    <td>Стадион: <input class="stadium" type="text" name="stadium" value="<?= $rec['stadium'] ?>"></td>
+                    <td>Голы:
+                        <input type="number" name="goal_1" value="<?= $rec['goal_1'] ?>"></td>
+                    <td>Голы:
+                        <input type="number" name="goal_2" value="<?= $rec['goal_1'] ?>"></td>
+                </tr>
+                <tr>
+                    <td>Дата: <input class="date_meet" type="date" name="date_meet" value="<?= $rec['date_meet'] ?>"></td>
+                    <td>Время: <input class="time_meet" type="time" name="time_meet" value="<?= $rec['time_meet'] ?>"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
         </div>
-    <?
+    <?php
     } ?>
     <hr class="hr_db">
+</div>
+<div>
+    <button class="btn_add_rec">Добавить матч</button>
 </div>
 
 <script>

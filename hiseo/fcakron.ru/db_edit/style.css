@@ -2,6 +2,12 @@
     АДМИНКА - РЕДАКИРОВАНИЕ БАЗЫ ДАННЫХ
     ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ */
 
+.manual p{
+    color: red;
+    font-size: 18px;
+    font-weight: 700;
+}
+
 input:required, select:required { border-color: red; }
 
 .err {
@@ -23,17 +29,18 @@ button.load_rec {
 
 /*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ТУРНИРЫ ▰▰▰▰ */
 
-.tourney_add .add_rec .name{
-    width: 100%;
-}
-.tourney_table .tourney .logo {
-    height: 70px;
-}
+/*  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰*/
 
-.tourney_table .tourney input[type="file"] {
-    display: none;
-}
-/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ВСТРЕЧА ▰▰▰▰ */
+.tourney_add .add_rec .name{ width: 100%; }
+
+/*  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰*/
+
+.tourney_table .tourney .logo { height: 70px; }
+.tourney_table .tourney .name { width: 350px; }
+.tourney_table .tourney input[type="file"] { display: none; }
+
+
+/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ МАТЧИ ▰▰▰▰ */
 
 
 
@@ -57,33 +64,31 @@ button.load_rec {
     border-color: red;
 }
 
-/*▰▰▰▰ РЕДАКТИРОВАНИЕ ТАбЛИЦЫ ▰▰▰▰*/
+/*▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰*/
 
-.meet_table .meet table {
-    border-spacing: 5px;
-  }
+.meet_table .meet table { border-spacing: 5px; }
+.meet_table .meet .name { width: 100%; }
+.meet_table .meet input[name="goal_1"] { width: 50px; }
+.meet_table .meet input[name="goal_2"] { width: 50px; }
+.meet_table .meet select[name="team_1"] { width: 100%; }
+.meet_table .meet select[name="team_2"] { width: 100%; }
 
-.meet_table .meet .name ,
-.meet_table .meet .team ,
-.meet_table .meet .city,
-.meet_table .meet .stadium
-{
-    width: 100%;
-}
 
-.meet_table .meet .goal input
-{
-    width: 50px;
-}
+/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ КОМАНДЫ ▰▰▰▰ */
 
-/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ */
-/*  КОМАНДЫ                                     */
-/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ */
+/*  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰*/
+/*  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰*/
+
+.teams_table .team input[type="file"] { display: none; }
+
+
+
+
+
 
 .team_add .add_rec .name, .team_add .add_rec .city{
     width: 100%;
 }
-
 
 
 

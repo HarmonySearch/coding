@@ -7,7 +7,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once( dirname( __FILE__  ) . '/functions_db.php' );  // функции для работы с базой данных
+require_once(dirname(__FILE__) . '/functions_db.php');  // функции для работы с базой данных
 
 
 //  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
@@ -49,7 +49,7 @@ if (isset($_GET['add'])) { ?>
 
                 form_data = new FormData(); // создание формы
 
-                if ($('.name').val() == '' || 
+                if ($('.name').val() == '' ||
                     $('.city').val() == '') {
                     $(".err").text("Не заполнены обязательные поля !");
                     return false;
@@ -102,110 +102,122 @@ if (isset($_GET['add'])) { ?>
 //  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰
 //
 
-$fields = array('name','city','website');
+$fields = array('name', 'city', 'website');
 ?>
+
 <div>
     <button class="btn_add_rec">Добавить команду</button>
 </div>
 
 <div class="teams_table">
-<?
-foreach(get_team() as $team){ ?>
-    <div class="team" data-code="<?= $team['code'] ?>">
+    <?php
+    foreach (get_team() as $rec) {
+        $code = $rec['code']; ?>
+        <hr class="hr_db">
+        <div class="team" data-code="<?= $code ?>">
 
-        <div class="name_l">Название команды</div>
-        <input class="name" type ="text" name="name" value="<?= $team['name'] ?>" >
-        
-        <div class="city_l">Город</div>
-        <input class="city" type ="text" name="city" value="<?= $team['city'] ?>" >
-        
-        <img class="logo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/team/<?= $team['code'] ?>.png" alt="<?= $team['name'] ?>">
-        <input class="load_logo" type="file" name="photo">
-
-    </div> 
-    <hr><? 
-} ?>
+            <table>
+                <tr>
+                    <td>Название&nbsp;команды: </td>
+                    <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
+                    <td rowspan="2"><img class="logo num<?= $rec['code'] ?>" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/team/<?= $rec['code'] ?>.png" alt="<?= $rec['name'] ?>"></td>
+                    <td><div style="width: 250px;">Логотип: ( PNG не более 100 Кбайт)</div></td>
+                </tr>
+                <tr>
+                    <td>Город: </td>
+                    <td><input class="city" type="text" name="city" value="<?= $rec['city'] ?>"></td>
+                    <td><label class="button" for="logo<?= $code ?>">Загрузить</label>
+                        <input class="logo" id="logo<?= $code ?>" type="file" name="logo"></td>
+                </tr>
+            </table>
+        </div>
+    <?php
+    } ?>
+    <hr class="hr_db">
 </div>
 
 <script>
-jQuery(function($){
-    
+    jQuery(function($) {
+
         //  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
         $(document).on('click', '.btn_add_rec', function() { // кнопка добавления записи
             document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=team&add";
         });
 
         //  ▰▰▰▰ РЕДАКТИРОВАТЬ ЗАПИСЬ ▰▰▰▰
-    $( "input[type=text]" ).change(function() { // значение поля изменилось
+        $("input[type=text]").change(function() { // значение поля изменилось
 
-        let table = 'team',
-            name = $(this).attr("name"), 
-            value = $(this).val(),
-            code = $(this).closest(".team").data("code");
-            
-        console.log(table, code, name, value);
+            let table = 'team',
+                name = $(this).attr("name"),
+                value = $(this).val(),
+                code = $(this).closest(".team").data("code");
 
-        let data_lib = {
-            action: 'data_change',
-            nonce_code : my_ajax_noncerr,
-            table: table,
-            code: code,
-            name: name,
-            value: value
-        };
-        
-        jQuery.ajax({
-            method: "POST",
-            url: ajaxurl,
-            data: data_lib
-        }).done(function( data ) {
-            console.log(data);
+            console.log(table, code, name, value);
+
+            let data_lib = {
+                action: 'data_change',
+                nonce_code: my_ajax_noncerr,
+                table: table,
+                code: code,
+                name: name,
+                value: value
+            };
+
+            jQuery.ajax({
+                method: "POST",
+                url: ajaxurl,
+                data: data_lib
+            }).done(function(data) {
+                console.log(data);
+            });
         });
-    });
-    
-    // загрузка логотипа
-    
-    $(document).on('change', '.load_logo', function(){
 
-        file_data = $(this).prop('files')[0]; // ссылка на файл
+        // загрузка логотипа
 
-        if (file_data.type != 'image/png') {
-            alert('Тип файла не png');
-            return false;
-        }
+        $(document).on('change', '.team input[name="logo"]', function() {
 
-        if (file_data.size > 100000) {
-            alert('Логотип не более 100 Кбайт.');
-            return false;
-        }
+            file_data = $(this).prop('files')[0]; // ссылка на файл
 
-        code = $(this).closest(".team").data("code");
-        path_file = '/images/db/team/' + code + '.png';
-        console.log(path_file);
-        
-        form_data = new FormData(); // создание формы
-        form_data.append('path_file', path_file); //
-        form_data.append('file', file_data);
-        form_data.append('action', 'load_file'); // функция обработки 
-        form_data.append('nonce_code', my_ajax_noncerr); // ключ
-        
-        $.ajax({
-            method: "POST",
-            cache: false,
-            contentType: false,
-            processData: false,
-            url: ajaxurl,
-            data: form_data,
-        }).done(function( msg ) {
-            if (msg!="") {
-                alert(msg);
-            } else{
-               console.log("обновить страницу, если фото не получится");
+            if (file_data.type != 'image/png') {
+                alert('Тип файла не png');
+                return false;
             }
-        });
-    });
 
-});
+            if (file_data.size > 100000) {
+                alert('Логотип не более 100 Кбайт.');
+                return false;
+            }
+
+            code = $(this).closest(".team").data("code");
+            path_file = '/images/db/team/' + code + '.png';
+            console.log(path_file);
+
+            form_data = new FormData(); // создание формы
+            form_data.append('path_file', path_file); //
+            form_data.append('file', file_data);
+            form_data.append('action', 'load_file'); // функция обработки 
+            form_data.append('nonce_code', my_ajax_noncerr); // ключ
+
+            $.ajax({
+                method: "POST",
+                cache: false,
+                contentType: false,
+                processData: false,
+                url: ajaxurl,
+                data: form_data,
+            }).done(function(msg) {
+                if (msg != "") {
+                    $(".err").text(msg);
+                } else {
+                    // обновление img
+                    let img = $(".num" + code);
+                    let src = img.attr('src') + '?t=' + Date.now();
+                    img.attr('src', src); // обновляем логотип
+                }
+            });
+        });
+
+    });
 </script>
 <!-- 
 Сделать клик на кнопки
