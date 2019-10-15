@@ -35,24 +35,31 @@ function get_tourney_code()
 
 function get_meet($code = 0)
 {
-
     global $wpdb;
 
     $sql = "SELECT * FROM meet";
     if ($code != 0) {
-        $sql .= " WHERE code = $code";
+        $sql .= " WHERE code = $code ";
     }
-    $result = $wpdb->get_results($sql, 'ARRAY_A');
-    return $result;
+    $sql .= " ORDER BY date_meet DESC";
+    $result = $wpdb->get_results($sql, 'ARRAY_A'); 
+    return count($result) == 1 ? $result[0] : $result;
 };
 
+// Является ли Акрон победителем в матче. -1/0/1. false - игра не закончилась или ее нет.
+function check_winner($meet_id){
+	$match = get_meet($meet_id);
+	$akron_team = $match['team_1'] == '1' ? 'goal_1' : 'goal_2';
+	if($match['completed'])
+		return ( intVal($match[$akron_team]) <=> intVal($match[$akron_team == 'goal_1' ? 'goal_2' : 'goal_1']) );
+	return false;
+}
 
 
 //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ КОМАНДЫ ▰▰▰▰
 
 function get_team($code = 0)
 {
-
     global $wpdb;
 
     $sql = "SELECT * FROM team";
@@ -60,7 +67,7 @@ function get_team($code = 0)
         $sql .= " WHERE code = $code";
     }
     $result = $wpdb->get_results($sql, 'ARRAY_A');
-    return $result;
+    return count($result) == 1 ? $result[0] : $result;
 };
 
 
@@ -74,6 +81,15 @@ function get_team_code()
     return $result;
 };
 
+function get_team_select()
+{ // коды для селектора
+
+    global $wpdb;
+
+    $sql = "SELECT `code`, `name`, `city` FROM team";
+    $result = $wpdb->get_results($sql, 'ARRAY_A');
+    return $result;
+};
 
 /* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
  * Таблица country (страна)

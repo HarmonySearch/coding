@@ -1,11 +1,11 @@
 <? 
-/* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ КВА 2019.09.27
- * Редактирования таблиц базы данных
- * ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
- */
+//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+//  РЕДАКТИРОВАНИЯ ТАБЛИЦ БАЗЫ ДАННЫХ
+//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
 
 
-##  CSS стили для админ-панели
+
+//  CSS стили для админ-панели
 add_action( 'admin_enqueue_scripts', function(){
   wp_enqueue_style( 'db-wp-admin', get_template_directory_uri() .'/db_edit/style.css' );
 });
@@ -137,7 +137,7 @@ function load_tourney_callback(){
 }
 
 //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
-//  ДОбАВИТЬ ЗАПИСЬ КОМАНДЫ
+//  ДОБАВИТЬ ЗАПИСЬ КОМАНДЫ
 //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
 //  Все проверки на уровне клиента. Здесь только запись.
 
@@ -179,10 +179,11 @@ function load_team_callback(){
 //  ДОБАВИТЬ ЗАПИСЬ ВСТРЕЧИ
 //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
 
-function load_meet_callback(){
+function load_meet_callback()
+{
 
-	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
-	if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
+    if (!wp_verify_nonce($_POST['nonce_code'], 'my_ajax_nonce')) die('Stop!'); // Проверяем защитный ключ
+    if (!is_user_logged_in()) die('Stop! No login'); // юзверь не залогонин
 
     $data_a = array(
         'name' => clean($_POST['name']),
@@ -192,17 +193,25 @@ function load_meet_callback(){
         'time_meet' => clean($_POST['time_meet']),
         'tourney' => clean($_POST['tourney']),
         'team_1' => clean($_POST['team_1']),
-        'team_2' => clean($_POST['team_2']));
-        $format = array( '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d' );
+        'team_2' => clean($_POST['team_2'])
+    );
 
-        global $wpdb;
+    $completed = clean($_POST['completed']);
+    if (is_numeric($completed)) {
+        $data_a['completed'] = (int) $completed;
+    }
 
-        $result = $wpdb->insert('meet', $data_a, $format);
-        
-        if ($result <= 0) {
-            wp_die('ошибка записи');
-        }
-        wp_die(); // если всё ок, то возвращаем ""
+
+    $format = array('%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d');
+
+    global $wpdb;
+
+    $result = $wpdb->insert('meet', $data_a, $format);
+
+    if ($result <= 0) {
+        wp_die('ошибка записи');
+    }
+    wp_die(); // если всё ок, то возвращаем ""
 }
 
 //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰

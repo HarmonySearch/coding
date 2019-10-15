@@ -291,11 +291,12 @@ if ($team != "") {                  // это для формирования з
 <script>
     jQuery(function($) {
 
+        //  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
         $(document).on('click', '.player_add', function() { // кнопка "добавить игрока"
-            console.log('добавит игрока');
             document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=player&add";
         });
 
+        //  ▰▰▰▰ ФИЛЬТР ▰▰▰▰
         $(".team_filter").change(function() {
             team = $(this).val();
             href = "https://fcakron.ru/wp-admin/admin.php?page=player&team=" + team;
@@ -303,14 +304,18 @@ if ($team != "") {                  // это для формирования з
             document.location.href = href;
         });
 
-        $(".player input[type=text], .player input[type=number],.player input[type=date],.player select").change(function() {
+        //  ▰▰▰▰ РЕДАКТИРОВАТЬ ЗАПИСЬ ▰▰▰▰
+        $("input, select").change(function() {
 
-            let table = 'player',
-                name = $(this).attr("name"),
-                value = $(this).val(),
-                code = $(this).closest(".player").data("code");
-
-            console.log(table, code, name, value);
+            let table = 'player';
+            let name = $(this).attr("name");
+            let code = $(this).closest(".player").data("code");
+            let value;
+            if ($(this).attr("type") == 'checkbox') {
+                value = ($(this).prop("checked") ? 1 : 0);
+            } else {
+                value = $(this).val();
+            }
 
             let data_lib = {
                 action: 'data_change',
@@ -326,13 +331,11 @@ if ($team != "") {                  // это для формирования з
                 url: ajaxurl,
                 data: data_lib
             }).done(function(data) {
-                console.log(data);
             });
 
         });
 
-        // загрузка фото
-
+        //  ▰▰▰▰ ЗАГРУЗКА ФОТО ▰▰▰▰
         $(document).on('change', '.load_photo, .load_photo2', function() {
 
             // подготовка к обновлению фото

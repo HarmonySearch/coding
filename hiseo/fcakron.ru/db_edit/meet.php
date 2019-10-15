@@ -9,7 +9,7 @@ error_reporting(E_ALL);
 
 require_once(dirname(__FILE__) . '/functions_db.php');  // функции для работы с базой данных
 
-$code_team = get_team_code();  // код --> команда (для select)
+$code_team = get_team_select();  // код --> команда (для select)
 $code_tourney = get_tourney_code();  // код --> турнир (для select)
 
 
@@ -45,7 +45,7 @@ if (isset($_GET['add'])) { ?>
                         <select class="team_1" name="team_1" required>
                             <option value="">Выбрать команду</option>
                             <? foreach ($code_team as $opt) { ?>
-                                <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?></option>
+                                <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
                             <? } ?>
                         </select>
                     </td>
@@ -55,7 +55,7 @@ if (isset($_GET['add'])) { ?>
                         <select class="team_2" name="team_2" required>
                             <option value="">Выбрать команду</option>
                             <? foreach ($code_team as $opt) { ?>
-                                <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?></option>
+                                <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
                             <? } ?>
                         </select>
                     </td>
@@ -72,6 +72,9 @@ if (isset($_GET['add'])) { ?>
                 </tr>
                 <tr>
                     <td>Время: <input class="time_meet" type="time" name="time_meet" value=""></td>
+                </tr>
+                <tr>
+                    <td>Окончен: <input type="checkbox" name="completed" value="0"></td>
                 </tr>
             </table>
         </div>
@@ -103,6 +106,7 @@ if (isset($_GET['add'])) { ?>
                 form_data.append('stadium', $('.stadium').val());
                 form_data.append('date_meet', $('.date_meet').val());
                 form_data.append('time_meet', $('.time_meet').val());
+                form_data.append('completed', $('input[name="completed"]').val());
 
                 form_data.append('action', 'load_meet'); // функция обработки 
                 form_data.append('nonce_code', my_ajax_noncerr); // ключ
@@ -150,10 +154,10 @@ if (isset($_GET['add'])) { ?>
 
             <table>
                 <tr>
-                <th>Матч</th>
-                <th>Место проведения</th>
-                <th>Команда 1</th>
-                <th>Команда 2</th>
+                    <th>Матч</th>
+                    <th>Место проведения</th>
+                    <th>Команда 1</th>
+                    <th>Команда 2</th>
                 </tr>
                 <tr>
                     <td><input class="name" type="text" name="name" value="<?= $rec['name'] ?>"></td>
@@ -161,7 +165,7 @@ if (isset($_GET['add'])) { ?>
                     <td>
                         <select class="team" name="team_1">
                             <? foreach ($code_team as $opt) { ?>
-                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_1']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_1']) ? 'selected' : ''; ?>><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
                             <? } ?>
                         </select>
 
@@ -169,7 +173,7 @@ if (isset($_GET['add'])) { ?>
                     <td>
                         <select class="team" name="team_2">
                             <? foreach ($code_team as $opt) { ?>
-                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_2']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_2']) ? 'selected' : ''; ?>><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
                             <? } ?>
                         </select>
 
@@ -188,12 +192,12 @@ if (isset($_GET['add'])) { ?>
                     <td>Голы:
                         <input type="number" name="goal_1" value="<?= $rec['goal_1'] ?>"></td>
                     <td>Голы:
-                        <input type="number" name="goal_2" value="<?= $rec['goal_1'] ?>"></td>
+                        <input type="number" name="goal_2" value="<?= $rec['goal_2'] ?>"></td>
                 </tr>
                 <tr>
                     <td>Дата: <input class="date_meet" type="date" name="date_meet" value="<?= $rec['date_meet'] ?>"></td>
                     <td>Время: <input class="time_meet" type="time" name="time_meet" value="<?= $rec['time_meet'] ?>"></td>
-                    <td></td>
+                    <td>Закончен: <input type="checkbox" name="completed" value="<?= $rec['completed'] ?>" <? echo ($rec['completed'] == 1) ? 'checked' : ''; ?>></td>
                     <td></td>
                 </tr>
             </table>
@@ -219,11 +223,14 @@ if (isset($_GET['add'])) { ?>
 
             let table = 'meet';
             let name = $(this).attr("name");
-            let value = $(this).val();
             let code = $(this).closest(".meet").data("code");
-
-            console.log(table, code, name, value);
-
+            let value;
+            if ( $(this).attr("type") == 'checkbox' ) {
+                value = ( $(this).prop("checked")? 1 : 0 );
+            } else {
+                value = $(this).val();
+            }
+            
             let data_lib = {
                 action: 'data_change',
                 nonce_code: my_ajax_noncerr,
