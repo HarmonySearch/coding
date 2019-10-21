@@ -24,14 +24,14 @@ if (isset($_GET['add'])) { ?>
         <div class="add_rec">
             <table>
                 <tr>
-                    <td>Название: <input class="name" type="text" name="name" value="" maxlength="32" required></td>
+                    <td>Название: <input type="text" name="name" value="" maxlength="32" required></td>
                 </tr>
                 <tr>
-                    <td>Город: <input class="city" type="text" name="city" value="" maxlength="32" required></td>
+                    <td>Город: <input type="text" name="city" value="" maxlength="32" required></td>
                 </tr>
                 <tr>
                     <td>Логотип: ( PNG не более 100 Кбайт)<br>
-                        <input class="load_logo" type="file" name="logo">
+                        <input type="file">
                     </td>
                 </tr>
             </table>
@@ -45,32 +45,22 @@ if (isset($_GET['add'])) { ?>
     <script>
         jQuery(function($) {
 
-            $(document).on('click', '.load_rec', function() {
-
-                form_data = new FormData(); // создание формы
+        //  ▰▰▰▰ КНОПКА ЗАГРУЗИТЬ В БАЗУ ▰▰▰▰
+        $(document).on('click', '.load_rec', function() {
 
                 if ($('.name').val() == '' ||
                     $('.city').val() == '') {
-                    $(".err").text("Не заполнены обязательные поля !");
+                    alert("Не заполнены обязательные поля !");
                     return false;
                 }
+                
+                form_data = new FormData(); // создание формы
                 form_data.append('name', $('.name').val());
                 form_data.append('city', $('.city').val());
-
-                if ($('.load_logo').val() != '') { // файл загружен ?
-
-                    file_data = $('.load_logo').prop('files')[0]; // ссылка на объект файла
-                    if (file_data.type != 'image/png') {
-                        $(".err").text("Логотп не в формате PNG.");
-                        return false;
-                    }
-                    if (file_data.size > 100000) {
-                        $(".err").text("Логотип не более 100 Кбайт.");
-                        return false;
-                    }
+                if ($('input[type="file"]').val() != '') {
+                    file_data = $('.load_logo').prop('files')[0];
                     form_data.append('file', file_data);
                 }
-
                 form_data.append('action', 'load_team'); // функция обработки 
                 form_data.append('nonce_code', my_ajax_noncerr); // ключ
 
@@ -82,11 +72,13 @@ if (isset($_GET['add'])) { ?>
                     url: ajaxurl,
                     data: form_data,
                 }).done(function(msg) {
-                    console.log(msg);
-                    if (msg == '') {
+                    console.log(msg); 
+                    if (msg != '') {
+                        alert(msg);
+                        if msg[0]==' ' {
                         document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=team";
-                    } else {
-                        $('.err').text(msg);
+                        return;
+                        }
                     }
                 });
             });
@@ -105,6 +97,8 @@ if (isset($_GET['add'])) { ?>
 $fields = array('name', 'city', 'website');
 ?>
 
+<h1>Таблица команд</h1>
+<h3>(информация используется на сайте)</h3>
 <div>
     <button class="btn_add_rec">Добавить команду</button>
 </div>
@@ -219,9 +213,3 @@ $fields = array('name', 'city', 'website');
 
     });
 </script>
-<!-- 
-Сделать клик на кнопки
-       
-
-
--->

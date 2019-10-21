@@ -7,24 +7,47 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+$code_cry = get_country();    // страна select
+
 //  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
 //
 //  GET запрос наличие переменной add без значения
-//  https://fcakron.ru/wp-admin/admin.php?page=tourney&add
+//  https://fcakron.ru/wp-admin/admin.php?page=trainer&add
 
 if (isset($_GET['add'])) { ?>
-    <h1>Добавить турнир</h1>
-    <div class="tourney_add">
+    <h1>Добавить тренера</h1>
+    <div class="trainer_add">
         <div class="add_rec">
             <div class="err">Поля в красной рамке обязательныe.</div>
             <table>
+
                 <tr>
-                    <td>Название:<input type="text" name="name" value="" maxlength="32" required></td>
+                    <td>Фамилия: <input type="text" name="lastname" value="" required></td>
                 </tr>
                 <tr>
-                    <td>Логотип: ( PNG не более 100 Кбайт)<br>
-                        <input type="file">
+                    <td>Имя
+                        <input type="text" name="name" value="" required></td>
+                </tr>
+                <tr>
+                    <td>Должность
+                        <input type="text" name="position" value=""></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div>Страна тренера:</div>
+                        <select name="country">
+                            <option value="">выбрать страну</option>
+                            <? foreach ($code_cry as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?></option>
+                            <? } ?>
+                        </select>
                     </td>
+                </tr>
+                <tr>
+                    <td>Фотография (PNG - 450х300): </td>
+                </tr>
+                <tr>
+                    <td><input type="file"></td>
                 </tr>
             </table>
         </div>
@@ -39,18 +62,22 @@ if (isset($_GET['add'])) { ?>
             //  ▰▰▰▰ КНОПКА ЗАГРУЗИТЬ В БАЗУ ▰▰▰▰
             $(document).on('click', '.load_rec', function() {
 
-                if ($('input[name="name"]').val() == '') {
+                if ($('input[name="lastname"]').val() == '' || 
+                    $('input[name="name"]').val() == '') {
                     alert("Не заполнены обязательные поля.");
                     return false;
                 }
                 form_data = new FormData(); // создание формы
+                form_data.append('lastname', $('input[name="lastname"]').val());
                 form_data.append('name', $('input[name="name"]').val());
+                form_data.append('position', $('input[name="position"]').val());
+                form_data.append('country', $('select[name="country"]').val());
                 let file = $('input[type="file"]');
                 if (file.val() != '') {
                     file_data = file.prop('files')[0];
                     form_data.append('file', file_data);
                 }
-                form_data.append('action', 'load_tourney'); // функция обработки 
+                form_data.append('action', 'load_trainer'); // функция обработки 
                 form_data.append('nonce_code', my_ajax_noncerr); // ключ
 
                 $.ajax({
@@ -68,7 +95,7 @@ if (isset($_GET['add'])) { ?>
                             return;
                         }
                     }
-                    document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=tourney";
+                    document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=trainer";
                 });
             });
         });
@@ -81,34 +108,53 @@ if (isset($_GET['add'])) { ?>
 //
 // ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰
 //
-?> 
-<h1>Таблица турниров</h1>
-<h3>(информация используется на сайте)</h3>
+?>
+<h1>Таблица тренерского состава</h1>
+<h3>(информация не используется на сайте)</h3>
 <div>
-    <button class="btn_add_rec">Добавить турнир</button>
+    <button class="btn_add_rec">Добавить тренера</button>
 </div>
 
-<div class="tourney_table">
+<div class="trainer_table">
     <?php
-    foreach (get_tourney() as $rec) {
+    foreach (get_trainer() as $rec) {
         $code = $rec['code']; ?>
         <hr class="hr_db">
-        <div class="tourney" data-code="<?= $code ?>">
+        <div class="root_table" data-table="trainer" data-code="<?= $code ?>">
 
             <table>
                 <tr>
-                    <td>Название: </td>
+                    <td>Фамилия: </td>
+                    <td><input type="text" name="lastname" value="<?= $rec['lastname'] ?>"></td>
+                    <td rowspan="3"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/trainer/<?= $rec['code'] ?>.png" alt="<?= $rec['name'] ?>"></td>
+                    <td>Логотип: ( PNG не более 200 Кбайт)</td>
+                </tr>
+
+                <tr>
+                    <td>Имя: </td>
                     <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
+                    <td><label class="button" for="logo<?= $code ?>">Загрузить</label></td>
                 </tr>
+
                 <tr>
-                    <td><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/tourney/<?= $rec['code'] ?>.png" alt="<?= $rec['name'] ?>"></td>
-                    <td>Логотип: ( PNG не более 100 Кбайт)<br>
-                        <label class="button" for="logo<?= $code ?>">Загрузить</label></td>
-                </tr>
-                <tr>
+                    <td>Должность: </td>
+                    <td><input type="text" name="position" value="<?= $rec['position'] ?>"></td>
                     <td><input id="logo<?= $code ?>" type="file"></td>
                 </tr>
+                <tr>
+                <td>Страна: </td>
+                <td>
+                    <select class="country" name="country">
+                            <? foreach ($code_cry as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['country']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                            <? } ?>
+                        </select>
+                        </td>
+
+                </tr>
             </table>
+
+
         </div>
     <?php
     } ?>
@@ -118,20 +164,22 @@ if (isset($_GET['add'])) { ?>
 <script>
     jQuery(function($) {
 
-        //  ▰▰▰▰ КНОПКА ДОБАВИТЬ ТУРНИР ▰▰▰▰
+        //  ▰▰▰▰ КНОПКА ДОБАВИТЬ ТРЕНЕРА ▰▰▰▰
         $(document).on('click', '.btn_add_rec', function() { // кнопка добавления записи
-            document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=tourney&add";
+            document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=trainer&add";
         });
 
         //  ▰▰▰▰ РЕДАКТИРОВАНИЕ ФОРМЫ ▰▰▰▰
 
         $(document).on('change', 'input:not([type=file]), select', function(e) {
 
-            let table = 'tourney';
+            let patern = $(this).closest(".root_table"); // корневой предок
+            let table = patern.data("table"); // у него прописан код
+            let code = patern.data("code"); // и название таблицы для правки
             let name = $(this).attr("name");
-            let code = $(this).closest(".tourney").data("code");
             let value = $(this).val();
-
+console.log(table,code,value);
+//return;
             let data_lib = {
                 action: 'data_change',
                 nonce_code: my_ajax_noncerr,
@@ -146,7 +194,7 @@ if (isset($_GET['add'])) { ?>
                 url: ajaxurl,
                 data: data_lib
             }).done(function(data) {
-                // console.log(data);
+                console.log(data);
             });
         });
 
@@ -155,7 +203,7 @@ if (isset($_GET['add'])) { ?>
         $(document).on('change', 'input[type="file"]', function() {
 
             let file_data = $(this).prop('files')[0];
-            let parent = $(this).closest(".tourney");
+            let parent = $(this).closest(".trainer");
             let code = parent.data("code"); // код записи
             let img = parent.find('img'); // картинка
 

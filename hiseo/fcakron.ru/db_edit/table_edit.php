@@ -1,4 +1,4 @@
-<? 
+<?php
 //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
 //  РЕДАКТИРОВАНИЯ ТАБЛИЦ БАЗЫ ДАННЫХ
 //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
@@ -14,7 +14,7 @@ add_action( 'admin_enqueue_scripts', 'myajax_data', 99 ); // событие 'adm
 
 function myajax_data(){  //Создает уникальный защитный ключ на короткий промежуток времени	?>
     <script> var my_ajax_noncerr = '<?= wp_create_nonce( 'my_ajax_nonce' ); ?>'</script>
-<?   
+<?php   
 }
 // проверка условия разрешения редактирования информации
 if( wp_doing_ajax() ){ 
@@ -25,17 +25,15 @@ if( wp_doing_ajax() ){
 		add_action('wp_ajax_load_meet', 'load_meet_callback');
 		add_action('wp_ajax_load_team', 'load_team_callback');
 		add_action('wp_ajax_load_player', 'load_player_callback');
-        
+		add_action('wp_ajax_load_trainer', 'load_trainer_callback');
 	// }
 }
 /*
  * 
  */
-/* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
- * Изменение информации в базе данных
- * (универсальная функция)
- * ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
- */
+//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+//  ИЗМЕНЯЕТ ОДНО ПОЛЕ В ТАБЛИЦЕ
+//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
 
 function clean($var = ""){
     $var = trim($var);
@@ -51,7 +49,7 @@ function data_change_callback(){
      * Проверяем актуальность
      */
 
-    $tables = ['team', 'player','tourney', 'meet']; // список допустымых таблиц
+    $tables = ['team', 'player','tourney', 'meet', 'trainer']; // список допустымых таблиц
 
 	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
 	if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
@@ -74,104 +72,161 @@ function data_change_callback(){
 	wp_die();
 }
 
-/* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
- * Загрузка файлов в формате png
- * ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
- */
-function load_file_callback(){
-     
-	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
-	if(! is_user_logged_in()) die( 'Stop! No login'); // пользователь не залогонился
+$rule_file = array(
+    'meet' => array('type' => 'image/jpeg', 'size' => 500000,  'dir' => '/images/db/meet/', 'ext' => '.jpg'),
+    'team' => array('type' => 'image/png', 'size' => 100000,  'dir' => '/images/db/team/', 'ext' => '.png'),
+    'tourney' => array('type' => 'image/png', 'size' => 100000, 'dir' => '/images/db/tourney/', 'ext' => '.png'),
+    'player_1' => array('type' => 'image/png', 'size' => 200000, 'dir' => '/images/db/player/', 'ext' => '-1.png'),
+    'player_2' => array('type' => 'image/png', 'size' => 200000, 'dir' => '/images/db/player/', 'ext' => '-2.png'),
+    'trainer' => array('type' => 'image/png', 'size' => 200000, 'dir' => '/images/db/trainer/', 'ext' => '.png')
+);
+
+//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+//  ЗАГРУЗКА ФАЙЛОВ
+//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+
+function load_file_callback()
+{
+    global $rule_file;
+
+    if (!wp_verify_nonce($_POST['nonce_code'], 'my_ajax_nonce')) die('Stop!'); // Проверяем защитный ключ
+    if (!is_user_logged_in()) die('Stop! No login'); // пользователь не залогонился
+
+    //wp_die('вход');
 
     // ошибки процесса загрузки
-    if ( $_FILES['file']['error'] < 0 ) {
+    if ($_FILES['file']['error'] < 0) {
         wp_die('Ошибка: ' . $_FILES['file']['error']);
     }
-    
-    $pach = get_template_directory().$_POST['path_file'];
 
+    $param = $rule_file[$_POST['key']];
+
+    if ( $_FILES['file']['type'] != $param['type'] ) {
+        wp_die('Тип файла не: '. $param['type']);
+    }
+
+    if ( $_FILES['file']['size'] > $param['size'] ) {
+        wp_die('Размер файла больше: '. $param['size']);
+    }
+
+    $pach = get_template_directory() . $param['dir'] . $_POST['code'] . $param['ext'];
     // wp_die($pach);
     $result = move_uploaded_file($_FILES['file']['tmp_name'], $pach);
     if( ! $result )
-        echo 'ошибка загрузки', $pach;
+        echo 'ошибка загрузки файла: ', $pach;
 	wp_die();
 }
 
 
 
 //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
-//  ДОбАВИТЬ ЗАПИСЬ ТУРНИРА
+//  ДОБАВИТЬ ЗАПИСЬ ТУРНИРА
 //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
-//  Все проверки на уровне клиента. Здесь только запись.
 
 function load_tourney_callback(){
+
+    global $rule_file;
 
 	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
 	if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
 
+    // проверяем файлы если они существуют
+    if (isset($_FILES['file'])) {
 
-    if(isset($_FILES['file'])) {
-        if ( $_FILES['file']['error'] < 0 ) {
-            wp_die ('Логотип: ошибка ' . $_FILES['file']['error']);
+        if ($_FILES['file']['error'] < 0) {
+            wp_die('Ошибка: ' . $_FILES['file']['error']);
+        }
+
+        $param = $rule_file['tourney'];
+
+        if ($_FILES['file']['type'] != $param['type']) {
+            wp_die('Тип файла не: ' . $param['type']);
+        }
+
+        if ($_FILES['file']['size'] > $param['size']) {
+            wp_die('Размер файла больше: ' . $param['size']);
         }
     }
 
     $data_a = array(
-        'name' => clean($_POST['name']));
+        'name' => clean($_POST['name'])
+    );
 
-        global $wpdb;
-        $result = $wpdb->insert('tourney', $data_a);
-        if ($result <= 0) {
-            wp_die('ошибка записи');
-        }
+    global $wpdb;
+    $result = $wpdb->insert('tourney', $data_a);
+    if ($result <= 0) {
+        wp_die('Ошибка записи в базу данных.');
+    }
 
-        // грузим файлы если они существуют
-        if(isset($_FILES['file'])) {    
-            $id = $wpdb->insert_id; // код новой записи
-            $pach = get_template_directory()."/images/db/tourney/$id.png";
-            $result = move_uploaded_file($_FILES['file']['tmp_name'], $pach);
-            if(! $result )
-                wp_die ("Логотип: ошибка загрузки.");
-        }
-        wp_die(''); // если всё ок, то возвращаем ""
+    $id = $wpdb->insert_id; // код новой записи
+
+    // грузим файлы если они существуют
+    if (isset($_FILES['file'])) {
+
+        $id = $wpdb->insert_id; // код новой записи
+        $pach = get_template_directory() . "/images/db/tourney/$id.png";
+        $result = move_uploaded_file($_FILES['file']['tmp_name'], $pach);
+        if (!$result)
+            wp_die(' Ошибка загрузки файла.');
+    }
+    wp_die(); // если всё ок
 }
 
 //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
 //  ДОБАВИТЬ ЗАПИСЬ КОМАНДЫ
 //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
-//  Все проверки на уровне клиента. Здесь только запись.
+//  сначала проверка файла на допустимость. 
+//  если всё допустимо, по создаём запись и берём код
+//  грузим файл в дирректорию
+//  если запись создана, выкидывать пользователя в общую таблицу
+//  чтобы не запорачиваться с JSON:
+//  'бубубу' - ошибка до записи
+//  ' бубубу' - ошибка после записи
+//  '' - норм
 
-function load_team_callback(){
+function load_team_callback()
+{
+    global $rule_file;
 
-	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
-	if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
+    if (!wp_verify_nonce($_POST['nonce_code'], 'my_ajax_nonce')) die('Stop!'); // Проверяем защитный ключ
+    if (!is_user_logged_in()) die('Stop! No login'); // юзверь не залогонин
 
+    if (isset($_FILES['file'])) {
+        if ($_FILES['file']['error'] < 0) {
+            wp_die('Логотип: ошибка ' . $_FILES['file']['error']);
+        }
 
-    if(isset($_FILES['file'])) {
-        if ( $_FILES['file']['error'] < 0 ) {
-            wp_die ('Логотип: ошибка ' . $_FILES['file']['error']);
+        $param = $rule_file['team'];
+
+        if ($_FILES['file']['type'] != $param['type']) {
+            wp_die('Тип файла не: ' . $param['type']);
+        }
+
+        if ($_FILES['file']['size'] > $param['size']) {
+            wp_die('Размер файла больше: ' . $param['size']);
         }
     }
 
     $data_a = array(
         'name' => clean($_POST['name']),
-        'city' => clean($_POST['city']));
+        'city' => clean($_POST['city'])
+    );
 
-        global $wpdb;
-        $result = $wpdb->insert('team', $data_a);
-        if ($result <= 0) {
-            wp_die('ошибка записи');
-        }
+    global $wpdb;
+    $result = $wpdb->insert('team', $data_a);
+    if ($result <= 0) {
+        wp_die('Ошибка записи в базу данных.');
+    }
 
-        // грузим файлы если он существуют
-        if(isset($_FILES['file'])) {    
-            $id = $wpdb->insert_id; // код новой записи
-            $pach = get_template_directory()."/images/db/team/" . $id . ".png";
-            $result = move_uploaded_file($_FILES['file']['tmp_name'], $pach);
-            if(! $result )
-                wp_die ('Логотип: ошибка загрузки.');
-        }
-        wp_die(); // если всё ок
+    // грузим файлы если он существуют
+    if (isset($_FILES['file'])) {
+        $id = $wpdb->insert_id; // код новой записи
+        $pach = get_template_directory() . "/images/db/team/" . $id . ".png";
+        $result = move_uploaded_file($_FILES['file']['tmp_name'], $pach);
+        if (!$result)
+            wp_die(' Ошибка загрузки файла.');
+    }
+    wp_die(); // если всё ок
 }
 
 
@@ -191,18 +246,18 @@ function load_meet_callback()
         'stadium' => clean($_POST['stadium']),
         'date_meet' => clean($_POST['date_meet']),
         'time_meet' => clean($_POST['time_meet']),
+        'time_zone' => clean($_POST['time_zone']),
         'tourney' => clean($_POST['tourney']),
         'team_1' => clean($_POST['team_1']),
         'team_2' => clean($_POST['team_2'])
     );
 
-    $completed = clean($_POST['completed']);
-    if (is_numeric($completed)) {
-        $data_a['completed'] = (int) $completed;
+    $free = clean($_POST['free']);
+    if (is_numeric($free)) {
+        $data_a['free'] = (int) $free;
     }
 
-
-    $format = array('%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d');
+    $format = array('%s', '%s', '%s', '%s', '%s',  '%s', '%d', '%d', '%d', '%d');
 
     global $wpdb;
 
@@ -215,24 +270,45 @@ function load_meet_callback()
 }
 
 //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
-//  ДОбАВИТЬ ЗАПИСЬ ИГРОКА
+//  ДОБАВИТЬ ЗАПИСЬ ИГРОКА
 //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
 
 function load_player_callback(){
+
+    global $rule_file;
     
 	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
-	if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
+	if(!is_user_logged_in()) die('Stop! No login'); // юзверь не залогонин
 
-// начинаем с проверки файлов фотографий
-    if(isset($_FILES['file'])) {
-        if ( $_FILES['file']['error'] < 0 ) {
-            wp_die ('Фотография 1: ошибка ' . $_FILES['file']['error']);
+    // начинаем с проверки файлов фотографий
+    if (isset($_FILES['file_1'])) {
+        if ($_FILES['file_1']['error'] < 0) {
+            wp_die('Фотография 1: ошибка ' . $_FILES['file_1']['error']);
+        }
+        $param = $rule_file['player_1'];
+
+        if ($_FILES['file_1']['type'] != $param['type']) {
+            wp_die('Тип файла 1 не: ' . $param['type']);
+        }
+
+        if ($_FILES['file_1']['size'] > $param['size']) {
+            wp_die('Размер файла 1 больше: ' . $param['size']);
         }
     }
 
-    if(isset($_FILES['file2'])) {
-        if ( $_FILES['file2']['error'] < 0 ) {
-            wp_die ('Фотография 2: ошибка ' . $_FILES['file2']['error']);
+    if (isset($_FILES['file_2'])) {
+        if ($_FILES['file_2']['error'] < 0) {
+            wp_die('Фотография 2: ошибка ' . $_FILES['file_2']['error']);
+
+            $param = $rule_file['player_2'];
+
+            if ($_FILES['file_2']['type'] != $param['type']) {
+                wp_die('Тип файла 2 не: ' . $param['type']);
+            }
+
+            if ($_FILES['file_2']['size'] > $param['size']) {
+                wp_die('Размер файла 2 больше: ' . $param['size']);
+            }
         }
     }
 
@@ -255,8 +331,8 @@ function load_player_callback(){
     $team = (int)clean($_POST['team']);
     $data_a['team'] = $team;
     
-    $positions = clean($_POST['positions']);
-    if (is_numeric($positions)) { $data_a['positions'] = (int)$positions; }
+    $position = clean($_POST['position']);
+    if (is_numeric($position)) { $data_a['position'] = (int)$position; }
     
     $country = clean($_POST['country']);
     if ( is_numeric ($country)) { $data_a['country'] = (int)$country; }
@@ -276,24 +352,79 @@ function load_player_callback(){
     
     // грузим файлы если они существуют
     
-    if(isset($_FILES['file'])) {    
-        $pach = get_template_directory()."/images/db/player/" . $id . "-1.png";
-        echo "Файл $pach";
-		$result = move_uploaded_file($_FILES['file']['tmp_name'], $pach);
-		if(! $result )
-			wp_die ('Фотография 1 - ошибка загрузки.'.$pach);
+    if(isset($_FILES['file_1'])) {
+        $pach = get_template_directory() . "/images/db/player/" . $id . "-1.png";
+        $result = move_uploaded_file($_FILES['file_1']['tmp_name'], $pach);
+        if (!$result)
+            wp_die('Фотография 1 - ошибка загрузки.' . $pach);
     }
 
-    if(isset($_FILES['file2'])) {
-        $pach = get_template_directory()."/images/db/player/" . $id . "-2.png";
-         echo "Файл $pach";
-		$result = move_uploaded_file($_FILES['file2']['tmp_name'], $pach);
-		if(! $result ) {
-			wp_die ('Фотография 2 - ошибка загрузки.'.$pach);
+    if (isset($_FILES['file_2'])) {
+        $pach = get_template_directory() . "/images/db/player/" . $id . "-2.png";
+        $result = move_uploaded_file($_FILES['file_2']['tmp_name'], $pach);
+        if (!$result) {
+            wp_die('Фотография 2 - ошибка загрузки.' . $pach);
         }
     }
 
-	wp_die(); // если всё ок
+	wp_die();
+}
+
+//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+//  ДОБАВИТЬ ЗАПИСЬ ТРЕНЕРА
+//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+
+function load_trainer_callback(){ 
+
+    global $rule_file;
+
+	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
+	if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
+
+    // проверяем файлы если они существуют
+    if (isset($_FILES['file'])) {
+
+        if ($_FILES['file']['error'] < 0) {
+            wp_die('Ошибка: ' . $_FILES['file']['error']);
+        }
+
+        $param = $rule_file['trainer'];
+
+        if ($_FILES['file']['type'] != $param['type']) {
+            wp_die('Тип файла не: ' . $param['type']);
+        }
+
+        if ($_FILES['file']['size'] > $param['size']) {
+            wp_die('Размер файла больше: ' . $param['size']);
+        }
+    }
+
+    $data_a = array(
+        'lastname' => clean($_POST['lastname']),
+        'name' => clean($_POST['name']),
+        'position' => clean($_POST['position'])
+    );
+    $country = clean($_POST['country']);
+    if ( is_numeric ($country)) { $data_a['country'] = (int)$country; }
+    
+    global $wpdb;
+    $result = $wpdb->insert('trainer', $data_a);
+    if ($result <= 0) {
+        wp_die('Ошибка записи в базу данных.');
+    }
+
+    $id = $wpdb->insert_id; // код новой записи
+
+    // грузим файлы если они существуют
+    if (isset($_FILES['file'])) {
+
+        $id = $wpdb->insert_id; // код новой записи
+        $pach = get_template_directory() . "/images/db/trainer/$id.png";
+        $result = move_uploaded_file($_FILES['file']['tmp_name'], $pach);
+        if (!$result)
+            wp_die(' Ошибка загрузки файла.');
+    }
+    wp_die();
 }
 
 ?>

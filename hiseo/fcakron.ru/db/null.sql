@@ -56,9 +56,22 @@ INSERT INTO country VALUES
 
 
 --
--- Описание для таблицы player 
+-- Описание для таблицы тренер 
 --
-DROP TABLE IF EXISTS player;
+CREATE TABLE `trainer` (
+  `code` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'уникальный код',
+  `lastname` varchar(32) NOT NULL DEFAULT 'фамилия игрока' COMMENT 'фамилия',
+  `name` varchar(32) DEFAULT '' COMMENT 'имя',
+  `position` varchar(32) DEFAULT '' COMMENT 'должность',
+  `country` int(10) UNSIGNED DEFAULT NULL COMMENT 'страна (код из таблицы country)',
+
+  PRIMARY KEY (code),
+
+  CONSTRAINT `trainer_country` FOREIGN KEY (`country`) REFERENCES `country` (`code`) ON DELETE SET NULL ON UPDATE CASCADE
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='тренер';
+
+
 
 CREATE TABLE player (
 
@@ -190,24 +203,33 @@ COMMENT = 'турнир';
 --
 DROP TABLE IF EXISTS event;
 
-CREATE TABLE event (
-  code INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'уникальный код',
-  play INT(10) UNSIGNED DEFAULT NULL COMMENT 'игра (код из таблицы play)',
-  player INT(10) UNSIGNED DEFAULT NULL COMMENT 'игрок (код из таблицы player)',
-  team INT(10) UNSIGNED DEFAULT NULL COMMENT 'команда (код из таблицы team)',
-  period TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'период',
-  time_goal TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'минута',
+CREATE TABLE `protocol` (
+  `code` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'уникальный код',
+  `meet` INT(10) UNSIGNED DEFAULT NULL COMMENT 'игра (код из таблицы play)',
+  `minute` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'минута',
+  `player` INT(10) UNSIGNED DEFAULT NULL COMMENT 'игрок (код из таблицы player)',
+  `event` INT(10) UNSIGNED DEFAULT NULL COMMENT 'игра (код из таблицы play)',
 
   PRIMARY KEY (code),
   
-  FOREIGN KEY (play) REFERENCES play(code) ON DELETE SET NULL ON UPDATE CASCADE,
-  FOREIGN KEY (player) REFERENCES player(code) ON DELETE SET NULL ON UPDATE CASCADE,
-  FOREIGN KEY (team) REFERENCES team(code) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `protocol_player` FOREIGN KEY (`player`) REFERENCES `player` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `protocol_event` FOREIGN KEY (`event`) REFERENCES `event` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `protocol_meet` FOREIGN KEY (`meet`) REFERENCES `meet` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
 )
 ENGINE = INNODB
 CHARACTER SET utf8
 COLLATE utf8_general_ci
-COMMENT = 'событие';
+COMMENT = 'протокол событий';
+
+
+CREATE TABLE `event` (
+  `code` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'уникальный код',
+  `name` varchar(50) NOT NULL COMMENT 'название события',
+  
+    PRIMARY KEY (code),
+    UNIQUE INDEX name (name)
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='список событий';
 
 
 база данных футбольного клуба

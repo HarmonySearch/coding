@@ -7,32 +7,26 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once(dirname(__FILE__) . '/functions_db.php');  // функции для работы с базой данных
-
 $code_team = get_team_select();  // код --> команда (для select)
 $code_tourney = get_tourney_code();  // код --> турнир (для select)
 
-
-
-
-//  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
+//  ▰▰▰▰ ДОБАВЛЕНИЕ ЗАПИСИ ▰▰▰▰
 //
 //  GET запрос наличие переменной add без значения
 //  https://fcakron.ru/wp-admin/admin.php?page=meet&add
 
 if (isset($_GET['add'])) { ?>
-
     <h2>Новый матч</h2>
     <div class="meet_add">
-
         <div class="add_rec">
+            <div class="err">Поля в красной рамке обязательныe.</div>
             <table>
                 <tr>
-                    <td>Название:<input class="name" type="text" name="name" value="" maxlength="32" required></td>
+                    <td>Название:<input type="text" name="name" value="" maxlength="32" required></td>
                 </tr>
                 <tr>
                     <td>Турнир:
-                        <select class="tourney" name="tourney" required>
+                        <select name="tourney" required>
                             <option value="">Выбрать турнир</option>
                             <? foreach ($code_tourney as $opt) { ?>
                                 <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?></option>
@@ -42,7 +36,7 @@ if (isset($_GET['add'])) { ?>
                 </tr>
                 <tr>
                     <td>Команда 1:
-                        <select class="team_1" name="team_1" required>
+                        <select name="team_1" required>
                             <option value="">Выбрать команду</option>
                             <? foreach ($code_team as $opt) { ?>
                                 <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
@@ -52,7 +46,7 @@ if (isset($_GET['add'])) { ?>
                 </tr>
                 <tr>
                     <td>Команда 2:
-                        <select class="team_2" name="team_2" required>
+                        <select name="team_2" required>
                             <option value="">Выбрать команду</option>
                             <? foreach ($code_team as $opt) { ?>
                                 <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
@@ -61,20 +55,23 @@ if (isset($_GET['add'])) { ?>
                     </td>
                 </tr>
                 <tr>
-                    <td>Город: <input class="city" type="text" name="city" value="" maxlength="32"></td>
+                    <td>Город: <input type="text" name="city" value="" maxlength="32"></td>
                 </tr>
                 <tr>
-                    <td>Стадион:<input class="stadium" type="text" name="stadium" value="" maxlength="32"></td>
+                    <td>Стадион:<input type="text" name="stadium" value="" maxlength="32"></td>
                 </tr>
 
                 <tr>
-                    <td> Дата встречи: <input class="date_meet" type="date" name="date_meet" value=""></td>
+                    <td> Дата встречи: <input type="date" name="date_meet" value=""></td>
                 </tr>
                 <tr>
-                    <td>Время: <input class="time_meet" type="time" name="time_meet" value=""></td>
+                    <td>Время: <input type="time" name="time_meet" value=""></td>
                 </tr>
                 <tr>
-                    <td>Окончен: <input type="checkbox" name="completed" value="0"></td>
+                    <td>Временная зона: <input type="number" name="time_zone" value="4"></td>
+                </tr>
+                <tr>
+                    <td>Вход свободный: <input type="checkbox" name="free" value="0" checked></td>
                 </tr>
             </table>
         </div>
@@ -82,32 +79,34 @@ if (isset($_GET['add'])) { ?>
     <hr class="hr_db">
 
     <button class="load_rec">Загрузить в базу</button>
-    <div class="err">Поля в красной рамке обязательны для заполнения.</div>
 
     <script>
         jQuery(function($) {
 
+            //  ▰▰▰▰ КНОПКА ЗАГРУЗИТЬ В БАЗУ ▰▰▰▰
             $(document).on('click', '.load_rec', function() {
 
-                form_data = new FormData(); // создание формы
-
-                if ($('.name').val() == "" ||
-                    $('.tourney').val() == "" ||
-                    $('.team_1').val() == "" ||
-                    $('.team_2').val() == "") {
-                    $(".err").text("Не заполнены обязательные поля !");
+                if ($('input[name="name"]').val() == "" ||
+                    $('select[name="tourney"]').val() == "" ||
+                    $('select[name="team_1"]').val() == "" ||
+                    $('select[name="team_2"]').val() == "") {
+                        alert("Не заполнены обязательные поля.");
                     return false;
                 }
-                form_data.append('name', $('.name').val());
-                form_data.append('tourney', $('.tourney').val());
-                form_data.append('team_1', $('.team_1').val());
-                form_data.append('team_2', $('.team_2').val());
-                form_data.append('city', $('.city').val());
-                form_data.append('stadium', $('.stadium').val());
-                form_data.append('date_meet', $('.date_meet').val());
-                form_data.append('time_meet', $('.time_meet').val());
-                form_data.append('completed', $('input[name="completed"]').val());
-
+                form_data = new FormData(); // создание формы
+                form_data.append('name', $('input[name="name"]').val());
+                form_data.append('tourney', $('select[name="tourney"]').val());
+                form_data.append('team_1', $('select[name="team_1"]').val());
+                form_data.append('team_2', $('select[name="team_2"]').val());
+                form_data.append('city', $('input[name="city"]').val());
+                form_data.append('stadium', $('input[name="stadium"]').val());
+                form_data.append('date_meet', $('input[name="date_meet"]').val());
+                form_data.append('time_meet', $('input[name="time_meet"]').val());
+                if ($('input[name="free"]').is(':checked')) {
+                    form_data.append('free', "1");
+                } else {
+                    form_data.append('free', "0");
+                }
                 form_data.append('action', 'load_meet'); // функция обработки 
                 form_data.append('nonce_code', my_ajax_noncerr); // ключ
 
@@ -120,11 +119,13 @@ if (isset($_GET['add'])) { ?>
                     data: form_data,
                 }).done(function(msg) {
                     console.log(msg);
-                    if (msg == '') {
-                        document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=meet";
-                    } else {
-                        $('.err').text(msg);
+                    if (msg != '') {
+                        alert(msg);
+                        if (msg[0] != ' ') {
+                            return;
+                        }
                     }
+                    document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=meet";
                 });
             });
         });
@@ -140,6 +141,8 @@ if (isset($_GET['add'])) { ?>
 //
 ?>
 
+<h1>Таблица матчей</h1>
+<h3>(информация используется на сайте)</h3>
 <div>
     <button class="btn_add_rec">Добавить матч</button>
 </div>
@@ -151,19 +154,21 @@ if (isset($_GET['add'])) { ?>
         <hr class="hr_db">
         <div class="meet" data-code="<?= $rec['code'] ?>">
 
-
             <table>
                 <tr>
                     <th>Матч</th>
-                    <th>Место проведения</th>
+                    <th colspan="2">Место проведения</th>
                     <th>Команда 1</th>
                     <th>Команда 2</th>
+                    <td rowspan="3"><img num<?= $rec['code'] ?>" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/meet/<?= $rec['code'] ?>.jpg" alt="нет афиши">
+                    </td>
                 </tr>
                 <tr>
-                    <td><input class="name" type="text" name="name" value="<?= $rec['name'] ?>"></td>
-                    <td>Город: <input class="city" type="text" name="city" value="<?= $rec['city'] ?>"></td>
+                    <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
+                    <td>Город:</td>
+                    <td><input type="text" name="city" value="<?= $rec['city'] ?>"></td>
                     <td>
-                        <select class="team" name="team_1">
+                        <select name="team_1">
                             <? foreach ($code_team as $opt) { ?>
                                 <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_1']) ? 'selected' : ''; ?>><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
                             <? } ?>
@@ -171,34 +176,54 @@ if (isset($_GET['add'])) { ?>
 
                     </td>
                     <td>
-                        <select class="team" name="team_2">
+                        <select name="team_2">
                             <? foreach ($code_team as $opt) { ?>
                                 <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_2']) ? 'selected' : ''; ?>><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
                             <? } ?>
                         </select>
 
                     </td>
+                    <td>Использовать афишу: <input type="checkbox" name="poster" value="<?= $rec['poster'] ?>" <? echo ($rec['poster'] == 1) ? 'checked' : ''; ?>>
+                    </td>
                 </tr>
                 <tr>
                     <td>
-                        <select class="tourney" name="tourney">
+                        <select name="tourney">
                             <? foreach ($code_tourney as $opt) { ?>
                                 <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['tourney']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
                             <? } ?>
                         </select>
 
                     </td>
-                    <td>Стадион: <input class="stadium" type="text" name="stadium" value="<?= $rec['stadium'] ?>"></td>
+                    <td>Стадион:</td>
+                    <td> <input type="text" name="stadium" value="<?= $rec['stadium'] ?>"></td>
                     <td>Голы:
                         <input type="number" name="goal_1" value="<?= $rec['goal_1'] ?>"></td>
                     <td>Голы:
                         <input type="number" name="goal_2" value="<?= $rec['goal_2'] ?>"></td>
                 </tr>
                 <tr>
-                    <td>Дата: <input class="date_meet" type="date" name="date_meet" value="<?= $rec['date_meet'] ?>"></td>
-                    <td>Время: <input class="time_meet" type="time" name="time_meet" value="<?= $rec['time_meet'] ?>"></td>
-                    <td>Закончен: <input type="checkbox" name="completed" value="<?= $rec['completed'] ?>" <? echo ($rec['completed'] == 1) ? 'checked' : ''; ?>></td>
-                    <td></td>
+                    <!-- 4 -->
+                    <td>
+                        Дата: <input type="date" name="date_meet" value="<?= $rec['date_meet'] ?>">
+                    </td>
+                    <td>
+                        Время:</td>
+                    <td> <input type="time" name="time_meet" value="<?= $rec['time_meet'] ?>">
+                        Зона: <input type="number" name="time_zone" value="<?= $rec['time_zone'] ?>">
+                    </td>
+                    <td>
+                        Вход свободый: <input type="checkbox" name="free" value="<?= $rec['free'] ?>" <? echo ($rec['free'] == 1) ? 'checked' : ''; ?>>
+
+                    </td>
+                    <td>
+                        Матч окончен: <input type="checkbox" name="completed" value="<?= $rec['completed'] ?>" <? echo ($rec['completed'] == 1) ? 'checked' : ''; ?>>
+
+                    </td>
+                    <td>
+                        <label class="button" for="poster<?= $code ?>">Загрузить</label>
+                        <input class="poster" id="poster<?= $code ?>" type="file">
+                    </td>
                 </tr>
             </table>
         </div>
@@ -213,24 +238,25 @@ if (isset($_GET['add'])) { ?>
 <script>
     jQuery(function($) {
 
-        //  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
+        //  ▰▰▰▰ КНОПКА ДОБАВИТЬ МАТЧ ▰▰▰▰
         $(document).on('click', '.btn_add_rec', function() { // кнопка добавления записи
             document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=meet&add";
         });
 
-        //  ▰▰▰▰ РЕДАКТИРОВАТЬ ЗАПИСЬ ▰▰▰▰
-        $("input, select").change(function() { // значение поля изменилось
+        //  ▰▰▰▰ РЕДАКТИРОВАНИЕ ФОРМЫ ▰▰▰▰
+
+        $(document).on('change', 'input:not([type=file]), select', function(e) {
 
             let table = 'meet';
             let name = $(this).attr("name");
             let code = $(this).closest(".meet").data("code");
             let value;
-            if ( $(this).attr("type") == 'checkbox' ) {
-                value = ( $(this).prop("checked")? 1 : 0 );
+            if ($(this).attr("type") == 'checkbox') {
+                value = ($(this).prop("checked") ? 1 : 0);
             } else {
                 value = $(this).val();
             }
-            
+
             let data_lib = {
                 action: 'data_change',
                 nonce_code: my_ajax_noncerr,
@@ -245,7 +271,45 @@ if (isset($_GET['add'])) { ?>
                 url: ajaxurl,
                 data: data_lib
             }).done(function(data) {
-                console.log(data);
+                // console.log(data);
+            });
+        });
+
+        //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ЗАГРУЗКА ФАЙЛА ▰▰▰▰
+
+        $(document).on('change', 'input[type="file"]', function(e) {
+
+            let file_data = $(this).prop('files')[0];
+            let parent = $(this).closest(".meet");
+            let code = parent.data("code");
+            let img = parent.find('img');
+            let poster = parent.find('input[name="poster"]');
+
+            form_data = new FormData();
+            form_data.append('key', 'meet'); // ключ из ассоциативного массива на сервере
+            form_data.append('code', code);
+            form_data.append('file', file_data);
+            form_data.append('action', 'load_file'); // функция обработки 
+            form_data.append('nonce_code', my_ajax_noncerr); // ключ
+
+            $.ajax({
+                method: "POST",
+                cache: false,
+                contentType: false,
+                processData: false,
+                url: ajaxurl,
+                data: form_data,
+            }).done(function(msg) {
+                if (msg != "") {
+                    alert(msg);
+                } else {
+                    // обновление img
+                    let src = img.attr('src') + '?t=' + Date.now();
+                    img.attr('src', src);
+                    // прописывем использование афишиw
+                    poster.attr("checked", "checked");
+                    poster.trigger('change');
+                }
             });
         });
     });

@@ -2,6 +2,17 @@
     АДМИНКА - РЕДАКИРОВАНИЕ БАЗЫ ДАННЫХ
     ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ */
 
+.btn_add_rec {
+    cursor: pointer;
+}
+
+/* числовые поля */
+.digit_only 
+{
+    width: 30px;
+    text-align-last: end;
+}
+
 .manual p{
     color: red;
     font-size: 18px;
@@ -27,230 +38,120 @@ button.load_rec {
     margin-top: 5px;
 }
 
-/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ТУРНИРЫ ▰▰▰▰ */
+/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ТУРНИРЫ ▰▰▰▰ */
 
-/*  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰*/
-
-.tourney_add .add_rec .name{ width: 100%; }
+/*  ▰▰▰▰ ДОБАВЛЕНИЕ ЗАПИСИ ▰▰▰▰ */
+.tourney_add input[name="name"] { width: 350px; }
 
 /*  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰*/
-
-.tourney_table .tourney .logo { height: 70px; }
-.tourney_table .tourney .name { width: 350px; }
-.tourney_table .tourney input[type="file"] { display: none; }
-
-
-/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ МАТЧИ ▰▰▰▰ */
+.tourney_table img { height: 70px; }
+.tourney_table input[name="name"] { width: 350px; }
+.tourney_table input[type="file"] { display: none; }
 
 
+/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ МАТЧИ ▰▰▰▰ */
 
-/*  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰*/
+/*  ▰▰▰▰ ДОБАВЛЕНИЕ ЗАПИСИ ▰▰▰▰ */
+.meet_add input[name="name"],
+.meet_add input[name="tourney"],
+.meet_add select[name="team_1"],
+.meet_add select[name="team_2"],
+.meet_add input[name="city"],
+.meet_add input[name="stadium"] 
+{ 
+    width: 100%;
+}
+.meet_add input[name="time_zone"]
+{
+    width: 50px; 
+}
 
+/*  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰*/
+/* числовые поля */
+.meet_table table { border-spacing: 5px; }
+.meet_table input[name="time_zone"],
+.meet_table input[name="goal_1"],
+.meet_table input[name="goal_2"] 
+{
+    width: 50px; 
+}
+.meet_table input[name="name"] { width: 100%; }
+.meet_table .meet input[type="file"] { display: none; }
 
+.meet_table img { height: 70px; }
 
-.meet_add .name,
-.meet_add .tourney,
-.meet_add .team_1,
-.meet_add .team_2,
-.meet_add .city,
-.meet_add .stadium {
+/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ КОМАНДЫ ▰▰▰▰ */
+
+/*  ▰▰▰▰ ДОБАВЛЕНИЕ ЗАПИСИ ▰▰▰▰ */
+.team_add input[name="name"],
+.team_add input[name="city"] {
     width: 100%;
 }
 
-.meet_add .tourney,
-.meet_add .team_1,
-.meet_add .team_2,
-.meet_add .name {
-    border-color: red;
-}
-
-/*▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰*/
-
-.meet_table .meet table { border-spacing: 5px; }
-.meet_table .meet .name { width: 100%; }
-.meet_table .meet input[name="goal_1"] { width: 50px; }
-.meet_table .meet input[name="goal_2"] { width: 50px; }
-.meet_table .meet select[name="team_1"] { width: 100%; }
-.meet_table .meet select[name="team_2"] { width: 100%; }
-
-
-/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ КОМАНДЫ ▰▰▰▰ */
-
-/*  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰*/
 /*  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰*/
-
 .teams_table .team input[type="file"] { display: none; }
 
+.teams_table .team .logo { height: 70px; }
 
+/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ИГРОКИ ▰▰▰▰ */
 
+/*  ▰▰▰▰ ДОБАВЛЕНИЕ ЗАПИСИ ▰▰▰▰ */
 
-
-
-.team_add .add_rec .name, .team_add .add_rec .city{
-    width: 100%;
-}
-
-
-
-
-
-
-
-
-.teams_table .team {
-    display: grid;
-    grid-template-columns:120px 250px 130px 300px ;
-    row-gap: 2px;
-    column-gap: 2px;
-    margin-bottom: 10px;
-}
-
-.team .name_l{
-    grid-column: 1 / 2;
-    grid-row: 1 / 2;
-}
-.team .name{
-    grid-column: 2 / 3;
-    grid-row: 1 / 2;
-}
-.team .city_l{
-    grid-column: 1 / 2;
-    grid-row: 2 / 3;
-}
-.team .city{
-    grid-column: 2 / 3;
-    grid-row: 2 / 3;
-}
-
-.team .logo { 
-    grid-column: 3 / 4;
-    grid-row: 1 / 3;
-    height: 75px;
-    justify-self : center;
-}
-
-.team * {
-    align-self: center;
-}
-
-
-
-.team_edit_table {
-    display: grid;
-    grid-template-columns: avto;
-    row-gap: 1.5em;
-    column-gap: 10px;
-}
-.team_cell {
-    border: 1px solid blue; 
-}
-.btn_db {
-    cursor:pointer;
-    border: 1px solid blue; 
-    
-}
-
-/*▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ */
-/*  ИГРОКИ                                    */
-/*▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ */
-
-/*▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰*/
-
-.player_add .add_rec .instagram,
-.player_add .add_rec .vc,
-.player_add .add_rec .country,
-.player_add .add_rec .positions,
-.player_add .add_rec .name,
-.player_add .add_rec .lastname,
-.player_add .add_rec .team
+.player_add input[name="instagram"],
+.player_add input[name="vc"],
+.player_add select[name="country"],
+.player_add select[name="position"],
+.player_add input[name="name"],
+.player_add input[name="lastname"],
+.player_add select[name="team"]
 {
     width: 100%;
 }
-
-.player_add .add_rec .number,
-.player_add .add_rec .weight,
-.player_add .add_rec .growing
+/* числовые поля */
+.player_add input[name="number"],
+.player_add input[name="weight"],
+.player_add input[name="growing"]
 {
     width: 50px;
 }
 
+/*  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰*/
 
-
-
-
-
-
-    
-/* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
- * Редактировать игроков
- * ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
- */
-
-.player {
-    display: grid;
-    grid-template-columns:  100px       100px    100px     40px     50px                120px                 50px          120px            50px          120px           50px           120px           130px       130px        80px      200px;
-    grid-template-areas:    "team       team     lastname  growing  matches_plus        matches_plus_l        exchange_plus exchange_plus_l  cart_y_plus   cart_y_plus_l   omission_plus  omission_plus_l photo      photo2       instagram_l instagram" 
-                            "positions  country  name      weight   output_start_plus   output_start_plus_l   goal_plus     goal_plus_l      cart_r_plus   cart_r_plus_l   .              .               photo      photo2       vc_l vc"
-                            "number     capitan  birthday  birthday output_in_game_plus output_in_game_plus_l pass_plus     pass_plus_l      save_plus     save_plus_l     .              .               load_photo load_photo2 . ." ;
-    row-gap: 2px;
-    column-gap: 5px;
-    margin: 10px;
-}
-.player * {
-    align-self: center;
-    line-height: 1.0;
-
-}
-.player .lastname { grid-area: lastname; }     
-.player .name { grid-area: name; }
-.player .birthday { grid-area: birthday; }
-.player .team { grid-area: team; }
-.player .country { grid-area: country; }
-.player .country_l { grid-area: country_l }
-.player .positions { grid-area: positions; }
-.player .capitan { grid-area: capitan; }
-.player .number { grid-area: number; }
-.player .growing { grid-area: growing; }
-.player .weight { grid-area: weight; }
-.player .vc { grid-area: vc; }
-.player .vc_l { grid-area: vc_l; }
-.player .instagram { grid-area: instagram; }
-.player .instagram_l { grid-area: instagram_l; }
-.player .matches_plus { grid-area: matches_plus;     text-align: right;}
-.player .matches_plus_l { grid-area: matches_plus_l; }
-.player .output_start_plus { grid-area: output_start_plus; }
-.player .output_start_plus_l { grid-area: output_start_plus_l; }
-.player .output_in_game_plus { grid-area: output_in_game_plus; }
-.player .output_in_game_plus_l { grid-area: output_in_game_plus_l; }
-.player .exchange_plus { grid-area: exchange_plus; }
-.player .exchange_plus_l { grid-area: exchange_plus_l; }
-.player .goal_plus { grid-area: goal_plus; }
-.player .goal_plus_l { grid-area: goal_plus_l; }
-.player .pass_plus { grid-area: pass_plus; }
-.player .pass_plus_l { grid-area: pass_plus_l; }
-.player .cart_y_plus { grid-area: cart_y_plus; }
-.player .cart_y_plus_l { grid-area: cart_y_plus_l; }
-.player .cart_r_plus { grid-area: cart_r_plus; }
-.player .cart_r_plus_l { grid-area: cart_r_plus_l; }
-.player .save_plus { grid-area: save_plus; }
-.player .save_plus_l { grid-area: save_plus_l; }
-.player .omission_plus { grid-area: omission_plus; }
-.player .omission_plus_l { grid-area: omission_plus_l; }
-.player .photo { 
-    grid-area: photo;
-    height: 75px;
-}
-.player .photo2 { 
-    grid-area: photo2;
-    height: 75px;
-}
-.player .load_photo { grid-area: load_photo; } 
-.player .load_photo2 { grid-area: load_photo2; } 
-
-.player .number input {
-    width: 50px;
+.count {
+    text-align: end;  
 }
 
-.player input[type='file'] { /* чтобы не выводилась надпись "файл не загружен" */
-  color: transparent;
+.digit_only[name="growing"] 
+{
+    width: 40px; 
 }
+.player_table select[name="team"] 
+{ 
+    width: 230px; 
+}
+
+.player_table input[name="name"] ,
+.player_table input[name="lastname"]
+{ 
+    width: 100%; 
+}
+
+.player_table .photo
+{ 
+    width: 135px; 
+}
+.player_table input[type="file"] { display: none; }
+
+/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ТРЕНЕРСКИЙ СОСТАВ ▰▰▰▰ */
+/*  ▰▰▰▰ ДОБАВЛЕНИЕ ЗАПИСИ ▰▰▰▰ */
+
+.trainer_add select[name="country"],
+.trainer_add input[name="position"],
+.trainer_add input[name="name"],
+.trainer_add input[name="lastname"]
+{
+    width: 100%;
+}
+/*  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰*/
+.trainer_table input[type="file"] { display: none; }
+.trainer_table img { width: 135px; }

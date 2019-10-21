@@ -7,11 +7,9 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once(dirname(__FILE__) . '/functions_db.php');  // функции для работы с базой данных
-
-$code_cry = get_country();    // код --> страна
-$code_pos = get_positions();  // код --> позиция игрока
-$code_team = get_team_code();  // код --> команда (для select)
+$code_cry = get_country();    // страна select
+$code_pos = get_position();  // позиция select
+$code_team = get_team_select();  // команда select
 
 //  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
 //
@@ -19,18 +17,17 @@ $code_team = get_team_code();  // код --> команда (для select)
 //  https://fcakron.ru/wp-admin/admin.php?page=player&add
 
 if (isset($_GET['add'])) { ?>
-
     <h2>Новый игрок</h2>
     <div class="player_add">
-
         <div class="add_rec">
+            <div class="err">Поля в красной рамке обязательныe.</div>
             <table>
                 <tr>
                     <td>Команда:
-                        <select class="team" name="team" required>
+                        <select name="team" required>
                             <option value="">выбрать название команды</option>
                             <? foreach ($code_team as $opt) { ?>
-                                <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?></option>
+                                <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
                             <? } ?>
                         </select>
                     </td>
@@ -38,7 +35,7 @@ if (isset($_GET['add'])) { ?>
                 <tr>
                     <td>
                         <div>Страна игрока:</div>
-                        <select class="country" name="country">
+                        <select name="country">
                             <option value="">выбрать страну</option>
                             <? foreach ($code_cry as $opt) { ?>
                                 <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?></option>
@@ -47,20 +44,20 @@ if (isset($_GET['add'])) { ?>
                     </td>
                 </tr>
                 <tr>
-                    <td>Фамилия: <input class="lastname" type="text" name="lastname" value="" required></td>
+                    <td>Фамилия: <input type="text" name="lastname" value="" required></td>
                 </tr>
                 <tr>
                     <td>Имя
-                        <input class="name" type="text" name="name" value="" required></td>
+                        <input type="text" name="name" value="" required></td>
                 </tr>
                 <tr>
-                    <td>Дата рождения: <input class="birthday" type="date" name="birthday" value=""></td>
+                    <td>Дата рождения: <input type="date" name="birthday" value=""></td>
                 </tr>
                 <tr>
-                    <td>Рост: <input class="growing" type="text" name="growing" value="" maxlength="3"> Вес: <input class="weight" type="text" name="weight" value="" maxlength="3"></td>
+                    <td>Рост: <input type="text" name="growing" value="" maxlength="3"> Вес: <input type="text" name="weight" value="" maxlength="3"></td>
                 </tr>
                 <tr>
-                    <td>Номер игрока: <input class="number" type="text" name="number" value="" placeholder=""> Капитан: <input class="capitan" type="checkbox" name="capitan" value="0"></td>
+                    <td>Номер игрока: <input type="text" name="number" value="" placeholder=""> Капитан: <input type="checkbox" name="capitan" value="0"></td>
                 </tr>
                 <tr>
                     <td>
@@ -68,7 +65,7 @@ if (isset($_GET['add'])) { ?>
                 </tr>
                 <tr>
                     <td>Позиция игрока:
-                        <select class="positions" name="positions">
+                        <select name="position">
                             <option value="">выбрать позицию</option>
                             <? foreach ($code_pos as $opt) { ?>
                                 <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?></option>
@@ -77,16 +74,22 @@ if (isset($_GET['add'])) { ?>
                     </td>
                 </tr>
                 <tr>
-                    <td>VC: <input class="vc" type="text" name="vc" value="" placeholder=""></td>
+                    <td>VC: <input type="text" name="vc" value="" placeholder=""></td>
                 </tr>
                 <tr>
-                    <td>INSTAGRAM: <input class="instagram" type="text" name="instagram" value="" placeholder=""></td>
+                    <td>INSTAGRAM: <input type="text" name="instagram" value="" placeholder=""></td>
                 </tr>
                 <tr>
-                    <td>Фотография 1: <input type="file" name="photo"></td>
+                    <td>Фотография 1 (PNG - 450х300): </td>
                 </tr>
                 <tr>
-                    <td>Фотография 2: <input type="file" name="photo2"></td>
+                    <td><input type="file" name="file_1"></td>
+                </tr>
+                <tr>
+                    <td>Фотография 2 (PNG - 450х300): </td>
+                </tr>
+                <tr>
+                    <td><input type="file" name="file_2"></td>
                 </tr>
 
             </table>
@@ -95,67 +98,47 @@ if (isset($_GET['add'])) { ?>
     <hr class="hr_db">
 
     <button class="load_rec">Загрузить в базу</button>
-    <div class="err">Поля в красной рамке обязательны для заполнения.</div>
 
     <script>
         jQuery(function($) {
-
-            //  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
+            //  ▰▰▰▰ КНОПКА ЗАГРУЗИТЬ В БАЗУ ▰▰▰▰
             $(document).on('click', '.load_rec', function() {
-
-                form_data = new FormData(); // создание формы
-
-                if ($('.team').val() == "" ||
-                    $('.lastname').val() == "" ||
-                    $('.name').val() == "") {
-                    $(".err").text("Не заполнены обязательные поля !");
+                if ($('select[name="team"]').val() == "" ||
+                    $('input[name="lastname"]').val() == "" ||
+                    $('input[name="name"]').val() == "") {
+                    alert("Не заполнены обязательные поля.");
                     return false;
                 }
-                form_data.append('team', $('.team').val());
-                form_data.append('positions', $('.positions').val());
-                form_data.append('country', $('.country').val());
-                form_data.append('number', $('.number').val());
-                form_data.append('lastname', $('.lastname').val());
-                form_data.append('name', $('.name').val());
-                form_data.append('birthday', $('.birthday').val());
-                form_data.append('growing', $('.growing').val());
-                form_data.append('weight', $('.weight').val());
-                form_data.append('vc', $('.vc').val());
-                form_data.append('instagram', $('.instagram').val());
-                if ($('.capitan').is(':checked')) {
+                form_data = new FormData(); // создание формы
+                form_data.append('team', $('select[name="team"]').val());
+                form_data.append('position', $('select[name="position"]').val());
+                form_data.append('country', $('select[name="country"]').val());
+                form_data.append('number', $('input[name="number"]').val());
+                form_data.append('lastname', $('input[name="lastname"]').val().trim());
+                form_data.append('name', $('input[name="name"]').val().trim());
+                form_data.append('birthday', $('input[name="birthday"]').val());
+                form_data.append('growing', $('input[name="growing"]').val());
+                form_data.append('weight', $('input[name="weight"]').val());
+                form_data.append('vc', $('input[name="vc"]').val());
+                form_data.append('instagram', $('input[name="instagram"]').val());
+
+                if ($('input[name="capitan"]').is(':checked')) {
                     form_data.append('capitan', "1");
                 } else {
                     form_data.append('capitan', "0");
                 }
 
-                let photo = $('input[name="photo"]');
-                if (photo.val() != '') {
-                    file_data = photo.prop('files')[0]; // ссылка на объект файла
-                    if (file_data.type != 'image/png') {
-                        $(".err").text("Фотография не в формате PNG.");
-                        return false;
-                    }
-                    if (file_data.size > 200000) {
-                        $(".err").text("Фотография не более 200 Кбайт.");
-                        return false;
-                    }
-                    form_data.append('file', file_data);
+                let file_1 = $('input[name="file_1"]');
+                if (file_1.val() != '') {
+                    file_data_1 = file_1.prop('files')[0];
+                    form_data.append('file_1', file_data_1);
                 }
-                photo = $('input[name="photo2"]');
-                if (photo.val() != '') {
-                    file_data2 = photo.prop('files')[0]; // ссылка на объект файла
-                    if (file_data2.type != 'image/png') {
-                        $(".err").text("Фотография не в формате PNG.");
-                        return false;
-                    }
-                    if (file_data2.size > 200000) {
-                        $(".err").text("Фотография не более 200 Кбайт.");
-                        return false;
-                    }
-                    form_data.append('file2', file_data2);
+                let file_2 = $('input[name="file_2"]');
+                if (file_2.val() != '') {
+                    file_data_2 = file_2.prop('files')[0];
+                    form_data.append('file_2', file_data_2);
                 }
-
-                form_data.append('action', 'load_player'); // функция обработки 
+                form_data.append('action', 'load_player'); // функция обработки
                 form_data.append('nonce_code', my_ajax_noncerr); // ключ
 
                 $.ajax({
@@ -167,21 +150,24 @@ if (isset($_GET['add'])) { ?>
                     data: form_data,
                 }).done(function(msg) {
                     console.log(msg);
-                    if (msg == '') {
-                        //document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=player";
-                    } else {
-                        $('.err').text(msg);
+                    if (msg != '') {
+                        alert(msg);
+                        if (msg[0] != ' ') {
+                            return;
+                        }
                     }
+                    document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=player";
                 });
+
             });
         });
     </script>
 
-<?
+<?php
     wp_die();
 }
 
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ РЕДАКТИРОВАНИЕ ТАбЛИЦЫ ▰▰▰▰
+//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰
 
 /*
  * Фильтрация игроков по командам.
@@ -202,8 +188,11 @@ if ($team != "") {                  // это для формирования з
 
 ?>
 
+<h1>Таблица игроков</h1>
+<h3>(забита чистая информация)</h3>
+<h3>(информация пока не используется на сайте)</h3>
 <div>
-    <button class="player_add">Добавить игрока</button>
+    <button class="btn_add_rec">Добавить игрока</button>
 </div>
 <hr class="hr_db">
 
@@ -217,82 +206,126 @@ if ($team != "") {                  // это для формирования з
 </div>
 
 <div class="player_table">
-    <?
-    foreach ($players as $player) { ?>
-
+    <?php
+    foreach ($players as $rec) {
+        $code = $rec['code']; ?>
         <hr class="hr_db">
-        <div class="player" data-code="<?= $player['code'] ?>">
-            <input class="lastname" type="text" name="lastname" value="<?= $player['lastname'] ?>">
-            <input class="name" type="text" name="name" value="<?= $player['name'] ?>">
-            <input class="birthday" type="date" name="birthday" value="<?= $player['birthday'] ?>">
-            <div class="number">номер
-                <input type="number" name="number" value="<?= $player['number'] ?>">
-            </div>
-            <input class="growing" type="text" name="growing" value="<?= $player['growing'] ?>">
-            <input class="weight" type="text" name="weight" value="<?= $player['weight'] ?>">
-            <input class="vc" type="text" name="vc" value="<?= $player['vc'] ?>">
-            <input class="instagram" type="text" name="instagram" value="<?= $player['instagram'] ?>">
-            <input class="matches_plus" type="number" name="matches_plus" value="<?= $player['matches_plus'] ?>">
-            <input class="output_start_plus" type="number" name="output_start_plus" value="<?= $player['output_start_plus'] ?>">
-            <input class="output_in_game_plus" type="number" name="output_in_game_plus" value="<?= $player['output_in_game_plus'] ?>">
-            <input class="exchange_plus" type="number" name="exchange_plus" value="<?= $player['exchange_plus'] ?>">
-            <input class="goal_plus" type="number" name="goal_plus" value="<?= $player['goal_plus'] ?>">
-            <input class="pass_plus" type="number" name="pass_plus" value="<?= $player['pass_plus'] ?>">
-            <input class="cart_y_plus" type="number" name="cart_y_plus" value="<?= $player['cart_y_plus'] ?>">
-            <input class="cart_r_plus" type="number" name="cart_r_plus" value="<?= $player['cart_r_plus'] ?>">
-            <input class="save_plus" type="number" name="save_plus" value="<?= $player['save_plus'] ?>">
-            <input class="omission_plus" type="number" name="omission_plus" value="<?= $player['omission_plus'] ?>">
+        <div class="player" data-code="<?= $code ?>">
 
+            <table style="white-space: nowrap;">
+                <tr>
+                    <!-- 1 -->
+                    <th>Команда</th>
+                    <th>Игрок</th>
+                    <th colspan="2">Фотографии</th>
+                    <th colspan="6">Счетчики</th>
+                </tr>
 
-            <div class="vc_l">vc соцсеть</div>
-            <div class="instagram_l">инстаграмм</div>
-            <div class="matches_plus_l">матчи<br>(корректировка)</div>
-            <div class="output_start_plus_l">выходы на старте<br>(корректировка)</div>
-            <div class="output_in_game_plus_l">выходы на замене<br>(корректировка)</div>
-            <div class="exchange_plus_l">замен в ходе матча<br>(корректировка)</div>
-            <div class="goal_plus_l">голы<br>(корректировка)</div>
-            <div class="pass_plus_l">голевые передачи<br>(корректировка)</div>
-            <div class="cart_y_plus_l">жёлтые карточки<br>(корректировка)</div>
-            <div class="cart_r_plus_l">красные карточки<br>(корректировка)</div>
-            <div class="save_plus_l">сейвы<br>(корректировка)</div>
-            <div class="omission_plus_l">пропуски<br>(корректировка)</div>
+                <tr>
+                    <!-- 2 -->
+                    <td>
+                        <!-- команда -->
+                        <select name="team">
+                            <? foreach ($code_team as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team']) ? 'selected' : ''; ?>><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
+                            <? } ?>
+                        </select>
+                    </td>
+                    <td><input type="text" name="lastname" value="<?= $rec['lastname'] ?>"></td>
+                    <td rowspan="3"><img class="img_1 photo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/player/<?= $rec['code'] ?>-1.png" alt="<?= $rec['lastname'] ?>"></td>
+                    <td rowspan="3"><img class="img_2 photo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/player/<?= $rec['code'] ?>-2.png" alt="<?= $rec['lastname'] ?>"></td>
+                    <td class="count">Матчи:</td>
+                    <td class="count"><input class="digit_only" type="text" name="matches_plus" value="<?= $rec['matches_plus'] ?>"></td>
+                    <td class="count">Голы :</td>
+                    <td><input class="digit_only" type="text" name="goal_plus" value="<?= $rec['goal_plus'] ?>"></td>
+                    <td class="count">Сейвы:</td>
+                    <td><input class="digit_only" type="text" name="save_plus" value="<?= $rec['save_plus'] ?>"></td>
+                </tr>
 
-            <div class="capitan"><input type="checkbox" name="capitan" value="<?= $player['capitan'] ?>" <? echo ($player['capitan'] == 1) ? 'checked' : ''; ?>>Капитан</div>
+                <tr>
+                    <!-- 3 -->
+                    <td>
+                        <select class="position" name="position">
+                            <? foreach ($code_pos as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['position']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                            <? } ?>
+                        </select>
+                        <select class="country" name="country">
+                            <? foreach ($code_cry as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['country']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                            <? } ?>
+                        </select>
+                    </td>
+                    <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
+                    <td class="count">Выходы в старте:</td>
+                    <td><input class="digit_only" type="text" name="output_start_plus" value="<?= $rec['output_start_plus'] ?>"></td>
+                    <td class="count">Голевые передачи:</td>
+                    <td><input class="digit_only" type="text" name="pass_plus" value="<?= $rec['pass_plus'] ?>"></td>
+                    <td class="count">Пропущенные мячи:</td>
+                    <td><input class="digit_only" type="text" name="omission_plus" value="<?= $rec['omission_plus'] ?>"></td>
+                </tr>
 
-            <select class="team" name="team">
-                <? foreach ($code_team as $opt) { ?>
-                    <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $player['team']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
-                <? } ?>
-            </select>
+                <tr>
+                    <!-- 4 -->
+                    <td>
+                        Номер: <input class="digit_only" type="text" name="number" value="<?= $rec['number'] ?>">
+                        Капитан: <input type="checkbox" name="capitan" value="<?= $rec['capitan'] ?>" <? echo ($rec['capitan'] == 1) ? 'checked' : ''; ?>>
+                    </td>
+                    <td>д.р.: <input type="date" name="birthday" value="<?= $rec['birthday'] ?>"></td>
+                    <td class="count">Выходы на замену:</td>
+                    <td><input class="digit_only" type="text" name="output_in_game_plus" value="<?= $rec['output_in_game_plus'] ?>"></td>
+                    <td class="count">Жёлтые карточки:</td>
+                    <td><input class="digit_only" type="text" name="cart_y_plus" value="<?= $rec['cart_y_plus'] ?>"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
 
-            <select class="positions" name="positions">
-                <? foreach ($code_pos as $opt) { ?>
-                    <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $player['positions']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
-                <? } ?>
-            </select>
-
-            <select class="country" name="country">
-                <? foreach ($code_cry as $opt) { ?>
-                    <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $player['country']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
-                <? } ?>
-            </select>
-
-            <img class="photo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/player/<?= $player['code'] ?>-1.png" alt="<?= $player['lastname'] ?>">
-            <img class="photo2" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/player/<?= $player['code'] ?>-2.png" alt="<?= $player['lastname'] ?>">
-
-            <input class="load_photo" type="file" name="photo">
-            <input class="load_photo2" type="file" name="photo2">
+                <tr>
+                    <!-- 5 -->
+                    <td></td>
+                    <td>
+                        Рост: <input class="digit_only" type="text" name="growing" value="<?= $rec['growing'] ?>">
+                        Вес: <input class="digit_only" type="text" name="weight" value="<?= $rec['weight'] ?>">
+                    </td>
+                    <td style="text-align:center">
+                        <label for="file_1<?= $code ?>" class="button">Загрузить</label>
+                        <input id="file_1<?= $code ?>" data-num="1" type="file">
+                    </td>
+                    <td style="text-align:center">
+                        <label for="file_2<?= $code ?>" class="button">Загрузить</label>
+                        <input id="file_2<?= $code ?>" data-num="2" type="file">
+                    </td>
+                    <td>Замен в ходе матча:</td>
+                    <td><input class="digit_only" type="text" name="exchange_plus" value="<?= $rec['exchange_plus'] ?>"></td>
+                    <td class="count">Красные карточки:</td>
+                    <td><input class="digit_only" type="text" name="cart_r_plus" value="<?= $rec['cart_r_plus'] ?>"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
         </div>
-    <?
+    <?php
     } ?>
     <hr class="hr_db">
+</div>
+<div>
+    <button class="btn_add_rec">Добавить игрока</button>
 </div>
 
 <script>
     jQuery(function($) {
 
+        //  ▰▰▰▰ ВВОДИТЬ ТОЛЬКО ЦИФРЫ ▰▰▰▰
+        $(document).ready(function() {
+            $('.digit_only').on("change keyup input click", function() {
+                if (this.value.match(/[^0-9]/g)) { // g ищет все совпадения, без него – только первое.
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                }
+            });
+        });
+
         //  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
-        $(document).on('click', '.player_add', function() { // кнопка "добавить игрока"
+        $(document).on('click', '.btn_add_rec', function() { // кнопка "добавить игрока"
             document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=player&add";
         });
 
@@ -330,44 +363,25 @@ if ($team != "") {                  // это для формирования з
                 method: "POST",
                 url: ajaxurl,
                 data: data_lib
-            }).done(function(data) {
-            });
+            }).done(function(data) {});
 
         });
 
-        //  ▰▰▰▰ ЗАГРУЗКА ФОТО ▰▰▰▰
-        $(document).on('change', '.load_photo, .load_photo2', function() {
+        //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ЗАГРУЗКА ФАЙЛА ▰▰▰▰
+        // нужны: код записи, номер фото (первое или второе),
+        // ссылки на файл для загрузки, на img для обновления после загрузки 
 
-            // подготовка к обновлению фото
-            class_input = $(this).attr('class');
-            sel_img = '.' + class_input.replace('load_', '');
-            img = $(this).siblings(sel_img);
-            new_src = img.attr('src') + '?t=' + Date.now();
+        $(document).on('change', 'input[type="file"]', function() {
 
-            file_data = $(this).prop('files')[0]; // объект файл
+            let parent = $(this).closest(".player");
+            let code = parent.data("code"); // код записи
+            let num = $(this).data("num"); // номер фото
+            let file_data = $(this).prop('files')[0]; // ссылки на файл
+            let img = parent.find('.img_' + num); // ссылка на картинку
 
-            if (file_data.type != 'image/png') {
-                alert('Тип файла не png');
-                return false;
-            }
-
-            if (file_data.size > 200000) {
-                alert('Фотография не более 200 Кбайт.');
-                return false;
-            }
-
-            code = $(this).closest(".player").data("code");
-
-            if ($(this).hasClass('load_photo')) {
-                path_file = '/images/db/player/' + code + '-1.png';
-            } else {
-                path_file = '/images/db/player/' + code + '-2.png';
-            }
-            // console.log(path_file);
-
-            form_data = new FormData(); // создание формы
-
-            form_data.append('path_file', path_file); //
+            form_data = new FormData();
+            form_data.append('key', 'player_' + num); // ключ из ассоциативного массива на сервере
+            form_data.append('code', code);
             form_data.append('file', file_data);
             form_data.append('action', 'load_file'); // функция обработки 
             form_data.append('nonce_code', my_ajax_noncerr); // ключ
@@ -383,7 +397,9 @@ if ($team != "") {                  // это для формирования з
                 if (msg != "") {
                     alert(msg);
                 } else {
-                    img.attr('src', new_src); // обновляем фото
+                    // обновление img
+                    let src = img.attr('src') + '?t=' + Date.now();
+                    img.attr('src', src);
                 }
             });
         });

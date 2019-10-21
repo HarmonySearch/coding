@@ -8,21 +8,21 @@
 //  ▰▰▰▰ ВЫБОРКА ПО КОДУ 
 function get_tourney($code = 0)
 {
-
     global $wpdb;
 
     $sql = "SELECT * FROM tourney";
     if ($code != 0) {
         $sql .= " WHERE code = $code";
+        $result = $wpdb->get_results($sql);
+    } else {
+        $result = $wpdb->get_results($sql, 'ARRAY_A');
     }
-    $result = $wpdb->get_results($sql, 'ARRAY_A');
     return $result;
 };
 
 //  ▰▰▰▰ ВЫБОРКА КОДОВ ДЛЯ СЕЛЕКТОРА 
 function get_tourney_code()
-{ // коды для селектора
-
+{
     global $wpdb;
 
     $sql = "SELECT code, `name` FROM tourney";
@@ -31,7 +31,7 @@ function get_tourney_code()
 };
 
 
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ МАТЧИ ▰▰▰▰
+//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ МАТЧИ ▰▰▰▰
 
 function get_meet($code = 0)
 {
@@ -46,6 +46,24 @@ function get_meet($code = 0)
     return count($result) == 1 ? $result[0] : $result;
 };
 
+function get_near_meet()
+{
+    global $wpdb;
+
+    $sql = "SELECT * FROM meet WHERE completed = 0 ORDER BY date_meet ASC LIMIT 1";
+    $result = $wpdb->get_results($sql, 'ARRAY_A'); 
+    return count($result) ? $result[0] : false;
+}
+
+function get_last_meet()
+{
+    global $wpdb;
+
+    $sql = "SELECT * FROM meet WHERE completed = 1 ORDER BY date_meet DESC LIMIT 1";
+    $result = $wpdb->get_results($sql, 'ARRAY_A'); 
+    return count($result) ? $result[0] : false;
+}
+
 // Является ли Акрон победителем в матче. -1/0/1. false - игра не закончилась или ее нет.
 function check_winner($meet_id){
 	$match = get_meet($meet_id);
@@ -56,7 +74,7 @@ function check_winner($meet_id){
 }
 
 
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ КОМАНДЫ ▰▰▰▰
+//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ КОМАНДЫ ▰▰▰▰
 
 function get_team($code = 0)
 {
@@ -107,7 +125,7 @@ function get_country()
 /* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
  * Таблица player_positions (позиции игроков)
  */
-function get_positions()
+function get_position()
 {
 
     global $wpdb;
@@ -146,6 +164,18 @@ function get_players($team = 0)
     if ($team != 0) {
         $sql .= " WHERE team = $team";
     }
+    $result = $wpdb->get_results($sql, 'ARRAY_A');
+    return $result;
+};
+//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ТРЕНЕРЫ ▰▰▰▰
+
+
+function get_trainer()
+{
+
+    global $wpdb;
+
+    $sql = "SELECT * FROM trainer";
     $result = $wpdb->get_results($sql, 'ARRAY_A');
     return $result;
 };
