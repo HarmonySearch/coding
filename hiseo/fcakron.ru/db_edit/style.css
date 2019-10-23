@@ -89,9 +89,10 @@ button.load_rec {
 }
 
 /*  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰*/
-.teams_table .team input[type="file"] { display: none; }
-
 .teams_table .team .logo { height: 70px; }
+
+.teams_table img { width: 70px; }
+.teams_table input[type="file"] { display: none; }
 
 /*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ИГРОКИ ▰▰▰▰ */
 

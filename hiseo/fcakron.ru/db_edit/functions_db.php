@@ -1,11 +1,11 @@
 <?php
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 //  ФУНКЦИИ РАБОТЫ С БАЗОЙ ДАННЫХ
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ТУРНИРЫ ▰▰▰▰
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ТУРНИРЫ ★★★★
 
-//  ▰▰▰▰ ВЫБОРКА ПО КОДУ 
+//  ★★★★ ВЫБОРКА ПО КОДУ 
 function get_tourney($code = 0)
 {
     global $wpdb;
@@ -20,7 +20,7 @@ function get_tourney($code = 0)
     return $result;
 };
 
-//  ▰▰▰▰ ВЫБОРКА КОДОВ ДЛЯ СЕЛЕКТОРА 
+//  ★★★★ ВЫБОРКА КОДОВ ДЛЯ СЕЛЕКТОРА 
 function get_tourney_code()
 {
     global $wpdb;
@@ -31,7 +31,16 @@ function get_tourney_code()
 };
 
 
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ МАТЧИ ▰▰▰▰
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ МАТЧИ ★★★★
+// NOT exclude
+function get_meet_all()
+{
+    global $wpdb;
+
+    $sql = "SELECT * FROM meet ORDER BY date_meet DESC";
+    $result = $wpdb->get_results($sql, 'ARRAY_A'); 
+    return $result;
+};
 
 function get_meet($code = 0)
 {
@@ -40,6 +49,8 @@ function get_meet($code = 0)
     $sql = "SELECT * FROM meet";
     if ($code != 0) {
         $sql .= " WHERE code = $code ";
+    } else {
+        $sql .= " WHERE NOT exclude ";
     }
     $sql .= " ORDER BY date_meet DESC";
     $result = $wpdb->get_results($sql, 'ARRAY_A'); 
@@ -50,7 +61,7 @@ function get_near_meet()
 {
     global $wpdb;
 
-    $sql = "SELECT * FROM meet WHERE completed = 0 ORDER BY date_meet ASC LIMIT 1";
+    $sql = "SELECT * FROM meet WHERE completed = 0 AND NOT exclude ORDER BY date_meet ASC LIMIT 1";
     $result = $wpdb->get_results($sql, 'ARRAY_A'); 
     return count($result) ? $result[0] : false;
 }
@@ -59,7 +70,7 @@ function get_last_meet()
 {
     global $wpdb;
 
-    $sql = "SELECT * FROM meet WHERE completed = 1 ORDER BY date_meet DESC LIMIT 1";
+    $sql = "SELECT * FROM meet WHERE completed = 1 AND NOT exclude ORDER BY date_meet DESC LIMIT 1";
     $result = $wpdb->get_results($sql, 'ARRAY_A'); 
     return count($result) ? $result[0] : false;
 }
@@ -74,7 +85,7 @@ function check_winner($meet_id){
 }
 
 
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ КОМАНДЫ ▰▰▰▰
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ КОМАНДЫ ★★★★
 
 function get_team($code = 0)
 {
@@ -127,10 +138,24 @@ function get_country()
  */
 function get_position()
 {
-
     global $wpdb;
 
     $sql = "SELECT * FROM player_positions";
+    $result = $wpdb->get_results($sql, 'ARRAY_A');
+    return $result;
+};
+
+
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ИГРОКИ ★★★★
+
+/* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+ * для select (АКРОН)
+ */
+function get_player_select()
+{ 
+    global $wpdb;
+
+    $sql = "SELECT `code`, `lastname`, `name` FROM player WHERE team=1";
     $result = $wpdb->get_results($sql, 'ARRAY_A');
     return $result;
 };
@@ -141,7 +166,6 @@ function get_position()
  */
 function get_player($code = 0)
 {
-
     global $wpdb;
 
     $sql = "SELECT * FROM player";
@@ -167,7 +191,7 @@ function get_players($team = 0)
     $result = $wpdb->get_results($sql, 'ARRAY_A');
     return $result;
 };
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ТРЕНЕРЫ ▰▰▰▰
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ТРЕНЕРЫ ★★★★
 
 
 function get_trainer()
@@ -176,6 +200,32 @@ function get_trainer()
     global $wpdb;
 
     $sql = "SELECT * FROM trainer";
+    $result = $wpdb->get_results($sql, 'ARRAY_A');
+    return $result;
+};
+
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ СТАТИСТИКА ★★★★
+
+
+function get_statistics()
+{
+
+    global $wpdb;
+
+    $sql = "SELECT * FROM `statistics`";
+    $result = $wpdb->get_results($sql, 'ARRAY_A');
+    return $result;
+};
+
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ СОБЫТИЯ ★★★★
+
+
+function get_event()
+{
+
+    global $wpdb;
+
+    $sql = "SELECT * FROM `event`";
     $result = $wpdb->get_results($sql, 'ARRAY_A');
     return $result;
 };

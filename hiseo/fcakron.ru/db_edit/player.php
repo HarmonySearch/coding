@@ -1,7 +1,7 @@
 <?php
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 //  РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ИГРОКОВ
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -11,7 +11,7 @@ $code_cry = get_country();    // страна select
 $code_pos = get_position();  // позиция select
 $code_team = get_team_select();  // команда select
 
-//  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
+//  ★★★★ ДОБАВИТЬ ЗАПИСЬ ★★★★
 //
 //  GET запрос наличие переменной add без значения
 //  https://fcakron.ru/wp-admin/admin.php?page=player&add
@@ -101,7 +101,7 @@ if (isset($_GET['add'])) { ?>
 
     <script>
         jQuery(function($) {
-            //  ▰▰▰▰ КНОПКА ЗАГРУЗИТЬ В БАЗУ ▰▰▰▰
+            //  ★★★★ КНОПКА ЗАГРУЗИТЬ В БАЗУ ★★★★
             $(document).on('click', '.load_rec', function() {
                 if ($('select[name="team"]').val() == "" ||
                     $('input[name="lastname"]').val() == "" ||
@@ -167,7 +167,7 @@ if (isset($_GET['add'])) { ?>
     wp_die();
 }
 
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ТАБЛИЦА ИГРОКОВ ★★★★
 
 /*
  * Фильтрация игроков по командам.
@@ -218,7 +218,7 @@ if ($team != "") {                  // это для формирования з
                     <th>Команда</th>
                     <th>Игрок</th>
                     <th colspan="2">Фотографии</th>
-                    <th colspan="6">Счетчики</th>
+                    <th colspan="6">Статистик которая (пока) должна выкладываться на сайт</th>
                 </tr>
 
                 <tr>
@@ -303,6 +303,48 @@ if ($team != "") {                  // это для формирования з
                     <td></td>
                 </tr>
             </table>
+            <table>
+                <b>★ ★ ★ Таблица статистики (вычисляемая. пока нет статистик будут нули) ★ ★ ★</b>
+                <tr>
+                    <td class="count">Сыгранные матчи: </td>
+                    <td class="count"><input class="digit_only" type="text" name="match" readonly value="<?= $rec['match'] ?>"></td>
+                    <td class="count">Минуты на поле: </td>
+                    <td class="count"><input class="digit_only" type="text" name="minute" readonly value="<?= $rec['minute'] ?>"></td>
+                    <td class="count">Голы (пенальти): </td>
+                    <td class="count"><input class="digit_only" type="text" name="goal" readonly value="<?= $rec['goal'] ?> (<?= $rec['penalty'] ?>)"></td>
+                    <td class="count">Голевые передачи: </td>
+                    <td class="count"><input class="digit_only" type="text" name="pass" readonly value="<?= $rec['pass'] ?>"></td>
+                    <td class="count">Желтые карточки: </td>
+                    <td class="count"><input class="digit_only" type="text" name="cart_yellow" readonly value="<?= $rec['cart_yellow'] ?>"></td>
+                </tr>
+                <tr>
+                    <td class="count">Красные карточки: </td>
+                    <td class="count"><input class="digit_only" type="text" name="match" readonly value="<?= $rec['match'] ?>"></td>
+                    <td class="count">Точность передач: </td>
+                    <td class="count"><input class="digit_only" type="text" name="minute" readonly value="<?= $rec['minute'] ?>"></td>
+                    <?php
+                        if ($rec['position'] != 1) {
+                            ?>
+                        <td class="count">Успешные отборы: </td>
+                        <td class="count"><input class="digit_only" type="text" name="take_away" readonly value="<?= $rec['take_away'] ?>"></td>
+                        <td class="count">Успешные обводки: </td>
+                        <td class="count"><input class="digit_only" type="text" name="stroke" readonly value="<?= $rec['stroke'] ?>"></td>
+                        <td class="count">Выигранные единоборства: </td>
+                        <td class="count"><input class="digit_only" type="text" name="combat" readonly value="<?= $rec['combat'] ?>"></td>
+                    <?php
+                        } else {
+                            ?>
+                        <td class="count">Сухие матчи: </td>
+                        <td class="count"><input class="digit_only" type="text" name="shutout" readonly value="<?= $rec['shutout'] ?>"></td>
+                        <td class="count">Пропущенные голы : </td>
+                        <td class="count"><input class="digit_only" type="text" name="goal_allow" readonly value="<?= $rec['goal_allow'] ?>"></td>
+                        <td class="count">Сейвы: </td>
+                        <td class="count"><input class="digit_only" type="text" name="save" readonly value="<?= $rec['save'] ?>"></td>
+                    <?php
+                        }
+                        ?>
+                </tr>
+            </table>
         </div>
     <?php
     } ?>
@@ -315,7 +357,7 @@ if ($team != "") {                  // это для формирования з
 <script>
     jQuery(function($) {
 
-        //  ▰▰▰▰ ВВОДИТЬ ТОЛЬКО ЦИФРЫ ▰▰▰▰
+        //  ★★★★ ВВОДИТЬ ТОЛЬКО ЦИФРЫ ★★★★
         $(document).ready(function() {
             $('.digit_only').on("change keyup input click", function() {
                 if (this.value.match(/[^0-9]/g)) { // g ищет все совпадения, без него – только первое.
@@ -324,12 +366,12 @@ if ($team != "") {                  // это для формирования з
             });
         });
 
-        //  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
+        //  ★★★★ ДОБАВИТЬ ЗАПИСЬ ★★★★
         $(document).on('click', '.btn_add_rec', function() { // кнопка "добавить игрока"
             document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=player&add";
         });
 
-        //  ▰▰▰▰ ФИЛЬТР ▰▰▰▰
+        //  ★★★★ ФИЛЬТР ★★★★
         $(".team_filter").change(function() {
             team = $(this).val();
             href = "https://fcakron.ru/wp-admin/admin.php?page=player&team=" + team;
@@ -337,7 +379,7 @@ if ($team != "") {                  // это для формирования з
             document.location.href = href;
         });
 
-        //  ▰▰▰▰ РЕДАКТИРОВАТЬ ЗАПИСЬ ▰▰▰▰
+        //  ★★★★ РЕДАКТИРОВАТЬ ЗАПИСЬ ★★★★
         $("input, select").change(function() {
 
             let table = 'player';
@@ -367,7 +409,7 @@ if ($team != "") {                  // это для формирования з
 
         });
 
-        //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ЗАГРУЗКА ФАЙЛА ▰▰▰▰
+        //  ★★★★★★★★★★★★★★★★★★★★★★★★ ЗАГРУЗКА ФАЙЛА ★★★★
         // нужны: код записи, номер фото (первое или второе),
         // ссылки на файл для загрузки, на img для обновления после загрузки 
 

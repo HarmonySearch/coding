@@ -1,0 +1,4 @@
+статистика. ввод стразу с кодом матча
+//  https://fcakron.ru/wp-admin/admin.php?page=statistics&add&meet=5
+Нужна кнопка задать статитику прямо от матча
+//  https://fcakron.ru/wp-admin/admin.php?page=statistics&add&meet=<?= $rec['code'] ?>

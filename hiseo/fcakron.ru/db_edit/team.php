@@ -48,17 +48,18 @@ if (isset($_GET['add'])) { ?>
         //  ▰▰▰▰ КНОПКА ЗАГРУЗИТЬ В БАЗУ ▰▰▰▰
         $(document).on('click', '.load_rec', function() {
 
-                if ($('.name').val() == '' ||
-                    $('.city').val() == '') {
+                if ($('input[name="name"]').val() == '' ||
+                    $('input[name="city"]').val() == '') {
                     alert("Не заполнены обязательные поля !");
                     return false;
                 }
                 
                 form_data = new FormData(); // создание формы
-                form_data.append('name', $('.name').val());
-                form_data.append('city', $('.city').val());
-                if ($('input[type="file"]').val() != '') {
-                    file_data = $('.load_logo').prop('files')[0];
+                form_data.append('name', $('input[name="name"]').val());
+                form_data.append('city', $('input[name="city"]').val());
+                let file = $('input[type="file"]');
+                if (file.val() != '') {
+                    file_data = file.prop('files')[0];
                     form_data.append('file', file_data);
                 }
                 form_data.append('action', 'load_team'); // функция обработки 
@@ -75,11 +76,11 @@ if (isset($_GET['add'])) { ?>
                     console.log(msg); 
                     if (msg != '') {
                         alert(msg);
-                        if msg[0]==' ' {
-                        document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=team";
-                        return;
+                        if (msg[0] != ' ') {
+                            return;
                         }
                     }
+                    document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=team";
                 });
             });
         });
@@ -99,29 +100,27 @@ $fields = array('name', 'city', 'website');
 
 <h1>Таблица команд</h1>
 <h3>(информация используется на сайте)</h3>
-<div>
-    <button class="btn_add_rec">Добавить команду</button>
-</div>
+<div><button class="btn_add_rec">Добавить команду</button></div>
 
 <div class="teams_table">
     <?php
     foreach (get_team() as $rec) {
         $code = $rec['code']; ?>
         <hr class="hr_db">
-        <div class="team" data-code="<?= $code ?>">
+        <div class="root_table" data-table="team" data-code="<?= $code ?>">
 
             <table>
                 <tr>
                     <td>Название&nbsp;команды: </td>
                     <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
-                    <td rowspan="2"><img class="logo num<?= $rec['code'] ?>" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/team/<?= $rec['code'] ?>.png" alt="<?= $rec['name'] ?>"></td>
+                    <td rowspan="2"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/team/<?= $rec['code'] ?>.png" alt="<?= $rec['name'] ?>"></td>
                     <td><div style="width: 250px;">Логотип: ( PNG не более 100 Кбайт)</div></td>
                 </tr>
                 <tr>
                     <td>Город: </td>
-                    <td><input class="city" type="text" name="city" value="<?= $rec['city'] ?>"></td>
+                    <td><input type="text" name="city" value="<?= $rec['city'] ?>"></td>
                     <td><label class="button" for="logo<?= $code ?>">Загрузить</label>
-                        <input class="logo" id="logo<?= $code ?>" type="file" name="logo"></td>
+                        <input id="logo<?= $code ?>" type="file" name="logo"></td>
                 </tr>
             </table>
         </div>
@@ -129,6 +128,7 @@ $fields = array('name', 'city', 'website');
     } ?>
     <hr class="hr_db">
 </div>
+<div><button class="btn_add_rec">Добавить команду</button></div>
 
 <script>
     jQuery(function($) {
@@ -141,13 +141,14 @@ $fields = array('name', 'city', 'website');
         //  ▰▰▰▰ РЕДАКТИРОВАТЬ ЗАПИСЬ ▰▰▰▰
         $("input[type=text]").change(function() { // значение поля изменилось
 
-            let table = 'team',
-                name = $(this).attr("name"),
-                value = $(this).val(),
-                code = $(this).closest(".team").data("code");
+            let patern = $(this).closest(".root_table"); // корневой предок
+            let table = patern.data("table"); // у него прописан код
+            let code = patern.data("code"); // и название таблицы для правки
+            let name = $(this).attr("name");
+            let value = $(this).val();
 
             console.log(table, code, name, value);
-
+            // return;
             let data_lib = {
                 action: 'data_change',
                 nonce_code: my_ajax_noncerr,
@@ -166,28 +167,19 @@ $fields = array('name', 'city', 'website');
             });
         });
 
-        // загрузка логотипа
+        //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ЗАГРУЗКА ФАЙЛА ▰▰▰▰
 
-        $(document).on('change', '.team input[name="logo"]', function() {
+        $(document).on('change', 'input[type="file"]', function() {
 
-            file_data = $(this).prop('files')[0]; // ссылка на файл
-
-            if (file_data.type != 'image/png') {
-                alert('Тип файла не png');
-                return false;
-            }
-
-            if (file_data.size > 100000) {
-                alert('Логотип не более 100 Кбайт.');
-                return false;
-            }
-
-            code = $(this).closest(".team").data("code");
-            path_file = '/images/db/team/' + code + '.png';
-            console.log(path_file);
+            let file_data = $(this).prop('files')[0];
+            let parent = $(this).closest(".root_table"); // корневой предок
+            let table = parent.data("table"); // у него прописана таблица
+            let code = parent.data("code"); // и код
+            let img = parent.find('img');
 
             form_data = new FormData(); // создание формы
-            form_data.append('path_file', path_file); //
+            form_data.append('key', table); // ключ из ассоциативного массива на сервере
+            form_data.append('code', code);
             form_data.append('file', file_data);
             form_data.append('action', 'load_file'); // функция обработки 
             form_data.append('nonce_code', my_ajax_noncerr); // ключ
@@ -201,12 +193,11 @@ $fields = array('name', 'city', 'website');
                 data: form_data,
             }).done(function(msg) {
                 if (msg != "") {
-                    $(".err").text(msg);
+                    alert(msg);
                 } else {
                     // обновление img
-                    let img = $(".num" + code);
                     let src = img.attr('src') + '?t=' + Date.now();
-                    img.attr('src', src); // обновляем логотип
+                    img.attr('src', src);
                 }
             });
         });

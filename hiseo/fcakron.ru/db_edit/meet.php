@@ -90,7 +90,7 @@ if (isset($_GET['add'])) { ?>
                     $('select[name="tourney"]').val() == "" ||
                     $('select[name="team_1"]').val() == "" ||
                     $('select[name="team_2"]').val() == "") {
-                        alert("Не заполнены обязательные поля.");
+                    alert("Не заполнены обязательные поля.");
                     return false;
                 }
                 form_data = new FormData(); // создание формы
@@ -149,21 +149,26 @@ if (isset($_GET['add'])) { ?>
 
 <div class="meet_table">
     <?php
-    foreach (get_meet() as $rec) {
+    foreach (get_meet_all() as $rec) {
         $code = $rec['code']; ?>
         <hr class="hr_db">
         <div class="meet" data-code="<?= $rec['code'] ?>">
 
             <table>
                 <tr>
+                    <!-- 1 -->
                     <th>Матч</th>
                     <th colspan="2">Место проведения</th>
                     <th>Команда 1</th>
                     <th>Команда 2</th>
-                    <td rowspan="3"><img num<?= $rec['code'] ?>" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/meet/<?= $rec['code'] ?>.jpg" alt="нет афиши">
+                    <td rowspan="3"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/meet/<?= $rec['code'] ?>.jpg" alt="нет афиши">
+                    </td>
+                    <td> <label class="button" for="poster<?= $code ?>">Загрузить</label>
+                        <input class="poster" id="poster<?= $code ?>" type="file">
                     </td>
                 </tr>
                 <tr>
+                    <!-- 2 -->
                     <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
                     <td>Город:</td>
                     <td><input type="text" name="city" value="<?= $rec['city'] ?>"></td>
@@ -218,11 +223,9 @@ if (isset($_GET['add'])) { ?>
                     </td>
                     <td>
                         Матч окончен: <input type="checkbox" name="completed" value="<?= $rec['completed'] ?>" <? echo ($rec['completed'] == 1) ? 'checked' : ''; ?>>
-
                     </td>
                     <td>
-                        <label class="button" for="poster<?= $code ?>">Загрузить</label>
-                        <input class="poster" id="poster<?= $code ?>" type="file">
+                        Скрыть матч : <input type="checkbox" name="exclude" value="<?= $rec['exclude'] ?>" <? echo ($rec['exclude'] == 1) ? 'checked' : ''; ?>>
                     </td>
                 </tr>
             </table>

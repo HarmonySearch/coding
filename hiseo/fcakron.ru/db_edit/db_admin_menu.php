@@ -45,10 +45,10 @@ function my_admin_menu()
         require_once(dirname(__FILE__) . '/trainer.php');
     }
 
-    add_submenu_page('db_fcakron', 'Редактирование событий', 'События', 1, 'event', 'event_edit');
-    function event_edit()
+    add_submenu_page(NULL, 'Редактирование статистики', 'Статистика', 1, 'statistics', 'statistics_edit');
+    function statistics_edit()
     {
-        require_once(dirname(__FILE__) . '/event.php');
+        require_once(dirname(__FILE__) . '/statistics.php');
     }
 }
 ?>
