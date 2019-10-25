@@ -1,8 +1,8 @@
- /*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+ /*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
     АДМИНКА - РЕДАКИРОВАНИЕ БАЗЫ ДАННЫХ
-    ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ */
+    ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ */
 
-.btn_add_rec {
+.btn_add_rec, .btn_schema {
     cursor: pointer;
 }
 
@@ -38,20 +38,20 @@ button.load_rec {
     margin-top: 5px;
 }
 
-/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ТУРНИРЫ ▰▰▰▰ */
+/*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ТУРНИРЫ ★★★★ */
 
-/*  ▰▰▰▰ ДОБАВЛЕНИЕ ЗАПИСИ ▰▰▰▰ */
+/*  ★★★★ ДОБАВЛЕНИЕ ЗАПИСИ ★★★★ */
 .tourney_add input[name="name"] { width: 350px; }
 
-/*  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰*/
+/*  ★★★★ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ★★★★*/
 .tourney_table img { height: 70px; }
 .tourney_table input[name="name"] { width: 350px; }
 .tourney_table input[type="file"] { display: none; }
 
 
-/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ МАТЧИ ▰▰▰▰ */
+/*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ МАТЧИ ★★★★ */
 
-/*  ▰▰▰▰ ДОБАВЛЕНИЕ ЗАПИСИ ▰▰▰▰ */
+/*  ★★★★ ДОБАВЛЕНИЕ ЗАПИСИ ★★★★ */
 .meet_add input[name="name"],
 .meet_add input[name="tourney"],
 .meet_add select[name="team_1"],
@@ -66,7 +66,7 @@ button.load_rec {
     width: 50px; 
 }
 
-/*  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰*/
+/*  ★★★★ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ★★★★*/
 /* числовые поля */
 .meet_table table { border-spacing: 5px; }
 .meet_table input[name="time_zone"],
@@ -80,23 +80,23 @@ button.load_rec {
 
 .meet_table img { height: 70px; }
 
-/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ КОМАНДЫ ▰▰▰▰ */
+/*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ КОМАНДЫ ★★★★ */
 
-/*  ▰▰▰▰ ДОБАВЛЕНИЕ ЗАПИСИ ▰▰▰▰ */
+/*  ★★★★ ДОБАВЛЕНИЕ ЗАПИСИ ★★★★ */
 .team_add input[name="name"],
 .team_add input[name="city"] {
     width: 100%;
 }
 
-/*  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰*/
+/*  ★★★★ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ★★★★*/
 .teams_table .team .logo { height: 70px; }
 
 .teams_table img { width: 70px; }
 .teams_table input[type="file"] { display: none; }
 
-/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ИГРОКИ ▰▰▰▰ */
+/*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ИГРОКИ ★★★★ */
 
-/*  ▰▰▰▰ ДОБАВЛЕНИЕ ЗАПИСИ ▰▰▰▰ */
+/*  ★★★★ ДОБАВЛЕНИЕ ЗАПИСИ ★★★★ */
 
 .player_add input[name="instagram"],
 .player_add input[name="vc"],
@@ -116,7 +116,7 @@ button.load_rec {
     width: 50px;
 }
 
-/*  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰*/
+/*  ★★★★ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ★★★★*/
 
 .count {
     text-align: end;  
@@ -143,8 +143,8 @@ button.load_rec {
 }
 .player_table input[type="file"] { display: none; }
 
-/*  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ТРЕНЕРСКИЙ СОСТАВ ▰▰▰▰ */
-/*  ▰▰▰▰ ДОБАВЛЕНИЕ ЗАПИСИ ▰▰▰▰ */
+/*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ТРЕНЕРСКИЙ СОСТАВ ★★★★ */
+/*  ★★★★ ДОБАВЛЕНИЕ ЗАПИСИ ★★★★ */
 
 .trainer_add select[name="country"],
 .trainer_add input[name="position"],
@@ -153,6 +153,75 @@ button.load_rec {
 {
     width: 100%;
 }
-/*  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰*/
+/*  ★★★★ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ★★★★*/
 .trainer_table input[type="file"] { display: none; }
 .trainer_table img { width: 135px; }
+
+/*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ СХЕМЫ ★★★★ */
+
+.scheme {
+    position: relative;
+    display: grid;
+    width: 405px;
+    height: 524px;
+    padding: 100px 0 15px;
+    background-image: url(/wp-content/themes/fcakron/images/sheme_bg.png);
+    box-sizing: border-box;
+}
+.scheme.s1 { /* 5/4/1 */
+    grid-template: "i11 i11 i11 i11 i11" "i07 i08 spa i09 i10" "i02 i03 i04 i05 i06" "i01 i01 i01 i01 i01" / 1fr 1fr 1fr 1fr 1fr;
+}
+.scheme.s2 { /* 5/3/2 */
+    grid-template: "spc i10 spd i11 spe" "i07 spa i08 spb i09" "i02 i03 i04 i05 i06" "i01 i01 i01 i01 i01" / 1fr 1fr 1fr 1fr 1fr;
+}
+.scheme.s5 { /* 4/5/1 */
+    grid-template: "i11 i11 i11 i11 i11" "i06 i07 i08 i09 i10" "i02 i03 spa i04 i05" "i01 i01 i01 i01 i01" / 1fr 1fr 1fr 1fr 1fr;
+}
+.scheme.s4 { /* 4/4/2 */
+    grid-template: "spc i10 spd i11 spe" "i06 i07 spb i08 i09" "i02 i03 spa i04 i05" "i01 i01 i01 i01 i01" / 1fr 1fr 1fr 1fr 1fr;
+}
+.scheme.s3 { /* 4/3/3 */
+    grid-template: "i09 spd i10 spe i11" "i06 spb i07 spc i08" "i02 i03 spa i04 i05" "i01 i01 i01 i01 i01" / 1fr 1fr 1fr 1fr 1fr;
+}
+.scheme.s6 { /* 3/5/2 */
+    grid-template: "spc i10 spd i11 spe" "i05 i06 i07 i08 i09" "i02 spa i03 spb i04" "i01 i01 i01 i01 i01" / 1fr 1fr 1fr 1fr 1fr;
+}
+.scheme.s7 { /* 3/4/3 */
+    grid-template: "i09 spd i10 spe i11" "i05 i06 spc i07 i08" "i02 spa i03 spb i04" "i01 i01 i01 i01 i01" / 1fr 1fr 1fr 1fr 1fr;
+}
+.scheme .item{
+	display: grid;
+	justify-items: center;
+    padding: 15px 0 0;
+    font-size: 30px;
+}
+
+.scheme .item:nth-child(1){grid-area: i01;}
+.scheme .item:nth-child(2){grid-area: i02;}
+.scheme .item:nth-child(3){grid-area: i03;}
+.scheme .item:nth-child(4){grid-area: i04;}
+.scheme .item:nth-child(5){grid-area: i05;}
+.scheme .item:nth-child(6){grid-area: i06;}
+.scheme .item:nth-child(7){grid-area: i07;}
+.scheme .item:nth-child(8){grid-area: i08;}
+.scheme .item:nth-child(9){grid-area: i09;}
+.scheme .item:nth-child(10){grid-area: i10;}
+.scheme .item:nth-child(11){grid-area: i11;}
+
+
+.root_table {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+}
+
+/*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ СТАТИСТИКА ★★★★ */
+
+.statistics_table input[name=minute],
+.statistics_table select
+{
+    width: 100%;
+}
+.statistics_table input[name=comment]
+{
+    width: 500%;
+}

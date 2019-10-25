@@ -26,7 +26,54 @@ INSERT INTO `player_positions` (`code`, `name`) VALUES
 (3, 'Полузащитник'),
 (4, 'Нападающий');
 
+CREATE TABLE `scheme` (
+  `code` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'уникальный код',
+  `name` varchar(50) NOT NULL COMMENT 'название схемы',
+  
+    PRIMARY KEY (code),
+    UNIQUE INDEX name (name)
 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='названия схем';
+
+
+scheme
+
+CREATE TABLE player_scheme (
+  `code` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `scheme` int(10) UNSIGNED DEFAULT NULL COMMENT 'схема (код из таблицы scheme)',
+  `meet` int(10) UNSIGNED DEFAULT NULL COMMENT 'матч (код из таблицы meet)',
+  `player_1` int(10) UNSIGNED DEFAULT NULL COMMENT 'игрок позиция 1',
+  `player_2` int(10) UNSIGNED DEFAULT NULL COMMENT 'игрок позиция 2',
+  `player_3` int(10) UNSIGNED DEFAULT NULL COMMENT 'игрок позиция 3',
+  `player_4` int(10) UNSIGNED DEFAULT NULL COMMENT 'игрок позиция 4',
+  `player_5` int(10) UNSIGNED DEFAULT NULL COMMENT 'игрок позиция 5',
+  `player_6` int(10) UNSIGNED DEFAULT NULL COMMENT 'игрок позиция 6',
+  `player_7` int(10) UNSIGNED DEFAULT NULL COMMENT 'игрок позиция 7',
+  `player_8` int(10) UNSIGNED DEFAULT NULL COMMENT 'игрок позиция 8',
+  `player_9` int(10) UNSIGNED DEFAULT NULL COMMENT 'игрок позиция 9',
+  `player_10` int(10) UNSIGNED DEFAULT NULL COMMENT 'игрок позиция 10',
+  `player_11` int(10) UNSIGNED DEFAULT NULL COMMENT 'игрок позиция 11',
+
+  PRIMARY KEY (code),
+
+  CONSTRAINT `pm_scheme` FOREIGN KEY (`scheme`) REFERENCES `scheme` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `pm_meet` FOREIGN KEY (`meet`) REFERENCES `meet` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `pm_player1` FOREIGN KEY (`player_1`) REFERENCES `player` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `pm_player2` FOREIGN KEY (`player_2`) REFERENCES `player` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `pm_player3` FOREIGN KEY (`player_3`) REFERENCES `player` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `pm_player4` FOREIGN KEY (`player_4`) REFERENCES `player` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `pm_player5` FOREIGN KEY (`player_5`) REFERENCES `player` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `pm_player6` FOREIGN KEY (`player_6`) REFERENCES `player` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `pm_player7` FOREIGN KEY (`player_7`) REFERENCES `player` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `pm_player8` FOREIGN KEY (`player_8`) REFERENCES `player` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `pm_player9` FOREIGN KEY (`player_9`) REFERENCES `player` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `pm_player10` FOREIGN KEY (`player_10`) REFERENCES `player` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `pm_player11` FOREIGN KEY (`player_11`) REFERENCES `player` (`code`) ON DELETE SET NULL ON UPDATE CASCADE
+)
+ENGINE = INNODB
+CHARACTER SET utf8
+COLLATE utf8_general_ci
+COMMENT = 'расстановка игроков на игру';
 --
 -- Описание для таблицы country
 --

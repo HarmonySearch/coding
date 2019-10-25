@@ -1,7 +1,7 @@
 <?php
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 //  РЕДАКТИРОВАНИЕ ТАБЛИЦЫ МАТЧЕЙ
-//  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -10,7 +10,7 @@ error_reporting(E_ALL);
 $code_team = get_team_select();  // код --> команда (для select)
 $code_tourney = get_tourney_code();  // код --> турнир (для select)
 
-//  ▰▰▰▰ ДОБАВЛЕНИЕ ЗАПИСИ ▰▰▰▰
+//  ★★★★ ДОБАВЛЕНИЕ ЗАПИСИ ★★★★
 //
 //  GET запрос наличие переменной add без значения
 //  https://fcakron.ru/wp-admin/admin.php?page=meet&add
@@ -83,7 +83,7 @@ if (isset($_GET['add'])) { ?>
     <script>
         jQuery(function($) {
 
-            //  ▰▰▰▰ КНОПКА ЗАГРУЗИТЬ В БАЗУ ▰▰▰▰
+            //  ★★★★ КНОПКА ЗАГРУЗИТЬ В БАЗУ ★★★★
             $(document).on('click', '.load_rec', function() {
 
                 if ($('input[name="name"]').val() == "" ||
@@ -137,7 +137,7 @@ if (isset($_GET['add'])) { ?>
 
 
 //
-//  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰
+//  ★★★★ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ★★★★
 //
 ?>
 
@@ -227,6 +227,12 @@ if (isset($_GET['add'])) { ?>
                     <td>
                         Скрыть матч : <input type="checkbox" name="exclude" value="<?= $rec['exclude'] ?>" <? echo ($rec['exclude'] == 1) ? 'checked' : ''; ?>>
                     </td>
+                    <td>
+                        <button class="btn_schema">Схема игроков</button>
+                    </td>
+                    <td>
+                        <button class="btn_statistics">Статистика</button>
+                    </td>
                 </tr>
             </table>
         </div>
@@ -241,12 +247,24 @@ if (isset($_GET['add'])) { ?>
 <script>
     jQuery(function($) {
 
-        //  ▰▰▰▰ КНОПКА ДОБАВИТЬ МАТЧ ▰▰▰▰
+        //  ★★★★ кнопка ДОБАВИТЬ МАТЧ ★★★★
         $(document).on('click', '.btn_add_rec', function() { // кнопка добавления записи
             document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=meet&add";
         });
 
-        //  ▰▰▰▰ РЕДАКТИРОВАНИЕ ФОРМЫ ▰▰▰▰
+        //  ★★★★ кнопка СХЕМА ИГРОКОВ ★★★★
+        $(document).on('click', '.btn_schema', function() { 
+            let code = $(this).closest(".meet").data("code");
+            document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=scheme&meet=" + code;
+        });
+
+        //  ★★★★ кнопка СТАТИСТИКА ★★★★
+        $(document).on('click', '.btn_statistics', function() { 
+            let code = $(this).closest(".meet").data("code");
+            document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=statistics&meet=" + code;
+        });
+
+        //  ★★★★ РЕДАКТИРОВАНИЕ ФОРМЫ ★★★★
 
         $(document).on('change', 'input:not([type=file]), select', function(e) {
 
@@ -278,7 +296,7 @@ if (isset($_GET['add'])) { ?>
             });
         });
 
-        //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ ЗАГРУЗКА ФАЙЛА ▰▰▰▰
+        //  ★★★★★★★★★★★★★★★★★★★★★★★★ ЗАГРУЗКА ФАЙЛА ★★★★
 
         $(document).on('change', 'input[type="file"]', function(e) {
 

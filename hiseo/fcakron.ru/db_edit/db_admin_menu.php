@@ -39,6 +39,12 @@ function my_admin_menu()
         require_once(dirname(__FILE__) . '/player.php');
     }
 
+    add_submenu_page('NULL', 'Схема игроков', 'Схема', 1, 'scheme', 'scheme_edit');
+    function scheme_edit()
+    {
+        require_once(dirname(__FILE__) . '/scheme.php');
+    }
+
     add_submenu_page('db_fcakron', 'Редактирование тренеров', 'Тренеры', 1, 'trainer', 'trainer_edit');
     function trainer_edit()
     {

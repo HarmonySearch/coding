@@ -64,7 +64,8 @@ if (isset($_GET['add'])) { ?>
                     </td>
                 </tr>
                 <tr>
-                    <td>Позиция игрока:
+                    <td>
+                        Позиция игрока:
                         <select name="position">
                             <option value="">выбрать позицию</option>
                             <? foreach ($code_pos as $opt) { ?>
@@ -212,28 +213,88 @@ if ($team != "") {                  // это для формирования з
         <hr class="hr_db">
         <div class="player" data-code="<?= $code ?>">
 
-            <table style="white-space: nowrap;">
-                <tr>
-                    <!-- 1 -->
-                    <th>Команда</th>
-                    <th>Игрок</th>
-                    <th colspan="2">Фотографии</th>
-                    <th colspan="6">Статистик которая (пока) должна выкладываться на сайт</th>
-                </tr>
 
+            <table>
                 <tr>
-                    <!-- 2 -->
                     <td>
-                        <!-- команда -->
                         <select name="team">
                             <? foreach ($code_team as $opt) { ?>
                                 <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team']) ? 'selected' : ''; ?>><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
                             <? } ?>
                         </select>
                     </td>
+                    <td>
+                        <select class="position" name="position">
+                            <? foreach ($code_pos as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['position']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                            <? } ?>
+                        </select>
+                    </td>
+                    <td style="text-align:center">
+                        Номер: <input class="digit_only" type="text" name="number" value="<?= $rec['number'] ?>">
+                    </td style="text-align:center">
+                    <td>
+                        Капитан: <input type="checkbox" name="capitan" value="<?= $rec['capitan'] ?>" <? echo ($rec['capitan'] == 1) ? 'checked' : ''; ?>>
+                    </td>
+                </tr>
+                <tr>
                     <td><input type="text" name="lastname" value="<?= $rec['lastname'] ?>"></td>
+                    <td>
+                        Первое ражданство:
+                    </td>
                     <td rowspan="3"><img class="img_1 photo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/player/<?= $rec['code'] ?>-1.png" alt="<?= $rec['lastname'] ?>"></td>
                     <td rowspan="3"><img class="img_2 photo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/player/<?= $rec['code'] ?>-2.png" alt="<?= $rec['lastname'] ?>"></td>
+                </tr>
+                <tr>
+                    <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
+                    <td>
+                        <select class="country" name="country">
+                            <option value="" <? echo ('' == $rec['country']) ? 'selected' : ''; ?>>нет</option>
+                            <? foreach ($code_cry as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['country']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                            <? } ?>
+                        </select>
+
+                    </td>
+                </tr>
+                <tr>
+                <td>д.р.: <input type="date" name="birthday" value="<?= $rec['birthday'] ?>"></td>
+                    <td>
+                    Второе гражданство:
+                    </td>
+                </tr>
+                <tr>
+                <td>
+                        Рост: <input class="digit_only" type="text" name="growing" value="<?= $rec['growing'] ?>">
+                        Вес: <input class="digit_only" type="text" name="weight" value="<?= $rec['weight'] ?>">
+                    </td>
+                    <td>
+                        <select name="country_2">
+                            <option value="" <? echo ('' == $rec['country_2']) ? 'selected' : ''; ?>>нет</option>
+                            <? foreach ($code_cry as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['country_2']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                            <? } ?>
+                        </select>
+                    </td>
+                    <td style="text-align:center">
+                        <label for="file_1<?= $code ?>" class="button">Загрузить</label>
+                        <input id="file_1<?= $code ?>" data-num="1" type="file">
+                    </td>
+                    <td style="text-align:center">
+                        <label for="file_2<?= $code ?>" class="button">Загрузить</label>
+                        <input id="file_2<?= $code ?>" data-num="2" type="file">
+                    </td>
+                </tr>
+            </table>
+
+
+
+
+            <table style="white-space: nowrap;">
+            <b>★ ★ ★ Статистик которая (пока) должна выкладываться на сайт ★ ★ ★</b>
+
+               <tr>
+                    <!-- 2 -->
                     <td class="count">Матчи:</td>
                     <td class="count"><input class="digit_only" type="text" name="matches_plus" value="<?= $rec['matches_plus'] ?>"></td>
                     <td class="count">Голы :</td>
@@ -244,19 +305,6 @@ if ($team != "") {                  // это для формирования з
 
                 <tr>
                     <!-- 3 -->
-                    <td>
-                        <select class="position" name="position">
-                            <? foreach ($code_pos as $opt) { ?>
-                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['position']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
-                            <? } ?>
-                        </select>
-                        <select class="country" name="country">
-                            <? foreach ($code_cry as $opt) { ?>
-                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['country']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
-                            <? } ?>
-                        </select>
-                    </td>
-                    <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
                     <td class="count">Выходы в старте:</td>
                     <td><input class="digit_only" type="text" name="output_start_plus" value="<?= $rec['output_start_plus'] ?>"></td>
                     <td class="count">Голевые передачи:</td>
@@ -267,11 +315,6 @@ if ($team != "") {                  // это для формирования з
 
                 <tr>
                     <!-- 4 -->
-                    <td>
-                        Номер: <input class="digit_only" type="text" name="number" value="<?= $rec['number'] ?>">
-                        Капитан: <input type="checkbox" name="capitan" value="<?= $rec['capitan'] ?>" <? echo ($rec['capitan'] == 1) ? 'checked' : ''; ?>>
-                    </td>
-                    <td>д.р.: <input type="date" name="birthday" value="<?= $rec['birthday'] ?>"></td>
                     <td class="count">Выходы на замену:</td>
                     <td><input class="digit_only" type="text" name="output_in_game_plus" value="<?= $rec['output_in_game_plus'] ?>"></td>
                     <td class="count">Жёлтые карточки:</td>
@@ -282,19 +325,6 @@ if ($team != "") {                  // это для формирования з
 
                 <tr>
                     <!-- 5 -->
-                    <td></td>
-                    <td>
-                        Рост: <input class="digit_only" type="text" name="growing" value="<?= $rec['growing'] ?>">
-                        Вес: <input class="digit_only" type="text" name="weight" value="<?= $rec['weight'] ?>">
-                    </td>
-                    <td style="text-align:center">
-                        <label for="file_1<?= $code ?>" class="button">Загрузить</label>
-                        <input id="file_1<?= $code ?>" data-num="1" type="file">
-                    </td>
-                    <td style="text-align:center">
-                        <label for="file_2<?= $code ?>" class="button">Загрузить</label>
-                        <input id="file_2<?= $code ?>" data-num="2" type="file">
-                    </td>
                     <td>Замен в ходе матча:</td>
                     <td><input class="digit_only" type="text" name="exchange_plus" value="<?= $rec['exchange_plus'] ?>"></td>
                     <td class="count">Красные карточки:</td>
@@ -406,7 +436,7 @@ if ($team != "") {                  // это для формирования з
                 url: ajaxurl,
                 data: data_lib
             }).done(function(data) {});
-
+                console.log(data);
         });
 
         //  ★★★★★★★★★★★★★★★★★★★★★★★★ ЗАГРУЗКА ФАЙЛА ★★★★

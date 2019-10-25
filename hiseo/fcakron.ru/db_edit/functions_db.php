@@ -42,6 +42,18 @@ function get_meet_all()
     return $result;
 };
 
+
+
+function get_meet_select()
+{
+    global $wpdb;
+
+    $sql = "SELECT `code`, `name` FROM `meet` ORDER BY `date_meet` DESC";
+    $result = $wpdb->get_results($sql, 'ARRAY_A'); 
+    return $result;
+};
+
+
 function get_meet($code = 0)
 {
     global $wpdb;
@@ -134,6 +146,21 @@ function get_country()
 };
 
 /* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+ * Таблица схема расстановки игроков
+ */
+function get_scheme()
+{
+
+    global $wpdb;
+
+    $sql = "SELECT * FROM scheme";
+    $result = $wpdb->get_results($sql, 'ARRAY_A');
+    return $result;
+};
+
+
+
+/* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
  * Таблица player_positions (позиции игроков)
  */
 function get_position()
@@ -173,20 +200,26 @@ function get_player($code = 0)
         $sql .= " WHERE code = $code";
     }
     $result = $wpdb->get_results($sql, 'ARRAY_A');
-    return $result;
+	return count($result) ? $result[0] : false;
 };
 
 /* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
  * Выборка игрока по команде
  */
-function get_players($team = 0)
+function get_players($team = 0, $role = 0)
 {
 
     global $wpdb;
 
     $sql = "SELECT * FROM player";
-    if ($team != 0) {
+    if ($team != 0 && $role == 0) {
         $sql .= " WHERE team = $team";
+    }
+    if ($team == 0 && $role != 0) {
+        $sql .= " WHERE position = $role";
+    }
+    if ($team != 0 && $role != 0) {
+        $sql .= " WHERE team = $team AND position = $role";
     }
     $result = $wpdb->get_results($sql, 'ARRAY_A');
     return $result;
@@ -207,17 +240,14 @@ function get_trainer()
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ СТАТИСТИКА ★★★★
 
 
-function get_statistics()
+function get_statistics($meet = 0)
 {
-
     global $wpdb;
 
-    $sql = "SELECT * FROM `statistics`";
+    $sql = "SELECT * FROM `statistics` WHERE `meet` = $meet";
     $result = $wpdb->get_results($sql, 'ARRAY_A');
     return $result;
 };
-
-//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ СОБЫТИЯ ★★★★
 
 
 function get_event()
@@ -226,6 +256,19 @@ function get_event()
     global $wpdb;
 
     $sql = "SELECT * FROM `event`";
+    $result = $wpdb->get_results($sql, 'ARRAY_A');
+    return $result;
+};
+
+
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ СХЕМЫ ★★★★
+
+
+function get_player_scheme($meet = 0)
+{
+    global $wpdb;
+
+    $sql = "SELECT * FROM `player_scheme` WHERE meet = $meet";
     $result = $wpdb->get_results($sql, 'ARRAY_A');
     return $result;
 };
