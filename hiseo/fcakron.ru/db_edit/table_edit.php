@@ -27,14 +27,12 @@ if( wp_doing_ajax() ){
 		add_action('wp_ajax_load_player', 'load_player_callback');
 		add_action('wp_ajax_load_trainer', 'load_trainer_callback');
 		add_action('wp_ajax_statistics_add', 'statistics_add_callback');
+		add_action('wp_ajax_standings_load', 'standings_load_callback');
 	// }
 }
 /*
  * 
  */
-//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-//  UPDATE FIELD
-//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
 function clean($var = ""){
     $var = trim($var);
@@ -43,6 +41,45 @@ function clean($var = ""){
     $var = htmlspecialchars($var);
     return $var;
 }
+
+
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+//  ЗАГРУЗКА ТУРНИРНОЙ ТАБЛИЦЫ
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+function standings_load_callback(){
+
+    global $wpdb;
+
+    if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
+    if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
+
+    $sql = "TRUNCATE TABLE standings;";
+    $wpdb->query($sql);
+    foreach ($_POST['json'] as $rec ) {
+        //echo($rec['meet']);
+        $data_a = array(
+            'team_code' => $rec['team_code'],
+            'meet' => $rec['meet'],
+            'victory' => $rec['victory'],
+            'draw' => $rec['draw'],
+            'defeat' => $rec['defeat'],
+            'points' => $rec['points']
+        );
+        //var_dump($data_a);
+        $format = array('%d', '%d', '%d', '%d', '%d', '%d');
+        $result = $wpdb->insert('standings', $data_a, $format);
+        if ($result <= 0) {
+            wp_die('Ошибка записи в базу данных.');
+        }
+    
+    };
+
+    die();
+}
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+//  UPDATE FIELD
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
 function data_change_callback(){
     /*

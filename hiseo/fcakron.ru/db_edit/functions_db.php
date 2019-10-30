@@ -127,11 +127,20 @@ function get_team_select()
 
     global $wpdb;
 
-    $sql = "SELECT `code`, `name`, `city` FROM team";
+    $sql = "SELECT `code`, `name`, `city` FROM team ORDER BY `name` ASC";
     $result = $wpdb->get_results($sql, 'ARRAY_A');
     return $result;
 };
 
+function get_team_select2()
+{ // коды для селектора
+
+    global $wpdb;
+
+    $sql = "SELECT `code`, CONCAT (`name`, ' ' ,`city`) as `name` FROM team";
+    $result = $wpdb->get_results($sql, 'ARRAY_A');
+    return $result;
+};
 /* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
  * Таблица country (страна)
  */
@@ -182,7 +191,7 @@ function get_player_select()
 { 
     global $wpdb;
 
-    $sql = "SELECT `code`, `lastname`, `name` FROM player WHERE team=1";
+    $sql = "SELECT `code`, `lastname`, `name` FROM player";
     $result = $wpdb->get_results($sql, 'ARRAY_A');
     return $result;
 };

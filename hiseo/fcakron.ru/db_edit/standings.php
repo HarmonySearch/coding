@@ -1,76 +1,127 @@
 <?php
-// 1. список всех команд участвывающих в матчах турнира
-// SELECT team_1 FROM meet union SELECT team_2 FROM meet (только уникальные) массив кодов команд
-// дальше 
-// обнуляем массив
-// forean список команд
-// f[команда][игра]=0;
-// f[команда][победа]=0;
-// f[команда][ничия]=0;
-// f[команда][проигрыш]=0;
 
+$sql = "SELECT * FROM standings";
 global $wpdb;
-echo '<pre>'; 
-// список всех команд игравших в турнире. нужен чтобв подготовить таблицу для сортировки
-$sql = 'SELECT team_1 as team FROM meet WHERE  tourney=3 union SELECT team_2 FROM meet WHERE  tourney=3';
-$teams = $wpdb->get_results($sql, 'ARRAY_A');
-//var_dump($teams);
-// обнуляем таблицу
-$s=[];
-foreach ($teams as $team) {
-    // echo $team['team'].PHP_EOL;
-    $i = $team['team'];
-    $s[$i]['victory']= 0; // победы
-    $s[$i]['draw']= 0; // ничьи
-    $s[$i]['defeat']= 0; // поражение
-    $s[$i]['meet']= 0; // количество игр
-    $s[$i]['diff']= 0; // разность забитых и пропущеных
-    $s[$i]['goal']= 0; 
-    $s[$i]['goal_guest']= 0;
-}  
-// var_dump($s);
-// Перебираем все сыгранные матчи
-$sql = 'SELECT team_1, team_2, goal_1, goal_2 FROM meet WHERE tourney=3 AND completed';
-$meets = $wpdb->get_results($sql, 'ARRAY_A');
-foreach ($meets as $meet) {
-    // Берём команду хозяина
-    // Суммирум игры победы проигрыши ничьи
+$standings = $wpdb->get_results($sql, 'ARRAY_A');
 
+$code_team = get_team_select();  // команда select
 
-    // добавим командам по игре
-    $s[$meet['team_1']]['meet']++;
-    $s[$meet['team_2']]['meet']++;
-    // первая команда выиграла. вторая проиграла
-    if ($meet['goal_1'] > $meet['goal_2']) {
-        $s[$meet['team_1']]['victory']++;
-        $s[$meet['team_1']]['points'] = $s[$meet['team_1']]['points'] + 2;
-        $s[$meet['team_2']]['defeat']++;
-    }
-    if ($meet['goal_1'] == $meet['goal_2']) {
-        $s[$meet['team_1']]['draw']++;
-        $s[$meet['team_1']]['points']++;
-        $s[$meet['team_2']]['draw']++;
-        $s[$meet['team_2']]['points']++;
-    }
-var_dump($s);
-}
-usort ($s, 'grade_sort');
-// отслотировать по очкам
-echo '--------------------------------------------------------------';
-var_dump($s);
-//echo '</pre>'; 
-// foreach ($s as $row) {
-
-// }
-
-// Функция сортировки по оценке: сортировка по УБЫВАНИЮ.
-function grade_sort($x, $y) {
-    if ($x['points'] < $y['points']) {
-        return true;
-    } else if ($x['points'] > $y['points']) {
-        return false;
-    } else {
-        return 0;
-    }
-}
 ?>
+<h1>Турнирная таблица</h1>
+<h3>(информация не используется на сайте)</h3>
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script>
+    $(function() {
+        $("#sortable").sortable({
+            revert: true
+        });
+        $("div").disableSelection();
+    });
+</script>
+<div>
+    <button class="btn_add_rec" data-meet="<?= $meet ?>">Добавить строку в таблицу</button>
+</div>
+
+<div class="row_stand" style="text-align: center;">
+    <span></span>
+    <span>Команда</span>
+    <span>И</span>
+    <span>П</span>
+    <span>Н</span>
+    <span>П</span>
+    <span>О</span>
+</div>
+<div id="sortable"  class="standings">
+    <?php
+    foreach ($standings as $rec) { ?>
+        <div class="row_stand">
+            <div class="reg_move">
+            
+            </div>
+            <select name="team_code">
+                <option value="">выбрать название команды</option>
+                <? foreach ($code_team as $opt) { ?>
+                    <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_code']) ? 'selected' : ''; ?>><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
+                <? } ?>
+            </select>
+            <input class="digit_only" type="text" name="meet" value="<?= $rec['meet'] ?>">
+            <input class="digit_only" type="text" name="victory" value="<?= $rec['victory'] ?>">
+            <input class="digit_only" type="text" name="draw" value="<?= $rec['draw'] ?>">
+            <input class="digit_only" type="text" name="defeat" value="<?= $rec['defeat'] ?>">
+            <input class="digit_only" type="text" name="points" value="<?= $rec['points'] ?>">
+        </div>
+    <?php } ?>
+</div>
+<div>
+    <button class="write_tab" data-meet="<?= $meet ?>">Записать таблицу в базу данных</button>
+</div>
+
+<style>
+    .standings .reg_move {
+        cursor: move;
+        display: inline-block;
+        background-image: url(http://fcakron.ru/wp-content/themes/fcakron/images/db/movs.png);
+        border: 1px solid #ddd;
+        width: 28px;
+        }
+
+        .row_stand {
+        display: grid;
+        grid-template-columns: 30px 210px 30px 30px 30px 30px 30px 60px;
+        grid-column-gap: 10px;
+        margin-bottom: 6px;
+    }
+    .btn_add_rec{
+        margin-bottom: 10px;
+    }
+    .write_tab {
+        cursor: pointer;
+    }
+</style>
+<script>
+    jQuery(function($) {
+
+        //  ★★★★ кнопка ДОБАВИТЬ запись в конец таблицы ★★★★
+        $(document).on('click', '.btn_add_rec', function() {
+            // клонируем последний элемент таблицы
+            let div = $("#sortable div:last-child").clone();
+            div.find("input,select").val("");
+            $("#sortable").append(div);
+        });
+
+        //  ★★★★ запись таблицы в БД ★★★★
+        $(document).on('click', '.write_tab', function() {
+            // клонируем последний элемент таблицы
+            // упаковка ьаблицы в JSON
+            var f = [];
+            $("#sortable .row_stand").each(function(key, e) {
+                // console.log($(this));
+                var z = {
+                    'team_code': $(this).find('[name=team_code]').val(),
+                    'meet': $(this).find('[name=meet]').val(),
+                    'victory': $(this).find('[name=victory]').val(),
+                    'draw': $(this).find('[name=draw]').val(),
+                    'defeat': $(this).find('[name=defeat]').val(),
+                    'points': $(this).find('[name=points]').val()
+                }
+                f[key] = z;
+            });
+            console.log(f);
+            //return;
+            let data_lib = {
+                action: 'standings_load',
+                nonce_code: my_ajax_noncerr,
+                json: f
+            };
+            jQuery.ajax({
+                method: "POST",
+                url: ajaxurl,
+                data: data_lib
+            }).done(function(data) {
+                console.log(data);
+            });
+        });
+    });
+</script>

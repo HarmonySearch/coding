@@ -8,10 +8,20 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$code_player = get_player_select();  // select игроки АКРОН
+$meet = $_GET['meet']; // код матча
+
+// select игрока. выборка игроков только из списка команд участвующих в игре
+
+$sql = "SELECT `code`,`lastname`, (SELECT name FROM team WHERE code = `team`) AS `team_name`
+        FROM `player` 
+        WHERE `team` IN (
+            SELECT `team_1` FROM `meet` WHERE `code` = 15 
+            union 
+            SELECT `team_2` FROM `meet` WHERE `code` = 15)";
+global $wpdb;
+$code_player = $wpdb->get_results($sql, 'ARRAY_A');
 $code_event = get_event();  // select события
 
-$meet = $_GET['meet'];
 
 // нужна хоть одна запись, поскольку добавление записей
 // делается клонированием последней записи
@@ -57,7 +67,7 @@ if (!$res) {
                     <select name="player">
                         <option value="">Выбрать игрока</option>
                         <? foreach ($code_player as $opt) { ?>
-                            <option value="<?= $opt["code"] ?>" <? echo ($opt["code"] == $rec["player"]) ? "selected" : ""; ?>><?= $opt["lastname"] ?> <?= $opt["name"] ?></option>
+                            <option value="<?= $opt["code"] ?>" <? echo ($opt["code"] == $rec["player"]) ? "selected" : ""; ?>><?= $opt["lastname"] ?> (<?= $opt["team_name"] ?>)</option>
                         <? } ?>
                     </select>
                 </td>

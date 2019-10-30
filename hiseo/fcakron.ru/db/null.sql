@@ -38,6 +38,27 @@ CREATE TABLE `scheme` (
 
 scheme
 
+CREATE TABLE standings(
+  `code` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `position` INT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'позиция',
+  `team_code` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'код команды',
+  `team_name` VARCHAR(30) NOT NULL DEFAULT '' COMMENT 'название команды',
+  `meet` INT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'матчи',
+  `victory` INT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'победы',
+  `draw` INT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'ничьи',
+  `defeat` INT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'поражения',
+  `points` INT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'очки',
+
+  PRIMARY KEY (code)
+
+)
+ENGINE = INNODB
+CHARACTER SET utf8
+COLLATE utf8_general_ci
+COMMENT = 'турнирная таблица';
+
+
+
 CREATE TABLE player_scheme (
   `code` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `scheme` int(10) UNSIGNED DEFAULT NULL COMMENT 'схема (код из таблицы scheme)',
