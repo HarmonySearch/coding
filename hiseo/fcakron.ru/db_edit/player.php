@@ -225,6 +225,7 @@ if ($team != "") {                  // это для формирования з
                     </td>
                     <td>
                         <select class="position" name="position">
+                        <option value="" <? echo ('' == $rec['position']) ? 'selected' : ''; ?>>не указана</option>
                             <? foreach ($code_pos as $opt) { ?>
                                 <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['position']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
                             <? } ?>
@@ -249,7 +250,7 @@ if ($team != "") {                  // это для формирования з
                     <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
                     <td>
                         <select class="country" name="country">
-                            <option value="" <? echo ('' == $rec['country']) ? 'selected' : ''; ?>>нет</option>
+                            <option value="" <? echo ('' == $rec['country']) ? 'selected' : ''; ?>>не указано</option>
                             <? foreach ($code_cry as $opt) { ?>
                                 <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['country']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
                             <? } ?>
@@ -270,7 +271,7 @@ if ($team != "") {                  // это для формирования з
                     </td>
                     <td>
                         <select name="country_2">
-                            <option value="" <? echo ('' == $rec['country_2']) ? 'selected' : ''; ?>>нет</option>
+                            <option value="" <? echo ('' == $rec['country_2']) ? 'selected' : ''; ?>>не указано</option>
                             <? foreach ($code_cry as $opt) { ?>
                                 <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['country_2']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
                             <? } ?>

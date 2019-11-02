@@ -96,6 +96,12 @@ if (isset($_GET['add'])) { ?>
 //
 
 $fields = array('name', 'city', 'website');
+
+
+global $wpdb;
+$sql = "SELECT * FROM team ORDER BY name ASC";
+$teams = $wpdb->get_results($sql, 'ARRAY_A');
+
 ?>
 
 <h1>Таблица команд</h1>
@@ -104,7 +110,7 @@ $fields = array('name', 'city', 'website');
 
 <div class="teams_table">
     <?php
-    foreach (get_team() as $rec) {
+    foreach ($teams as $rec) {
         $code = $rec['code']; ?>
         <hr class="hr_db">
         <div class="root_table" data-table="team" data-code="<?= $code ?>">

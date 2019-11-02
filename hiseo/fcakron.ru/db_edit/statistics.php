@@ -15,9 +15,9 @@ $meet = $_GET['meet']; // код матча
 $sql = "SELECT `code`,`lastname`, (SELECT name FROM team WHERE code = `team`) AS `team_name`
         FROM `player` 
         WHERE `team` IN (
-            SELECT `team_1` FROM `meet` WHERE `code` = 15 
+            SELECT `team_1` FROM `meet` WHERE `code` = $meet 
             union 
-            SELECT `team_2` FROM `meet` WHERE `code` = 15)";
+            SELECT `team_2` FROM `meet` WHERE `code` = $meet)";
 global $wpdb;
 $code_player = $wpdb->get_results($sql, 'ARRAY_A');
 $code_event = get_event();  // select события
