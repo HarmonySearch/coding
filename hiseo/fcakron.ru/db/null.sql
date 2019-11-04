@@ -36,7 +36,34 @@ CREATE TABLE `scheme` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='названия схем';
 
 
-scheme
+
+ball_poss процент владения мячом
+offside_1 офсайды 1-я команда
+offside_2 офсайды 2-я команда
+corner_1 угловые 1-я команда
+corner_2 угловые 2-я команда
+goal_moment_1 голевые моменты 1-я команда
+goal_moment_2 голевые моменты 2-я команда
+kick_goal_1 удары по воротам 1-я команда
+kick_goal_2 удары по воротам 2-я команда
+kick_target_1 удары в створ 1-я команда
+kick_target_2 удары в створ 2-я команда
+goalpost_1 штанги 1-я команда
+goalpost_2 штанги 2-я команда
+foul_1 фолы 1-я команда
+foul_2 фолы 2-я команда
+warning_1 предупреждения 1-я команда
+warning_2 предупреждения 2-я команда
+sending_off_1 удаления 1-я команда
+sending_off_2 удаления 2-я команда
+
+ALTER TABLE `meet` ADD `sending_off_1` 
+INT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'удаления 1-я команда'
+AFTER `exclude`;
+ALTER TABLE `meet` ADD `sending_off_2` 
+INT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'удаления 2-я команда'
+AFTER `exclude`;
+
 
 CREATE TABLE standings(
   `code` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,

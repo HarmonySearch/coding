@@ -10,16 +10,19 @@ $code_team = get_team_select();  // команда select
 <h1>Турнирная таблица</h1>
 <h3>(информация не используется на сайте)</h3>
 
-<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://fcakron.ru/wp-content/themes/fcakron/db_edit/js/jquery-ui.min.js"></script>
 <script>
-    $(function() {
-        $("#sortable").sortable({
-            revert: true
+    jQuery(function($) {
+
+        $(function() {
+            $("#sortable").sortable({
+                revert: true // плавно
+            });
+            $("div").disableSelection();
         });
-        $("div").disableSelection();
-    });
+    })
 </script>
+
 <div>
     <button class="btn_add_rec" data-meet="<?= $meet ?>">Добавить строку в таблицу</button>
 </div>
@@ -33,12 +36,11 @@ $code_team = get_team_select();  // команда select
     <span>П</span>
     <span>О</span>
 </div>
-<div id="sortable"  class="standings">
+<div id="sortable" class="standings">
     <?php
     foreach ($standings as $rec) { ?>
         <div class="row_stand">
             <div class="reg_move">
-            
             </div>
             <select name="team_code">
                 <option value="">выбрать название команды</option>
@@ -65,17 +67,19 @@ $code_team = get_team_select();  // команда select
         background-image: url(http://fcakron.ru/wp-content/themes/fcakron/images/db/movs.png);
         border: 1px solid #ddd;
         width: 28px;
-        }
+    }
 
-        .row_stand {
+    .row_stand {
         display: grid;
         grid-template-columns: 30px 210px 30px 30px 30px 30px 30px 60px;
         grid-column-gap: 10px;
         margin-bottom: 6px;
     }
-    .btn_add_rec{
+
+    .btn_add_rec {
         margin-bottom: 10px;
     }
+
     .write_tab {
         cursor: pointer;
     }

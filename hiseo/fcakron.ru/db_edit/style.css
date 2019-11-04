@@ -66,7 +66,13 @@ button.load_rec {
     width: 50px; 
 }
 
-/*  ★★★★ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ★★★★*/
+/*  ★★★★★★★★★★★★★★★★ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ★★★★*/
+
+.matches_table .div_accordion {
+    display: grid;
+    grid-template-columns: 20% 55% 25%;
+    grid-column-gap: 10px;
+}
 /* числовые поля */
 .meet_table table { border-spacing: 5px; }
 .meet_table input[name="time_zone"],
@@ -79,6 +85,12 @@ button.load_rec {
 .meet_table .meet input[type="file"] { display: none; }
 
 .meet_table img { height: 70px; }
+
+.meet_table .ui-accordion-header {
+    font-size: 18px;
+    font-weight: 700;    
+}
+
 
 /*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ КОМАНДЫ ★★★★ */
 

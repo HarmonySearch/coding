@@ -253,7 +253,7 @@ function get_statistics($meet = 0)
 {
     global $wpdb;
 
-    $sql = "SELECT * FROM `statistics` WHERE `meet` = $meet";
+    $sql = "SELECT * FROM `statistics` WHERE `meet` = $meet ORDER BY minute ASC";
     $result = $wpdb->get_results($sql, 'ARRAY_A');
     return $result;
 };

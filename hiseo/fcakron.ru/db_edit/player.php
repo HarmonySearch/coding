@@ -189,6 +189,9 @@ if ($team != "") {                  // это для формирования з
 
 ?>
 
+<script src="https://fcakron.ru/wp-content/themes/fcakron/db_edit/js/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://fcakron.ru/wp-content/themes/fcakron/db_edit/css/jquery-ui.css">
+
 <h1>Таблица игроков</h1>
 <h3>(забита чистая информация)</h3>
 <h3>(информация пока не используется на сайте)</h3>
@@ -225,7 +228,7 @@ if ($team != "") {                  // это для формирования з
                     </td>
                     <td>
                         <select class="position" name="position">
-                        <option value="" <? echo ('' == $rec['position']) ? 'selected' : ''; ?>>не указана</option>
+                            <option value="" <? echo ('' == $rec['position']) ? 'selected' : ''; ?>>не указана</option>
                             <? foreach ($code_pos as $opt) { ?>
                                 <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['position']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
                             <? } ?>
@@ -259,13 +262,13 @@ if ($team != "") {                  // это для формирования з
                     </td>
                 </tr>
                 <tr>
-                <td>д.р.: <input type="date" name="birthday" value="<?= $rec['birthday'] ?>"></td>
+                    <td>д.р.: <input type="date" name="birthday" value="<?= $rec['birthday'] ?>"></td>
                     <td>
-                    Второе гражданство:
+                        Второе гражданство:
                     </td>
                 </tr>
                 <tr>
-                <td>
+                    <td>
                         Рост: <input class="digit_only" type="text" name="growing" value="<?= $rec['growing'] ?>">
                         Вес: <input class="digit_only" type="text" name="weight" value="<?= $rec['weight'] ?>">
                     </td>
@@ -289,53 +292,55 @@ if ($team != "") {                  // это для формирования з
             </table>
 
 
+            <div class="stat1">
+                <h3>Статистик которая (пока) должна выкладываться на сайт</h3>
 
+                <table style="white-space: nowrap;">
 
-            <table style="white-space: nowrap;">
-            <b>★ ★ ★ Статистик которая (пока) должна выкладываться на сайт ★ ★ ★</b>
+                    <tr>
+                        <!-- 2 -->
+                        <td class="count">Матчи:</td>
+                        <td class="count"><input class="digit_only" type="text" name="matches_plus" value="<?= $rec['matches_plus'] ?>"></td>
+                        <td class="count">Голы :</td>
+                        <td><input class="digit_only" type="text" name="goal_plus" value="<?= $rec['goal_plus'] ?>"></td>
+                        <td class="count">Сейвы:</td>
+                        <td><input class="digit_only" type="text" name="save_plus" value="<?= $rec['save_plus'] ?>"></td>
+                    </tr>
 
-               <tr>
-                    <!-- 2 -->
-                    <td class="count">Матчи:</td>
-                    <td class="count"><input class="digit_only" type="text" name="matches_plus" value="<?= $rec['matches_plus'] ?>"></td>
-                    <td class="count">Голы :</td>
-                    <td><input class="digit_only" type="text" name="goal_plus" value="<?= $rec['goal_plus'] ?>"></td>
-                    <td class="count">Сейвы:</td>
-                    <td><input class="digit_only" type="text" name="save_plus" value="<?= $rec['save_plus'] ?>"></td>
-                </tr>
+                    <tr>
+                        <!-- 3 -->
+                        <td class="count">Выходы в старте:</td>
+                        <td><input class="digit_only" type="text" name="output_start_plus" value="<?= $rec['output_start_plus'] ?>"></td>
+                        <td class="count">Голевые передачи:</td>
+                        <td><input class="digit_only" type="text" name="pass_plus" value="<?= $rec['pass_plus'] ?>"></td>
+                        <td class="count">Пропущенные мячи:</td>
+                        <td><input class="digit_only" type="text" name="omission_plus" value="<?= $rec['omission_plus'] ?>"></td>
+                    </tr>
 
-                <tr>
-                    <!-- 3 -->
-                    <td class="count">Выходы в старте:</td>
-                    <td><input class="digit_only" type="text" name="output_start_plus" value="<?= $rec['output_start_plus'] ?>"></td>
-                    <td class="count">Голевые передачи:</td>
-                    <td><input class="digit_only" type="text" name="pass_plus" value="<?= $rec['pass_plus'] ?>"></td>
-                    <td class="count">Пропущенные мячи:</td>
-                    <td><input class="digit_only" type="text" name="omission_plus" value="<?= $rec['omission_plus'] ?>"></td>
-                </tr>
+                    <tr>
+                        <!-- 4 -->
+                        <td class="count">Выходы на замену:</td>
+                        <td><input class="digit_only" type="text" name="output_in_game_plus" value="<?= $rec['output_in_game_plus'] ?>"></td>
+                        <td class="count">Жёлтые карточки:</td>
+                        <td><input class="digit_only" type="text" name="cart_y_plus" value="<?= $rec['cart_y_plus'] ?>"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
 
-                <tr>
-                    <!-- 4 -->
-                    <td class="count">Выходы на замену:</td>
-                    <td><input class="digit_only" type="text" name="output_in_game_plus" value="<?= $rec['output_in_game_plus'] ?>"></td>
-                    <td class="count">Жёлтые карточки:</td>
-                    <td><input class="digit_only" type="text" name="cart_y_plus" value="<?= $rec['cart_y_plus'] ?>"></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-
-                <tr>
-                    <!-- 5 -->
-                    <td>Замен в ходе матча:</td>
-                    <td><input class="digit_only" type="text" name="exchange_plus" value="<?= $rec['exchange_plus'] ?>"></td>
-                    <td class="count">Красные карточки:</td>
-                    <td><input class="digit_only" type="text" name="cart_r_plus" value="<?= $rec['cart_r_plus'] ?>"></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </table>
+                    <tr>
+                        <!-- 5 -->
+                        <td>Замен в ходе матча:</td>
+                        <td><input class="digit_only" type="text" name="exchange_plus" value="<?= $rec['exchange_plus'] ?>"></td>
+                        <td class="count">Красные карточки:</td>
+                        <td><input class="digit_only" type="text" name="cart_r_plus" value="<?= $rec['cart_r_plus'] ?>"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="stat1">
+            <b>Таблица статистики (вычисляемая. пока нет статистик будут нули)</b>
             <table>
-                <b>★ ★ ★ Таблица статистики (вычисляемая. пока нет статистик будут нули) ★ ★ ★</b>
                 <tr>
                     <td class="count">Сыгранные матчи: </td>
                     <td class="count"><input class="digit_only" type="text" name="match" readonly value="<?= $rec['match'] ?>"></td>
@@ -388,6 +393,14 @@ if ($team != "") {                  // это для формирования з
 <script>
     jQuery(function($) {
 
+        $(function() {
+            $(".stat1").accordion({
+                collapsible: true,
+                active: false,
+                animate: false
+            });
+        });
+
         //  ★★★★ ВВОДИТЬ ТОЛЬКО ЦИФРЫ ★★★★
         $(document).ready(function() {
             $('.digit_only').on("change keyup input click", function() {
@@ -437,7 +450,7 @@ if ($team != "") {                  // это для формирования з
                 url: ajaxurl,
                 data: data_lib
             }).done(function(data) {});
-                console.log(data);
+            console.log(data);
         });
 
         //  ★★★★★★★★★★★★★★★★★★★★★★★★ ЗАГРУЗКА ФАЙЛА ★★★★

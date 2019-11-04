@@ -140,6 +140,8 @@ if (isset($_GET['add'])) { ?>
 //  ★★★★ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ★★★★
 //
 ?>
+<script src="https://fcakron.ru/wp-content/themes/fcakron/db_edit/js/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://fcakron.ru/wp-content/themes/fcakron/db_edit/css/jquery-ui.css">
 
 <h1>Таблица матчей</h1>
 <h3>(информация используется на сайте)</h3>
@@ -147,7 +149,7 @@ if (isset($_GET['add'])) { ?>
     <button class="btn_add_rec">Добавить матч</button>
 </div>
 
-<div class="meet_table">
+<div class="meet_table matches_table">
     <?php
     foreach (get_meet_all() as $rec) {
         $code = $rec['code']; ?>
@@ -157,84 +159,136 @@ if (isset($_GET['add'])) { ?>
             <table>
                 <tr>
                     <!-- 1 -->
-                    <th>Матч</th>
-                    <th colspan="2">Место проведения</th>
-                    <th>Команда 1</th>
-                    <th>Команда 2</th>
-                    <td rowspan="3"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/meet/<?= $rec['code'] ?>.jpg" alt="нет афиши">
-                    </td>
-                    <td> <label class="button" for="poster<?= $code ?>">Загрузить</label>
-                        <input class="poster" id="poster<?= $code ?>" type="file">
-                    </td>
-                </tr>
-                <tr>
-                    <!-- 2 -->
-                    <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
-                    <td>Город:</td>
-                    <td><input type="text" name="city" value="<?= $rec['city'] ?>"></td>
-                    <td>
-                        <select name="team_1">
-                            <? foreach ($code_team as $opt) { ?>
-                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_1']) ? 'selected' : ''; ?>><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
-                            <? } ?>
-                        </select>
-
-                    </td>
-                    <td>
-                        <select name="team_2">
-                            <? foreach ($code_team as $opt) { ?>
-                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_2']) ? 'selected' : ''; ?>><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
-                            <? } ?>
-                        </select>
-
-                    </td>
-                    <td>Использовать афишу: <input type="checkbox" name="poster" value="<?= $rec['poster'] ?>" <? echo ($rec['poster'] == 1) ? 'checked' : ''; ?>>
-                    </td>
-                </tr>
-                <tr>
+                    <td>Турнир</td>
                     <td>
                         <select name="tourney">
                             <? foreach ($code_tourney as $opt) { ?>
                                 <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['tourney']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
                             <? } ?>
                         </select>
-
                     </td>
-                    <td>Стадион:</td>
-                    <td> <input type="text" name="stadium" value="<?= $rec['stadium'] ?>"></td>
-                    <td>Голы:
-                        <input type="number" name="goal_1" value="<?= $rec['goal_1'] ?>"></td>
-                    <td>Голы:
-                        <input type="number" name="goal_2" value="<?= $rec['goal_2'] ?>"></td>
-                </tr>
-                <tr>
-                    <!-- 4 -->
+                    <td>Команда 1</td>
                     <td>
-                        Дата: <input type="date" name="date_meet" value="<?= $rec['date_meet'] ?>">
+                        <select name="team_1">
+                            <? foreach ($code_team as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_1']) ? 'selected' : ''; ?>><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
+                            <? } ?>
+                        </select>
                     </td>
-                    <td>
-                        Время:</td>
-                    <td> <input type="time" name="time_meet" value="<?= $rec['time_meet'] ?>">
-                        Зона: <input type="number" name="time_zone" value="<?= $rec['time_zone'] ?>">
-                    </td>
-                    <td>
-                        Вход свободый: <input type="checkbox" name="free" value="<?= $rec['free'] ?>" <? echo ($rec['free'] == 1) ? 'checked' : ''; ?>>
-
-                    </td>
+                    <td>Голы</td>
+                    <td><input type="number" name="goal_1" value="<?= $rec['goal_1'] ?>"></td>
                     <td>
                         Матч окончен: <input type="checkbox" name="completed" value="<?= $rec['completed'] ?>" <? echo ($rec['completed'] == 1) ? 'checked' : ''; ?>>
                     </td>
+                    <td> <button class="btn_schema">Схема игроков</button> </td>
+                </tr>
+                <tr>
+                    <!-- 2 -->
+                    <td>Матч</td>
+                    <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
+                    <td>Команда 2</td>
                     <td>
-                        Скрыть матч : <input type="checkbox" name="exclude" value="<?= $rec['exclude'] ?>" <? echo ($rec['exclude'] == 1) ? 'checked' : ''; ?>>
+                        <select name="team_2">
+                            <? foreach ($code_team as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team_2']) ? 'selected' : ''; ?>><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
+                            <? } ?>
+                        </select>
                     </td>
-                    <td>
-                        <button class="btn_schema">Схема игроков</button>
-                    </td>
-                    <td>
-                        <button class="btn_statistics">Статистика</button>
-                    </td>
+                    <td>Голы</td>
+                    <td><input type="number" name="goal_2" value="<?= $rec['goal_2'] ?>"></td>
+                    <td> Скрыть матч : <input type="checkbox" name="exclude" value="<?= $rec['exclude'] ?>" <? echo ($rec['exclude'] == 1) ? 'checked' : ''; ?>> </td>
+                    <td><button class="btn_statistics">События</button></td>
                 </tr>
             </table>
+            <div class="div_accordion">
+                <div class="accordion" style="grid-column-start: 1;">
+                    <b>Время и место</b>
+                    <table>
+                        <tr>
+                            <td> Дата: </td>
+                            <td> <input type="date" name="date_meet" value="<?= $rec['date_meet'] ?>"> </td>
+                        </tr>
+                        <tr>
+                            <td>Город:</td>
+                            <td><input type="text" name="city" value="<?= $rec['city'] ?>"></td>
+                        </tr>
+                        <tr>
+                            <td>Стадион:</td>
+                            <td> <input type="text" name="stadium" value="<?= $rec['stadium'] ?>"></td>
+                        </tr>
+                        <tr>
+                            <td> Время:</td>
+                            <td> <input type="time" name="time_meet" value="<?= $rec['time_meet'] ?>">
+                                Зона: <input type="number" name="time_zone" value="<?= $rec['time_zone'] ?>">
+                            </td>
+                        <tr>
+                            <td></td>
+                            <td>Вход&nbsp;свободый: <input type="checkbox" name="free" value="<?= $rec['free'] ?>" <? echo ($rec['free'] == 1) ? 'checked' : ''; ?>></td>
+
+                        </tr>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="accordion" style="grid-column-start: 2;">
+                    <b>Cтатистика</b>
+                    <table>
+                        <tr>
+                            <td>Процент владения мячом:</td>
+                            <td><input class="digit_only" type="text" name="ball_poss" value="<?= $rec['ball_poss'] ?>"></td>
+                            <td>Офсайды:</td>
+                            <td><input class="digit_only" type="text" name="offside_1" value="<?= $rec['offside_1'] ?>">
+                                <input class="digit_only" type="text" name="offside_2" value="<?= $rec['offside_2'] ?>"></td>
+                            <td>Угловые:</td>
+                            <td><input class="digit_only" type="text" name="corner_1" value="<?= $rec['corner_1'] ?>">
+                                <input class="digit_only" type="text" name="corner_2" value="<?= $rec['corner_2'] ?>"></td>
+                            <td>Голевые моменты:</td>
+                            <td><input class="digit_only" type="text" name="goal_moment_1" value="<?= $rec['goal_moment_1'] ?>">
+                                <input class="digit_only" type="text" name="goal_moment_2" value="<?= $rec['goal_moment_2'] ?>"></td>
+                        </tr>
+                        <tr>
+                            <td>Удары по воротам:</td>
+                            <td><input class="digit_only" type="text" name="kick_goal_1" value="<?= $rec['kick_goal_1'] ?>">
+                                <input class="digit_only" type="text" name="kick_goal_2" value="<?= $rec['kick_goal_2'] ?>"></td>
+                            <td>Удары в створ:</td>
+                            <td><input class="digit_only" type="text" name="kick_target_1" value="<?= $rec['kick_target_1'] ?>">
+                                <input class="digit_only" type="text" name="kick_target_2" value="<?= $rec['kick_target_2'] ?>"></td>
+                            <td>Штанги:</td>
+                            <td><input class="digit_only" type="text" name="goalpost_1" value="<?= $rec['goalpost_1'] ?>">
+                                <input class="digit_only" type="text" name="goalpost_2" value="<?= $rec['goalpost_2'] ?>"></td>
+                            <td>Фолы:</td>
+                            <td><input class="digit_only" type="text" name="foul_1" value="<?= $rec['foul_1'] ?>">
+                                <input class="digit_only" type="text" name="foul_2" value="<?= $rec['foul_2'] ?>"></td>
+                        </tr>
+                        <td>Предупреждения:</td>
+                        <td><input class="digit_only" type="text" name="warning_1" value="<?= $rec['warning_1'] ?>">
+                            <input class="digit_only" type="text" name="warning_2" value="<?= $rec['warning_2'] ?>"></td>
+                        <td>Удаления:</td>
+                        <td><input class="digit_only" type="text" name="sending_off_1" value="<?= $rec['sending_off_1'] ?>">
+                            <input class="digit_only" type="text" name="sending_off_2" value="<?= $rec['sending_off_2'] ?>"></td>
+                        <tr>
+
+                        </tr>
+                    </table>
+                </div>
+                <div class="accordion" style="grid-column-start: 3;">
+                    <b>Афиша</b>
+                    <table>
+                        <tr>
+                            <td>
+                                <label class="button" for="poster<?= $code ?>">Загрузить афишу</label>
+                                <input class="poster" id="poster<?= $code ?>" type="file">
+                            </td>
+                            <td rowspan="2"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/meet/<?= $rec['code'] ?>.jpg" alt="нет афиши">
+                        </tr>
+                        <tr>
+                            <td>
+                                Использовать афишу: <input type="checkbox" name="poster" value="<?= $rec['poster'] ?>" <? echo ($rec['poster'] == 1) ? 'checked' : ''; ?>>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
     <?php
     } ?>
@@ -247,19 +301,28 @@ if (isset($_GET['add'])) { ?>
 <script>
     jQuery(function($) {
 
+        //  ★★★★ АККОРДЕОН ★★★★
+        $(function() {
+            $(".accordion").accordion({
+                collapsible: true,
+                active: false,
+                animate: false
+            });
+        });
+
         //  ★★★★ кнопка ДОБАВИТЬ МАТЧ ★★★★
         $(document).on('click', '.btn_add_rec', function() { // кнопка добавления записи
             document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=meet&add";
         });
 
         //  ★★★★ кнопка СХЕМА ИГРОКОВ ★★★★
-        $(document).on('click', '.btn_schema', function() { 
+        $(document).on('click', '.btn_schema', function() {
             let code = $(this).closest(".meet").data("code");
             document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=scheme&meet=" + code;
         });
 
         //  ★★★★ кнопка СТАТИСТИКА ★★★★
-        $(document).on('click', '.btn_statistics', function() { 
+        $(document).on('click', '.btn_statistics', function() {
             let code = $(this).closest(".meet").data("code");
             document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=statistics&meet=" + code;
         });
