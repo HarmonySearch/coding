@@ -20,6 +20,7 @@ function myajax_data(){  //Создает уникальный защитный 
 if( wp_doing_ajax() ){ 
 	// if(current_user_can('edit_user_data')){ 
 		add_action('wp_ajax_data_change', 'data_change_callback');
+		add_action('wp_ajax_row_delete', 'row_delete_callback');
 		add_action('wp_ajax_load_file', 'load_file_callback');
 		add_action('wp_ajax_load_tourney', 'load_tourney_callback');
 		add_action('wp_ajax_load_meet', 'load_meet_callback');
@@ -77,6 +78,7 @@ function standings_load_callback(){
 
     die();
 }
+
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 //  UPDATE FIELD
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
@@ -109,6 +111,40 @@ function data_change_callback(){
     echo $result;
 	wp_die();
 }
+
+
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+//  УДАЛЕНИЕ СТРОКИ
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+function row_delete_callback(){
+    /*
+     * Получаем 2 параметра: таблицу и код строки
+     */
+
+    $tables = ['team', 'player','tourney', 'meet', 'trainer','player_scheme','statistics']; // список допустымых таблиц
+
+	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
+	if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
+
+    $table = clean($_POST['table']);
+    if (! in_array($table, $tables)) die('Stop! No table'); // нет такой таблицы
+    
+    $code = clean($_POST['code']);
+
+    $where = array('code' => $code);
+
+    global $wpdb;
+
+    $result = $wpdb->delete( $table, $where);
+
+    echo $result;
+    // echo $table, $code, $where;
+
+	wp_die();
+}
+
+
 
 $rule_file = array(
     'meet' => array('type' => 'image/jpeg', 'size' => 500000,  'dir' => '/images/db/meet/', 'ext' => '.jpg'),
@@ -471,11 +507,14 @@ function load_trainer_callback(){
     $data_a = array(
         'lastname' => clean($_POST['lastname']),
         'name' => clean($_POST['name']),
-        'position' => clean($_POST['position'])
+        'position' => clean($_POST['position'])  // должность
     );
     $country = clean($_POST['country']);
     if ( is_numeric ($country)) { $data_a['country'] = (int)$country; }
     
+    $team = (int)clean($_POST['team']);
+    $data_a['team'] = $team;
+
     global $wpdb;
     $result = $wpdb->insert('trainer', $data_a);
     if ($result <= 0) {

@@ -228,12 +228,28 @@ button.load_rec {
 
 /*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ СТАТИСТИКА ★★★★ */
 
-.statistics_table input[name=minute],
+/* .statistics_table input[name=minute],
 .statistics_table select
 {
     width: 100%;
+} */
+.statistics_table .row {
+    display: flex;
+    align-items: center;
 }
+.btn_delete {
+width: 26px;
+height: 23px;
+margin-right: 5px;
+}
+
 .statistics_table input[name=comment]
 {
-    width: 500%;
+    width: 100%;
+} 
+.statistics_table .hide {
+    display: none;
+} 
+.row select[name=player_2]{
+    display: none;
 }

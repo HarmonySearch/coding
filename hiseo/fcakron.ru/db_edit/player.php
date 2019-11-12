@@ -27,7 +27,7 @@ if (isset($_GET['add'])) { ?>
                         <select name="team" required>
                             <option value="">выбрать название команды</option>
                             <? foreach ($code_team as $opt) { ?>
-                                <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
+                                <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?> (<?= $opt['city'] ?>)</option>
                             <? } ?>
                         </select>
                     </td>

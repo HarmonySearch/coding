@@ -8,6 +8,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 $code_cry = get_country();    // страна select
+$code_team = get_team_select();  // команда select
 
 //  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
 //
@@ -20,6 +21,16 @@ if (isset($_GET['add'])) { ?>
         <div class="add_rec">
             <div class="err">Поля в красной рамке обязательныe.</div>
             <table>
+                <tr>
+                    <td>Команда:
+                        <select name="team" required>
+                            <option value="">выбрать название команды</option>
+                            <? foreach ($code_team as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>"><?= $opt['name'] ?> (<?= $opt['city'] ?>)</option>
+                            <? } ?>
+                        </select>
+                    </td>
+                </tr>
 
                 <tr>
                     <td>Фамилия: <input type="text" name="lastname" value="" required></td>
@@ -62,12 +73,13 @@ if (isset($_GET['add'])) { ?>
             //  ▰▰▰▰ КНОПКА ЗАГРУЗИТЬ В БАЗУ ▰▰▰▰
             $(document).on('click', '.load_rec', function() {
 
-                if ($('input[name="lastname"]').val() == '' || 
+                if ($('input[name="lastname"]').val() == '' ||
                     $('input[name="name"]').val() == '') {
                     alert("Не заполнены обязательные поля.");
                     return false;
                 }
                 form_data = new FormData(); // создание формы
+                form_data.append('team', $('select[name="team"]').val());
                 form_data.append('lastname', $('input[name="lastname"]').val());
                 form_data.append('name', $('input[name="name"]').val());
                 form_data.append('position', $('input[name="position"]').val());
@@ -110,7 +122,7 @@ if (isset($_GET['add'])) { ?>
 //
 ?>
 <h1>Таблица тренерского состава</h1>
-<h3>(информация не используется на сайте)</h3>
+<h3>добавилось поле "Команда". Теперь тренерский состав можно вводить для каждой команды</h3>
 <div>
     <button class="btn_add_rec">Добавить тренера</button>
 </div>
@@ -123,34 +135,44 @@ if (isset($_GET['add'])) { ?>
         <div class="root_table" data-table="trainer" data-code="<?= $code ?>">
 
             <table>
+            <tr>
+            <td>Команда: </td>
+                    <td>
+                        <select name="team">
+                            <? foreach ($code_team as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['team']) ? 'selected' : ''; ?>><?= $opt['name'] ?> - <?= $opt['city'] ?></option>
+                            <? } ?>
+                        </select>
+                    </td>
+                    </tr>
                 <tr>
                     <td>Фамилия: </td>
                     <td><input type="text" name="lastname" value="<?= $rec['lastname'] ?>"></td>
                     <td rowspan="3"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/trainer/<?= $rec['code'] ?>.png" alt="<?= $rec['name'] ?>"></td>
-                    <td>Логотип: ( PNG не более 200 Кбайт)</td>
                 </tr>
 
                 <tr>
                     <td>Имя: </td>
                     <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
-                    <td><label class="button" for="logo<?= $code ?>">Загрузить</label></td>
                 </tr>
 
                 <tr>
                     <td>Должность: </td>
                     <td><input type="text" name="position" value="<?= $rec['position'] ?>"></td>
-                    <td><input id="logo<?= $code ?>" type="file"></td>
                 </tr>
                 <tr>
-                <td>Страна: </td>
-                <td>
-                    <select class="country" name="country">
+                    <td>Страна: </td>
+                    <td>
+                        <select class="country" name="country">
                             <? foreach ($code_cry as $opt) { ?>
                                 <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['country']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
                             <? } ?>
                         </select>
-                        </td>
-
+                    </td>
+                    <td style="text-align:center">
+                        <label class="button" for="logo<?= $code ?>">Загрузить фото</label>
+                        <input id="logo<?= $code ?>" type="file">
+                    </td>
                 </tr>
             </table>
 
@@ -178,8 +200,8 @@ if (isset($_GET['add'])) { ?>
             let code = patern.data("code"); // и название таблицы для правки
             let name = $(this).attr("name");
             let value = $(this).val();
-console.log(table,code,value);
-//return;
+            console.log(table, code, value);
+            //return;
             let data_lib = {
                 action: 'data_change',
                 nonce_code: my_ajax_noncerr,

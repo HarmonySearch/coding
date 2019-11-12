@@ -39,7 +39,7 @@ if (!$scheme) {
 <h1>Схема расстановки игроков</h1>
 <h3>(информация не используется на сайте)</h3>
 
-<div class="trainer_table">
+<div>
     <?php
     foreach (get_player_scheme($meet) as $rec) {
         $code = $rec['code']; ?>

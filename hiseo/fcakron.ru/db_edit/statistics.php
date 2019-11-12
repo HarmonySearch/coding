@@ -22,6 +22,11 @@ global $wpdb;
 $code_player = $wpdb->get_results($sql, 'ARRAY_A');
 $code_event = get_event();  // select события
 
+// на каком коде события сколько игроков
+$player_event = [];
+foreach ($code_event as $rec) {
+    $player_event[$rec['code']] = $rec['player'];
+}
 
 // нужна хоть одна запись, поскольку добавление записей
 // делается клонированием последней записи
@@ -35,6 +40,36 @@ if (!$res) {
 // ★★★★ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ★★★★
 //
 ?>
+<style>
+    .event0 select[name=player] {
+        display: none;
+    }
+
+    .event5 select[name=player] {
+        display: none;
+    }
+
+    .event13 select[name=player] {
+        display: none;
+    }
+
+    .event14 select[name=player] {
+        display: none;
+    }
+
+    .event17 select[name=player] {
+        display: none;
+    }
+
+    .event18 select[name=player] {
+        display: none;
+    }
+
+    .event6 select[name=player_2] {
+        display: block;
+    }
+</style>
+
 <h1>Таблица статистики</h1>
 <h3>(информация пока не используется на сайте)</h3>
 <div>
@@ -43,41 +78,46 @@ if (!$res) {
 
 <div class="statistics_table">
     <hr class="hr_db">
-    <table>
-        <tr>
-            <th width="50px">Время</th>
-            <th>Событие</th>
-            <th>Игрок</th>
-            <th>Комметарий</th>
-        </tr>
-        <?php
-        foreach (get_statistics($meet) as $rec) {
-            $code = $rec['code']; ?>
-            <tr class="row" data-table="statistics" data-code="<?= $code ?>">
-                <td><input class="digit_only" type="text" name="minute" value="<?= $rec['minute'] ?>"></td>
-                <td>
-                    <select name="event">
-                        <option value="">Выбрать событие</option>
-                        <? foreach ($code_event as $opt) { ?>
-                            <option value="<?= $opt["code"] ?>" <? echo ($opt["code"] == $rec["event"]) ? "selected" : ""; ?>><?= $opt["name"] ?></option>
-                        <? } ?>
-                    </select>
-                </td>
-                <td>
-                    <select name="player">
-                        <option value="">Выбрать игрока</option>
-                        <? foreach ($code_player as $opt) { ?>
-                            <option value="<?= $opt["code"] ?>" <? echo ($opt["code"] == $rec["player"]) ? "selected" : ""; ?>><?= $opt["lastname"] ?> (<?= $opt["team_name"] ?>)</option>
-                        <? } ?>
-                    </select>
-                </td>
-                <td><input rows="2" cols="80" type="textarea" name="comment" value="<?= $rec["comment"] ?>"></td>
-            </tr>
-        <?php
-        } ?>
-    </table>
-    <hr class="hr_db">
+    <b>Время, событие, игроки, комметарий</b>
+    <?php
+    foreach (get_statistics($meet) as $rec) {
+        $code = $rec['code'];
+        // нет события - нет игроков
+        if (isset($rec['event'])) {
+            $css = $rec['event'];
+        } else {
+            $css = 0;
+        }
+        ?>
+        <div class="row <?= 'event' . $css ?>" data-table="statistics" data-code="<?= $code ?>">
+
+            <button class="btn_delete" data-meet="<?= $meet ?>"><img src="http://fcakron.ru/wp-content/themes/fcakron/images/db/delete.png"></button>
+
+            <input class="digit_only" type="text" name="minute" value="<?= $rec['minute'] ?>">
+            <select name="event">
+                <option value="">Выбрать событие</option>
+                <? foreach ($code_event as $opt) { ?>
+                    <option value="<?= $opt["code"] ?>" <? echo ($opt["code"] == $rec["event"]) ? "selected" : ""; ?>><?= $opt["name"] ?></option>
+                <? } ?>
+            </select>
+            <select name="player">
+                <option value="">Выбрать игрока</option>
+                <? foreach ($code_player as $opt) { ?>
+                    <option value="<?= $opt["code"] ?>" <? echo ($opt["code"] == $rec["player"]) ? "selected" : ""; ?>><?= $opt["lastname"] ?> (<?= $opt["team_name"] ?>)</option>
+                <? } ?>
+            </select>
+            <select name="player_2">
+                <option value="">Выбрать второго игрока</option>
+                <? foreach ($code_player as $opt) { ?>
+                    <option value="<?= $opt["code"] ?>" <? echo ($opt["code"] == $rec["player_2"]) ? "selected" : ""; ?>><?= $opt["lastname"] ?> (<?= $opt["team_name"] ?>)</option>
+                <? } ?>
+            </select>
+            <input rows="2" cols="80" type="textarea" name="comment" value="<?= $rec["comment"] ?>">
+        </div>
+    <?php
+    } ?>
 </div>
+<hr class="hr_db">
 <div>
     <button class="btn_add_rec" data-meet="<?= $meet ?>">Добавить событие</button>
 </div>
@@ -85,6 +125,34 @@ if (!$res) {
 
 <script>
     jQuery(function($) {
+
+        //  ★★★★ УДАЛЕНИЕ СТРОКИ ★★★★
+        $(document).on('click', '.btn_delete', function() {
+            let row = $(this).parent();
+            let code = row.data('code'); // код записи
+            let data_lib = {
+                action: 'row_delete',
+                nonce_code: my_ajax_noncerr,
+                table: "statistics",
+                code: code,
+            };
+            jQuery.ajax({
+                method: "POST",
+                url: ajaxurl,
+                data: data_lib
+            }).done(function(data) {
+                row.remove();
+            });
+        });
+
+
+        //  ★★★★ СМЕНА ПОЛЕЙ ПО СОБЫТИЮ ★★★★
+        $(document).on('change', '[name=event]', function(e) {
+            console.log('event');
+            // изменяем класс
+            let s = 'row event' + $(this).val();
+            $(this).parent().attr('class', s);
+        });
 
         //  ★★★★ вводить ТОЛЬКО ЦИФРЫ ★★★★
         $(document).ready(function() {
@@ -98,7 +166,7 @@ if (!$res) {
         //  ★★★★ кнопка ДОБАВИТЬ запись события ★★★★
         $(document).on('click', '.btn_add_rec', function() {
 
-            let meet = $(this).data("meet"); // код прописан в кнопке
+            let meet = $(this).data("meet"); // код матча прописан в кнопке
             let data_lib = {
                 action: 'statistics_add',
                 nonce_code: my_ajax_noncerr,
@@ -109,16 +177,16 @@ if (!$res) {
                 method: "POST",
                 url: ajaxurl,
                 data: data_lib
-            }).done(function(data) {
-                console.log('--' + data);
+            }).done(function(new_code) {
+                // new_code - код новой строки из базы
                 // клонируем последний элемент таблицы
-                let tr = $("table tr:last-child").clone();
-                console.log('+++++' + data);
-                tr.data("code", data);
-                console.log(tr.data("code"));
-                tr.find("input,select").val("");
-                console.log(tr);
-                $("table").append(tr);
+                // меняем код на новый, обнуляем переменные
+                let row = $(".statistics_table .row:last-child").clone();
+                console.log(row);
+                row.data("code", new_code);
+                row.find("input,select").val("");
+                row.attr('class', 'row event0');
+                $(".statistics_table").append(row);
             });
 
         });
@@ -127,7 +195,7 @@ if (!$res) {
 
         $(document).on('change', 'input, select', function(e) {
 
-            let parent = $(this).closest("tr"); // корневой предок
+            let parent = $(this).parent(); // родитель
             let code = parent.data("code"); // код записи
             let name = $(this).attr("name");
             let value = $(this).val();
