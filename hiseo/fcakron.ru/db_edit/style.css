@@ -171,6 +171,11 @@ button.load_rec {
 
 /*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ СХЕМЫ ★★★★ */
 
+.root_table {
+    display: grid;
+    grid-template-columns: 340px 420px 320px ;
+}
+
 .scheme {
     position: relative;
     display: grid;
@@ -179,6 +184,7 @@ button.load_rec {
     padding: 100px 0 15px;
     background-image: url(/wp-content/themes/fcakron/images/sheme_bg.png);
     box-sizing: border-box;
+    border: 4px double black;
 }
 .scheme.s1 { /* 5/4/1 */
     grid-template: "i11 i11 i11 i11 i11" "i07 i08 spa i09 i10" "i02 i03 i04 i05 i06" "i01 i01 i01 i01 i01" / 1fr 1fr 1fr 1fr 1fr;
@@ -221,10 +227,6 @@ button.load_rec {
 .scheme .item:nth-child(11){grid-area: i11;}
 
 
-.root_table {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-}
 
 /*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ СТАТИСТИКА ★★★★ */
 

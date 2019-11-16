@@ -170,6 +170,9 @@ if (isset($_GET['add'])) { ?>
 
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ТАБЛИЦА ИГРОКОВ ★★★★
 
+
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ТАБЛИЦА ИГРОКОВ ★★★★
+
 /*
  * Фильтрация игроков по командам.
  * Если в GET задана команда, то вытаскивать игроком только этой команды
@@ -178,14 +181,13 @@ if (isset($_GET['add'])) { ?>
 if (isset($_GET['team'])) {          // это для формирования селектора
     $team = $_GET['team'];
 } else {
-    $team = "";
+    $team = "1";
 }
 
-if ($team != "") {                  // это для формирования запроса
-    $players = get_players($_GET['team']);
-} else {
-    $players = get_players();
-}
+$players = get_players($team);
+
+
+$start = microtime(true);
 
 ?>
 
@@ -201,10 +203,10 @@ if ($team != "") {                  // это для формирования з
 <hr class="hr_db">
 
 <div>Фильтр по командам
-    <select class="team_filter" name="team">
+    <select class="team_filter" name="team_filter">
         <option value="">все команды</option>
         <? foreach ($code_team as $opt) { ?>
-            <option value="<?= $opt['code'] ?>" <?= ($opt['code'] == $team) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+            <option value="<?= $opt['code'] ?>" <?= ($opt['code'] == $team) ? 'selected' : ''; ?>><?= $opt['name'] ?> (<?= $opt['city'] ?>)</option>
         <? } ?>
     </select>
 </div>
@@ -244,10 +246,25 @@ if ($team != "") {                  // это для формирования з
                 <tr>
                     <td><input type="text" name="lastname" value="<?= $rec['lastname'] ?>"></td>
                     <td>
-                        Первое ражданство:
+                        Первое гражданство:
                     </td>
-                    <td rowspan="3"><img class="img_1 photo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/player/<?= $rec['code'] ?>-1.png" alt="<?= $rec['lastname'] ?>"></td>
-                    <td rowspan="3"><img class="img_2 photo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/player/<?= $rec['code'] ?>-2.png" alt="<?= $rec['lastname'] ?>"></td>
+                    <?php  // если нет картинок на сервере, то и не загружаем
+                        $src = dirname(__FILE__) . '/../images/db/player/' . $rec['code'] . '-1.png';
+                        if (file_exists($src)) { ?>
+                        <td rowspan="3"><img class="img_1 photo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/player/<?= $rec['code'] ?>-1.png" alt="<?= $rec['lastname'] ?>"></td>
+                    <?php
+                        } else { ?>
+                        <td rowspan="3"></td>
+                    <?php
+                        }
+                        $src = dirname(__FILE__) . '/../images/db/player/' . $rec['code'] . '-2.png';
+                        if (file_exists($src)) { ?>
+                        <td rowspan="3"><img class="img_2 photo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/player/<?= $rec['code'] ?>-2.png" alt="<?= $rec['lastname'] ?>"></td>
+                    <?php
+                        } else { ?>
+                        <td rowspan="3"></td>
+                    <?php
+                        } ?>
                 </tr>
                 <tr>
                     <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
@@ -339,155 +356,155 @@ if ($team != "") {                  // это для формирования з
                 </table>
             </div>
             <div class="stat1">
-            <b>Таблица статистики (вычисляемая. пока нет статистик будут нули)</b>
-            <table>
-                <tr>
-                    <td class="count">Сыгранные матчи: </td>
-                    <td class="count"><input class="digit_only" type="text" name="match" readonly value="<?= $rec['match'] ?>"></td>
-                    <td class="count">Минуты на поле: </td>
-                    <td class="count"><input class="digit_only" type="text" name="minute" readonly value="<?= $rec['minute'] ?>"></td>
-                    <td class="count">Голы (пенальти): </td>
-                    <td class="count"><input class="digit_only" type="text" name="goal" readonly value="<?= $rec['goal'] ?> (<?= $rec['penalty'] ?>)"></td>
-                    <td class="count">Голевые передачи: </td>
-                    <td class="count"><input class="digit_only" type="text" name="pass" readonly value="<?= $rec['pass'] ?>"></td>
-                    <td class="count">Желтые карточки: </td>
-                    <td class="count"><input class="digit_only" type="text" name="cart_yellow" readonly value="<?= $rec['cart_yellow'] ?>"></td>
-                </tr>
-                <tr>
-                    <td class="count">Красные карточки: </td>
-                    <td class="count"><input class="digit_only" type="text" name="match" readonly value="<?= $rec['match'] ?>"></td>
-                    <td class="count">Точность передач: </td>
-                    <td class="count"><input class="digit_only" type="text" name="minute" readonly value="<?= $rec['minute'] ?>"></td>
-                    <?php
-                        if ($rec['position'] != 1) {
+                <b>Таблица статистики (вычисляемая. пока нет статистик будут нули)</b>
+                <table>
+                    <tr>
+                        <td class="count">Сыгранные матчи: </td>
+                        <td class="count"><input class="digit_only" type="text" name="match" readonly value="<?= $rec['match'] ?>"></td>
+                        <td class="count">Минуты на поле: </td>
+                        <td class="count"><input class="digit_only" type="text" name="minute" readonly value="<?= $rec['minute'] ?>"></td>
+                        <td class="count">Голы (пенальти): </td>
+                        <td class="count"><input class="digit_only" type="text" name="goal" readonly value="<?= $rec['goal'] ?> (<?= $rec['penalty'] ?>)"></td>
+                        <td class="count">Голевые передачи: </td>
+                        <td class="count"><input class="digit_only" type="text" name="pass" readonly value="<?= $rec['pass'] ?>"></td>
+                        <td class="count">Желтые карточки: </td>
+                        <td class="count"><input class="digit_only" type="text" name="cart_yellow" readonly value="<?= $rec['cart_yellow'] ?>"></td>
+                    </tr>
+                    <tr>
+                        <td class="count">Красные карточки: </td>
+                        <td class="count"><input class="digit_only" type="text" name="match" readonly value="<?= $rec['match'] ?>"></td>
+                        <td class="count">Точность передач: </td>
+                        <td class="count"><input class="digit_only" type="text" name="minute" readonly value="<?= $rec['minute'] ?>"></td>
+                        <?php
+                            if ($rec['position'] != 1) {
+                                ?>
+                            <td class="count">Успешные отборы: </td>
+                            <td class="count"><input class="digit_only" type="text" name="take_away" readonly value="<?= $rec['take_away'] ?>"></td>
+                            <td class="count">Успешные обводки: </td>
+                            <td class="count"><input class="digit_only" type="text" name="stroke" readonly value="<?= $rec['stroke'] ?>"></td>
+                            <td class="count">Выигранные единоборства: </td>
+                            <td class="count"><input class="digit_only" type="text" name="combat" readonly value="<?= $rec['combat'] ?>"></td>
+                        <?php
+                            } else {
+                                ?>
+                            <td class="count">Сухие матчи: </td>
+                            <td class="count"><input class="digit_only" type="text" name="shutout" readonly value="<?= $rec['shutout'] ?>"></td>
+                            <td class="count">Пропущенные голы : </td>
+                            <td class="count"><input class="digit_only" type="text" name="goal_allow" readonly value="<?= $rec['goal_allow'] ?>"></td>
+                            <td class="count">Сейвы: </td>
+                            <td class="count"><input class="digit_only" type="text" name="save" readonly value="<?= $rec['save'] ?>"></td>
+                        <?php
+                            }
                             ?>
-                        <td class="count">Успешные отборы: </td>
-                        <td class="count"><input class="digit_only" type="text" name="take_away" readonly value="<?= $rec['take_away'] ?>"></td>
-                        <td class="count">Успешные обводки: </td>
-                        <td class="count"><input class="digit_only" type="text" name="stroke" readonly value="<?= $rec['stroke'] ?>"></td>
-                        <td class="count">Выигранные единоборства: </td>
-                        <td class="count"><input class="digit_only" type="text" name="combat" readonly value="<?= $rec['combat'] ?>"></td>
-                    <?php
-                        } else {
-                            ?>
-                        <td class="count">Сухие матчи: </td>
-                        <td class="count"><input class="digit_only" type="text" name="shutout" readonly value="<?= $rec['shutout'] ?>"></td>
-                        <td class="count">Пропущенные голы : </td>
-                        <td class="count"><input class="digit_only" type="text" name="goal_allow" readonly value="<?= $rec['goal_allow'] ?>"></td>
-                        <td class="count">Сейвы: </td>
-                        <td class="count"><input class="digit_only" type="text" name="save" readonly value="<?= $rec['save'] ?>"></td>
-                    <?php
-                        }
-                        ?>
-                </tr>
-            </table>
+                    </tr>
+                </table>
+            </div>
+        <?php
+        } ?>
+        <hr class="hr_db">
         </div>
-    <?php
-    } ?>
-    <hr class="hr_db">
-</div>
-<div>
-    <button class="btn_add_rec">Добавить игрока</button>
-</div>
+        <div>
+            <button class="btn_add_rec">Добавить игрока</button>
+        </div>
 
-<script>
-    jQuery(function($) {
+        <script>
+            jQuery(function($) {
 
-        $(function() {
-            $(".stat1").accordion({
-                collapsible: true,
-                active: false,
-                animate: false
+                $(function() {
+                    $(".stat1").accordion({
+                        collapsible: true,
+                        active: false,
+                        animate: false
+                    });
+                });
+
+                //  ★★★★ ВВОДИТЬ ТОЛЬКО ЦИФРЫ ★★★★
+                $(document).ready(function() {
+                    $('.digit_only').on("change keyup input click", function() {
+                        if (this.value.match(/[^0-9]/g)) { // g ищет все совпадения, без него – только первое.
+                            this.value = this.value.replace(/[^0-9]/g, '');
+                        }
+                    });
+                });
+
+                //  ★★★★ ДОБАВИТЬ ЗАПИСЬ ★★★★
+                $(document).on('click', '.btn_add_rec', function() { // кнопка "добавить игрока"
+                    document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=player&add";
+                });
+
+                //  ★★★★ ФИЛЬТР ★★★★
+                $(".team_filter").change(function() {
+                    team = $(this).val();
+                    href = "https://fcakron.ru/wp-admin/admin.php?page=player&team=" + team;
+                    console.log(href);
+                    document.location.href = href;
+                });
+
+                //  ★★★★ РЕДАКТИРОВАТЬ ЗАПИСЬ ★★★★
+                $("input, select").change(function() {
+
+                    let table = 'player';
+                    let name = $(this).attr("name");
+                    let code = $(this).closest(".player").data("code");
+                    let value;
+                    if ($(this).attr("type") == 'checkbox') {
+                        value = ($(this).prop("checked") ? 1 : 0);
+                    } else {
+                        value = $(this).val();
+                    }
+
+                    let data_lib = {
+                        action: 'data_change',
+                        nonce_code: my_ajax_noncerr,
+                        table: table,
+                        code: code,
+                        name: name,
+                        value: value
+                    };
+
+                    jQuery.ajax({
+                        method: "POST",
+                        url: ajaxurl,
+                        data: data_lib
+                    }).done(function(data) {});
+                    console.log(data);
+                });
+
+                //  ★★★★★★★★★★★★★★★★★★★★★★★★ ЗАГРУЗКА ФАЙЛА ★★★★
+                // нужны: код записи, номер фото (первое или второе),
+                // ссылки на файл для загрузки, на img для обновления после загрузки 
+
+                $(document).on('change', 'input[type="file"]', function() {
+
+                    let parent = $(this).closest(".player");
+                    let code = parent.data("code"); // код записи
+                    let num = $(this).data("num"); // номер фото
+                    let file_data = $(this).prop('files')[0]; // ссылки на файл
+                    let img = parent.find('.img_' + num); // ссылка на картинку
+
+                    form_data = new FormData();
+                    form_data.append('key', 'player_' + num); // ключ из ассоциативного массива на сервере
+                    form_data.append('code', code);
+                    form_data.append('file', file_data);
+                    form_data.append('action', 'load_file'); // функция обработки 
+                    form_data.append('nonce_code', my_ajax_noncerr); // ключ
+
+                    $.ajax({
+                        method: "POST",
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        url: ajaxurl,
+                        data: form_data,
+                    }).done(function(msg) {
+                        if (msg != "") {
+                            alert(msg);
+                        } else {
+                            // обновление img
+                            let src = img.attr('src') + '?t=' + Date.now();
+                            img.attr('src', src);
+                        }
+                    });
+                });
             });
-        });
-
-        //  ★★★★ ВВОДИТЬ ТОЛЬКО ЦИФРЫ ★★★★
-        $(document).ready(function() {
-            $('.digit_only').on("change keyup input click", function() {
-                if (this.value.match(/[^0-9]/g)) { // g ищет все совпадения, без него – только первое.
-                    this.value = this.value.replace(/[^0-9]/g, '');
-                }
-            });
-        });
-
-        //  ★★★★ ДОБАВИТЬ ЗАПИСЬ ★★★★
-        $(document).on('click', '.btn_add_rec', function() { // кнопка "добавить игрока"
-            document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=player&add";
-        });
-
-        //  ★★★★ ФИЛЬТР ★★★★
-        $(".team_filter").change(function() {
-            team = $(this).val();
-            href = "https://fcakron.ru/wp-admin/admin.php?page=player&team=" + team;
-            console.log(href);
-            document.location.href = href;
-        });
-
-        //  ★★★★ РЕДАКТИРОВАТЬ ЗАПИСЬ ★★★★
-        $("input, select").change(function() {
-
-            let table = 'player';
-            let name = $(this).attr("name");
-            let code = $(this).closest(".player").data("code");
-            let value;
-            if ($(this).attr("type") == 'checkbox') {
-                value = ($(this).prop("checked") ? 1 : 0);
-            } else {
-                value = $(this).val();
-            }
-
-            let data_lib = {
-                action: 'data_change',
-                nonce_code: my_ajax_noncerr,
-                table: table,
-                code: code,
-                name: name,
-                value: value
-            };
-
-            jQuery.ajax({
-                method: "POST",
-                url: ajaxurl,
-                data: data_lib
-            }).done(function(data) {});
-            console.log(data);
-        });
-
-        //  ★★★★★★★★★★★★★★★★★★★★★★★★ ЗАГРУЗКА ФАЙЛА ★★★★
-        // нужны: код записи, номер фото (первое или второе),
-        // ссылки на файл для загрузки, на img для обновления после загрузки 
-
-        $(document).on('change', 'input[type="file"]', function() {
-
-            let parent = $(this).closest(".player");
-            let code = parent.data("code"); // код записи
-            let num = $(this).data("num"); // номер фото
-            let file_data = $(this).prop('files')[0]; // ссылки на файл
-            let img = parent.find('.img_' + num); // ссылка на картинку
-
-            form_data = new FormData();
-            form_data.append('key', 'player_' + num); // ключ из ассоциативного массива на сервере
-            form_data.append('code', code);
-            form_data.append('file', file_data);
-            form_data.append('action', 'load_file'); // функция обработки 
-            form_data.append('nonce_code', my_ajax_noncerr); // ключ
-
-            $.ajax({
-                method: "POST",
-                cache: false,
-                contentType: false,
-                processData: false,
-                url: ajaxurl,
-                data: form_data,
-            }).done(function(msg) {
-                if (msg != "") {
-                    alert(msg);
-                } else {
-                    // обновление img
-                    let src = img.attr('src') + '?t=' + Date.now();
-                    img.attr('src', src);
-                }
-            });
-        });
-    });
-</script>
+        </script>
