@@ -65,7 +65,13 @@ if (!$res) {
         display: none;
     }
 
+    .event3 select[name=player_2] {
+        display: block;
+    }
     .event6 select[name=player_2] {
+        display: block;
+    }
+    .event9 select[name=player_2] {
         display: block;
     }
 </style>

@@ -11,6 +11,9 @@ $code_cry = get_country();    // страна select
 $code_pos = get_position();  // позиция select
 $code_team = get_team_select();  // команда select
 
+
+player_stat();
+
 //  ★★★★ ДОБАВИТЬ ЗАПИСЬ ★★★★
 //
 //  GET запрос наличие переменной add без значения
@@ -195,7 +198,6 @@ $start = microtime(true);
 <link rel="stylesheet" href="https://fcakron.ru/wp-content/themes/fcakron/db_edit/css/jquery-ui.css">
 
 <h1>Таблица игроков</h1>
-<h3>(забита чистая информация)</h3>
 <h3>(информация пока не используется на сайте)</h3>
 <div>
     <button class="btn_add_rec">Добавить игрока</button>
@@ -308,94 +310,61 @@ $start = microtime(true);
                 </tr>
             </table>
 
+            <?php if ($rec['position'] != 1) { ?>
+
+                <div class="stat1">
+                    <h3>Статистик не вычисляемая (вводить вручную)</h3>
+
+                    <table style="white-space: nowrap;">
+
+                        <tr>
+                            <!-- 2 -->
+                            <td class="count">Точность передач:</td>
+                            <td class="count"><input class="digit_only" type="text" name="accuracy" value="<?= $rec['accuracy'] ?>"></td>
+                            <td class="count">Успешные отборы:</td>
+                            <td><input class="digit_only" type="text" name="take_away" value="<?= $rec['take_away'] ?>"></td>
+                            <td class="count">Успешные обводки:</td>
+                            <td><input class="digit_only" type="text" name="stroke" value="<?= $rec['stroke'] ?>"></td>
+                            <td class="count">Выигранные единоборства:</td>
+                            <td><input class="digit_only" type="text" name="combat" value="<?= $rec['combat'] ?>"></td>
+                        </tr>
+                    </table>
+                </div>
+            <?php } ?>
 
             <div class="stat1">
-                <h3>Статистик которая (пока) должна выкладываться на сайт</h3>
+                <b>Статистика вычисляемая по событиям встреч (только для чтения)</b>
 
-                <table style="white-space: nowrap;">
-
-                    <tr>
-                        <!-- 2 -->
-                        <td class="count">Матчи:</td>
-                        <td class="count"><input class="digit_only" type="text" name="matches_plus" value="<?= $rec['matches_plus'] ?>"></td>
-                        <td class="count">Голы :</td>
-                        <td><input class="digit_only" type="text" name="goal_plus" value="<?= $rec['goal_plus'] ?>"></td>
-                        <td class="count">Сейвы:</td>
-                        <td><input class="digit_only" type="text" name="save_plus" value="<?= $rec['save_plus'] ?>"></td>
-                    </tr>
-
-                    <tr>
-                        <!-- 3 -->
-                        <td class="count">Выходы в старте:</td>
-                        <td><input class="digit_only" type="text" name="output_start_plus" value="<?= $rec['output_start_plus'] ?>"></td>
-                        <td class="count">Голевые передачи:</td>
-                        <td><input class="digit_only" type="text" name="pass_plus" value="<?= $rec['pass_plus'] ?>"></td>
-                        <td class="count">Пропущенные мячи:</td>
-                        <td><input class="digit_only" type="text" name="omission_plus" value="<?= $rec['omission_plus'] ?>"></td>
-                    </tr>
-
-                    <tr>
-                        <!-- 4 -->
-                        <td class="count">Выходы на замену:</td>
-                        <td><input class="digit_only" type="text" name="output_in_game_plus" value="<?= $rec['output_in_game_plus'] ?>"></td>
-                        <td class="count">Жёлтые карточки:</td>
-                        <td><input class="digit_only" type="text" name="cart_y_plus" value="<?= $rec['cart_y_plus'] ?>"></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-
-                    <tr>
-                        <!-- 5 -->
-                        <td>Замен в ходе матча:</td>
-                        <td><input class="digit_only" type="text" name="exchange_plus" value="<?= $rec['exchange_plus'] ?>"></td>
-                        <td class="count">Красные карточки:</td>
-                        <td><input class="digit_only" type="text" name="cart_r_plus" value="<?= $rec['cart_r_plus'] ?>"></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </table>
-            </div>
-            <div class="stat1">
-                <b>Таблица статистики (вычисляемая. пока нет статистик будут нули)</b>
                 <table>
                     <tr>
                         <td class="count">Сыгранные матчи: </td>
-                        <td class="count"><input class="digit_only" type="text" name="match" readonly value="<?= $rec['match'] ?>"></td>
+                        <td class="count"><input class="digit_only" type="text" name="matches" readonly value="<?= $rec['matches'] ?>"></td>
                         <td class="count">Минуты на поле: </td>
                         <td class="count"><input class="digit_only" type="text" name="minute" readonly value="<?= $rec['minute'] ?>"></td>
-                        <td class="count">Голы (пенальти): </td>
-                        <td class="count"><input class="digit_only" type="text" name="goal" readonly value="<?= $rec['goal'] ?> (<?= $rec['penalty'] ?>)"></td>
-                        <td class="count">Голевые передачи: </td>
-                        <td class="count"><input class="digit_only" type="text" name="pass" readonly value="<?= $rec['pass'] ?>"></td>
                         <td class="count">Желтые карточки: </td>
                         <td class="count"><input class="digit_only" type="text" name="cart_yellow" readonly value="<?= $rec['cart_yellow'] ?>"></td>
+                        <td class="count">Красные карточки: </td>
+                        <td class="count"><input class="digit_only" type="text" name="cart_red" readonly value="<?= $rec['cart_red'] ?>"></td>
+                        <?php if ($rec['position'] != 1) { ?>
+                        <?php } else { ?>
+                        <?php } ?>
                     </tr>
                     <tr>
-                        <td class="count">Красные карточки: </td>
-                        <td class="count"><input class="digit_only" type="text" name="match" readonly value="<?= $rec['match'] ?>"></td>
-                        <td class="count">Точность передач: </td>
-                        <td class="count"><input class="digit_only" type="text" name="minute" readonly value="<?= $rec['minute'] ?>"></td>
-                        <?php
-                            if ($rec['position'] != 1) {
-                                ?>
-                            <td class="count">Успешные отборы: </td>
-                            <td class="count"><input class="digit_only" type="text" name="take_away" readonly value="<?= $rec['take_away'] ?>"></td>
-                            <td class="count">Успешные обводки: </td>
-                            <td class="count"><input class="digit_only" type="text" name="stroke" readonly value="<?= $rec['stroke'] ?>"></td>
-                            <td class="count">Выигранные единоборства: </td>
-                            <td class="count"><input class="digit_only" type="text" name="combat" readonly value="<?= $rec['combat'] ?>"></td>
-                        <?php
-                            } else {
-                                ?>
+                        <?php if ($rec['position'] != 1) { ?>
+                            <td class="count">Голевые передачи: </td>
+                            <td class="count"><input class="digit_only" type="text" name="pass" readonly value="<?= $rec['pass'] ?>"></td>
+                            <td class="count">Голы: </td>
+                            <td class="count"><input class="digit_only" type="text" name="goal" readonly value="<?= $rec['goal'] ?>"></td>
+                            <td class="count">Голы с пенальти: </td>
+                            <td class="count"><input class="digit_only" type="text" name="penalty" readonly value="<?= $rec['penalty'] ?>"></td>
+                        <?php } else { ?>
                             <td class="count">Сухие матчи: </td>
                             <td class="count"><input class="digit_only" type="text" name="shutout" readonly value="<?= $rec['shutout'] ?>"></td>
                             <td class="count">Пропущенные голы : </td>
                             <td class="count"><input class="digit_only" type="text" name="goal_allow" readonly value="<?= $rec['goal_allow'] ?>"></td>
                             <td class="count">Сейвы: </td>
                             <td class="count"><input class="digit_only" type="text" name="save" readonly value="<?= $rec['save'] ?>"></td>
-                        <?php
-                            }
-                            ?>
+                        <?php } ?>
                     </tr>
                 </table>
             </div>
