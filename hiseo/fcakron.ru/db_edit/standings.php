@@ -3,15 +3,12 @@
 //  ТУРНИРНАЯ ТАБЛИЦА
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
-$sql = "SELECT * FROM standings";
-global $wpdb;
-$standings = $wpdb->get_results($sql, 'ARRAY_A');
+$standings = get_standings(3);
 
 $code_team = get_team_select();  // команда select
-
 ?>
 <h1>Турнирная таблица</h1>
-<h3>(информация не используется на сайте)</h3>
+<h2>(выводится на сайт)</h2>
 
 <script src="https://fcakron.ru/wp-content/themes/fcakron/db_edit/js/jquery-ui.min.js"></script>
 <script>
@@ -106,6 +103,7 @@ $code_team = get_team_select();  // команда select
             $("#sortable .row_stand").each(function(key, e) {
                 // console.log($(this));
                 var z = {
+                    'tourney': 3,
                     'team_code': $(this).find('[name=team_code]').val(),
                     'meet': $(this).find('[name=meet]').val(),
                     'victory': $(this).find('[name=victory]').val(),

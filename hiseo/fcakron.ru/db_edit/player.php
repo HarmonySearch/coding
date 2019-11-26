@@ -244,6 +244,8 @@ $start = microtime(true);
                     <td>
                         Капитан: <input type="checkbox" name="capitan" value="<?= $rec['capitan'] ?>" <? echo ($rec['capitan'] == 1) ? 'checked' : ''; ?>>
                     </td>
+                    <td><button class="btn_career">Карьера</button></td>
+
                 </tr>
                 <tr>
                     <td><input type="text" name="lastname" value="<?= $rec['lastname'] ?>"></td>
@@ -378,6 +380,12 @@ $start = microtime(true);
 
         <script>
             jQuery(function($) {
+
+        //  ★★★★ кнопка СТАТИСТИКА ★★★★
+        $(document).on('click', '.btn_career', function() {
+            let code = $(this).closest(".player").data("code");
+            document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=career&player=" + code;
+        });
 
                 $(function() {
                     $(".stat1").accordion({

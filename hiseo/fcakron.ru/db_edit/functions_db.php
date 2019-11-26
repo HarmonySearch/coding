@@ -3,7 +3,7 @@
 //  ФУНКЦИИ РАБОТЫ С БАЗОЙ ДАННЫХ
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
-//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ТУРНИРЫ ★★★★
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ТУРНИРЫ ★★★★
 
 //  ★★★★ ВЫБОРКА ПО КОДУ 
 function get_tourney($code = 0)
@@ -31,7 +31,7 @@ function get_tourney_code()
 };
 
 
-//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ МАТЧИ ★★★★
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ МАТЧИ ★★★★
 // NOT exclude
 function get_meet_all()
 {
@@ -98,7 +98,7 @@ function check_winner($meet_id)
 }
 
 
-//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ КОМАНДЫ ★★★★
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ КОМАНДЫ ★★★★
 
 function get_team($code = 0)
 {
@@ -183,7 +183,31 @@ function get_position()
 };
 
 
-//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ИГРОКИ ★★★★
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ИГРОКИ ★★★★
+
+
+//  ★★★★ АССИСТЕНТЫ ★★★★
+// больше всего голевых передач
+function get_assistant()
+{
+    global $wpdb;
+
+    $sql = "SELECT `code`, `number`, `name`, `lastname`, `pass` FROM player ORDER BY pass DESC LIMIT 5";
+    $result = $wpdb->get_results($sql, 'ARRAY_A');
+    return $result;
+};
+
+//  ★★★★ ГОЛ+ПАС ★★★★
+// больше всего голевых передач и голов по сумме
+function get_goal_pass()
+{
+    global $wpdb;
+
+    $sql = "SELECT `code`, `number`, `name`, `lastname`, `goal`, `pass`, (`goal` + `pass`) as goal_pass  
+            FROM player ORDER BY (goal + pass) DESC LIMIT 5";
+    $result = $wpdb->get_results($sql, 'ARRAY_A');
+    return $result;
+};
 
 /* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
  * для select (АКРОН)
@@ -237,15 +261,32 @@ function get_players($team = 0, $role = 0)
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ТРЕНЕРЫ ★★★★
 
 
-function get_trainer()
+function get_trainer($code = 0)
 {
 
     global $wpdb;
+	if($code){
+		$sql = "SELECT * FROM `trainer` WHERE `code` = $code";
+		$result = $wpdb->get_results($sql, 'ARRAY_A');
+		return $result[0];
+	}else{
+		$sql = "SELECT * FROM trainer";
+		$result = $wpdb->get_results($sql, 'ARRAY_A');
+		return $result;
+	}
+};
 
-    $sql = "SELECT * FROM trainer";
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ПЕРСОНАЛ ПО КОДУ ★★★★
+
+function get_personal($group = 0)
+{
+    global $wpdb;
+
+    $sql = "SELECT * FROM `trainer` WHERE `group` = $group";
     $result = $wpdb->get_results($sql, 'ARRAY_A');
     return $result;
 };
+
 
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ СТАТИСТИКА ★★★★
 
@@ -455,3 +496,37 @@ function get_player_scheme($meet = 0)
     $result = $wpdb->get_results($sql, 'ARRAY_A');
     return $result;
 };
+
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ КАРЬЕРА ★★★★
+
+function get_player_career($player = 0)
+{
+    global $wpdb;
+
+    $sql = "SELECT * FROM `career` WHERE player = $player";
+    $result = $wpdb->get_results($sql, 'ARRAY_A');
+    return $result;
+};
+
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ТУРНИРНАЯ ТАБЛИЦА ★★★★
+
+function get_standings($tourney = 0)
+{
+    global $wpdb;
+
+    $sql = "SELECT * FROM standings  WHERE tourney = $tourney";
+    $result = $wpdb->get_results($sql, 'ARRAY_A');
+    return $result;
+};
+
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ КАРЬЕРА ★★★★
+
+function get_group()
+{
+    global $wpdb;
+
+    $sql = "SELECT * FROM `group`";
+    $result = $wpdb->get_results($sql, 'ARRAY_A');
+    return $result;
+};
+

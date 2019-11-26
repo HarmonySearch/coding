@@ -64,14 +64,11 @@ if (!$res) {
     .event18 select[name=player] {
         display: none;
     }
+    .event20 select[name=player] {
+        display: none;
+    }
 
-    .event3 select[name=player_2] {
-        display: block;
-    }
     .event6 select[name=player_2] {
-        display: block;
-    }
-    .event9 select[name=player_2] {
         display: block;
     }
 </style>

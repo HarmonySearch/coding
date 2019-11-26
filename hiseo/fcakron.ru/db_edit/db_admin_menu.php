@@ -49,6 +49,11 @@ function my_admin_menu()
     {
         require_once(dirname(__FILE__) . '/statistics.php');
     }
+    add_submenu_page(NULL, 'Редактирование карьеры', 'Карьера', 1, 'career', 'career_edit');
+    function career_edit()
+    {
+        require_once(dirname(__FILE__) . '/career.php');
+    }
     add_submenu_page('db_fcakron', 'Турнирная таблица', 'Турнирная таблица', 1, 'standings', 'standings_edit');
     function standings_edit()
     {

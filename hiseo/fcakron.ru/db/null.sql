@@ -85,6 +85,30 @@ COLLATE utf8_general_ci
 COMMENT = 'турнирная таблица';
 
 
+CREATE TABLE career(
+  `code` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `player` int(10) UNSIGNED DEFAULT NULL COMMENT 'код игрока',
+  `year` VARCHAR(32) NOT NULL DEFAULT '' COMMENT 'годы',
+  `team` VARCHAR(64) NOT NULL DEFAULT '' COMMENT 'команда',
+  `description` VARCHAR(128) NOT NULL DEFAULT '' COMMENT 'описание',
+
+  PRIMARY KEY (code),
+
+  CONSTRAINT `career_player` FOREIGN KEY (`player`) REFERENCES `player` (`code`) ON DELETE SET NULL ON UPDATE CASCADE
+  
+)
+ENGINE = INNODB
+CHARACTER SET utf8
+COLLATE utf8_general_ci
+COMMENT = 'карьера игрока';
+
+
+
+
+
+
+
+
 
 CREATE TABLE player_scheme (
   `code` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,

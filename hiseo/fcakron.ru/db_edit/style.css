@@ -169,6 +169,14 @@ button.load_rec {
 .trainer_table input[type="file"] { display: none; }
 .trainer_table img { width: 135px; }
 
+.trainer_table select[name="country"],
+.trainer_table select[name="group"],
+.trainer_table input[name="contacts"],
+.trainer_table input[name="position"]
+{
+    width: 100%;
+}
+
 /*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ СХЕМЫ ★★★★ */
 
 .root_table {
@@ -230,11 +238,6 @@ button.load_rec {
 
 /*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ СТАТИСТИКА ★★★★ */
 
-/* .statistics_table input[name=minute],
-.statistics_table select
-{
-    width: 100%;
-} */
 .statistics_table .row {
     display: flex;
     align-items: center;
@@ -254,4 +257,9 @@ margin-right: 5px;
 } 
 .row select[name=player_2]{
     display: none;
+}
+/*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ КАРЬЕРА ★★★★ */
+.career_table .row {
+    display: flex;
+    align-items: top;
 }

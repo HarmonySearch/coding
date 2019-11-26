@@ -28,6 +28,7 @@ if( wp_doing_ajax() ){
 		add_action('wp_ajax_load_player', 'load_player_callback');
 		add_action('wp_ajax_load_trainer', 'load_trainer_callback');
 		add_action('wp_ajax_statistics_add', 'statistics_add_callback');
+		add_action('wp_ajax_career_add', 'career_add_callback');
 		add_action('wp_ajax_standings_load', 'standings_load_callback');
 	// }
 }
@@ -60,6 +61,7 @@ function standings_load_callback(){
     foreach ($_POST['json'] as $rec ) {
         //echo($rec['meet']);
         $data_a = array(
+            'tourney' => $rec['tourney'],
             'team_code' => $rec['team_code'],
             'meet' => $rec['meet'],
             'victory' => $rec['victory'],
@@ -89,7 +91,7 @@ function data_change_callback(){
      * Проверяем актуальность
      */
 
-    $tables = ['team', 'player','tourney', 'meet', 'trainer','player_scheme','statistics']; // список допустымых таблиц
+    $tables = ['team', 'player','tourney', 'meet', 'trainer','player_scheme','statistics','career']; // список допустымых таблиц
 
 	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
 	if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
@@ -122,7 +124,7 @@ function row_delete_callback(){
      * Получаем 2 параметра: таблицу и код строки
      */
 
-    $tables = ['team', 'player','tourney', 'meet', 'trainer','player_scheme','statistics']; // список допустымых таблиц
+    $tables = ['team', 'player','tourney', 'meet', 'trainer','player_scheme','statistics','career']; // список допустымых таблиц
 
 	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
 	if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
@@ -184,7 +186,7 @@ function load_file_callback()
     }
 
     $pach = get_template_directory() . $param['dir'] . $_POST['code'] . $param['ext'];
-    // wp_die($pach);
+    //wp_die($pach);
     $result = move_uploaded_file($_FILES['file']['tmp_name'], $pach);
     if( ! $result )
         echo 'ошибка загрузки файла: ', $pach;
@@ -373,6 +375,32 @@ function statistics_add_callback()
 }
 
 
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+//  ДОБАВИТЬ ЗАПИСЬ КАРЬЕРЫ
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+function career_add_callback()
+{
+
+    if (!wp_verify_nonce($_POST['nonce_code'], 'my_ajax_nonce')) die('Stop!'); // Проверяем защитный ключ
+    if (!is_user_logged_in()) die('Stop! No login'); // юзверь не залогонин
+
+    $data_a = array(
+        'player' => (int)clean($_POST['player'])
+    );
+    $format = array('%d');
+
+    global $wpdb;
+    $result = $wpdb->insert('career', $data_a, $format);
+
+    if ($result <= 0) {
+        wp_die('ошибка записи');
+    }
+    $id = $wpdb->insert_id; // код новой записи
+
+    wp_die($id);
+}
+
 
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 //  ДОБАВИТЬ ЗАПИСЬ ИГРОКА
@@ -476,7 +504,7 @@ function load_player_callback(){
 }
 
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-//  ДОБАВИТЬ ЗАПИСЬ ТРЕНЕРА
+//  ДОБАВИТЬ ЗАПИСЬ СОТРУДНИКА
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
 function load_trainer_callback(){ 
@@ -507,7 +535,8 @@ function load_trainer_callback(){
     $data_a = array(
         'lastname' => clean($_POST['lastname']),
         'name' => clean($_POST['name']),
-        'position' => clean($_POST['position'])  // должность
+        'position' => clean($_POST['position']),  // должность
+        'group' => clean($_POST['group'])  // должность
     );
     $country = clean($_POST['country']);
     if ( is_numeric ($country)) { $data_a['country'] = (int)$country; }
