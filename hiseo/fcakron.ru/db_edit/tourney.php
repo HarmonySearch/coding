@@ -81,7 +81,7 @@ if (isset($_GET['add'])) { ?>
 //
 // ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰
 //
-?> 
+?>
 <h1>Таблица турниров</h1>
 <h3>(информация используется на сайте)</h3>
 <div>
@@ -101,7 +101,13 @@ if (isset($_GET['add'])) { ?>
                     <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
                 </tr>
                 <tr>
-                    <td><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/tourney/<?= $rec['code'] ?>.png" alt="<?= $rec['name'] ?>"></td>
+                    <?php
+                        $src = dirname(__FILE__) . '/../images/db/tourney/' . $rec['code'] . 's.png';
+                        if (file_exists($src)) { ?>
+                        <td rowspan="2"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/tourney/<?= $rec['code'] ?>s.png" alt="">
+                        <?php } else { ?>
+                        <td rowspan="2"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/tourney/nofoto.png"></td>
+                    <?php } ?>
                     <td>Логотип: ( PNG не более 100 Кбайт)<br>
                         <label class="button" for="logo<?= $code ?>">Загрузить</label></td>
                 </tr>
@@ -174,12 +180,11 @@ if (isset($_GET['add'])) { ?>
                 url: ajaxurl,
                 data: form_data,
             }).done(function(msg) {
-                if (msg != "") {
-                    alert(msg);
-                } else {
-                    // обновление img
-                    let src = img.attr('src') + '?t=' + Date.now();
+                if (msg[0] == '/') { // норм должно прилететь типа /images/db/player/1-1.png
+                    src = 'https://fcakron.ru/wp-content/themes/fcakron' + msg + '?t=' + Date.now();
                     img.attr('src', src);
+                } else {
+                    alert(msg);
                 }
             });
         });

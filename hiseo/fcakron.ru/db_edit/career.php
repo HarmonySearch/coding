@@ -49,16 +49,17 @@ if (!$res) {
 
 <div class="career_table">
     <hr class="hr_db">
-    <b>Год, команда, комметарий</b>
+    <b>Годы, команда, матчи, голы</b>
     <?php
     foreach (get_player_career($player) as $rec) {
         $code = $rec['code'];
         ?>
         <div class="row <?= 'event' . $css ?>" data-table="career" data-code="<?= $code ?>">
             <button class="btn_delete" data-meet="<?= $meet ?>"><img src="http://fcakron.ru/wp-content/themes/fcakron/images/db/delete.png"></button>
-            <textarea rows="1" cols="20" name="year"><?= $rec["year"] ?></textarea>
-            <textarea rows="2" cols="20" name="team"><?= $rec["team"] ?></textarea>
-            <textarea rows="5" cols="100" name="description"><?= $rec["description"] ?></textarea>
+            <input type="text" name="year" value="<?= $rec['year'] ?>">
+            <input type="text" name="team" value="<?= $rec['team'] ?>">
+            <input class="digit_only" type="text" name="match" value="<?= $rec['match'] ?>">
+            <input class="digit_only" type="text" name="goal" value="<?= $rec['goal'] ?>">
         </div>
     <?php
     } ?>

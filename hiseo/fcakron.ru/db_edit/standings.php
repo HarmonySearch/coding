@@ -98,7 +98,7 @@ $code_team = get_team_select();  // команда select
         //  ★★★★ запись таблицы в БД ★★★★
         $(document).on('click', '.write_tab', function() {
             // клонируем последний элемент таблицы
-            // упаковка ьаблицы в JSON
+            // упаковка таблицы в JSON
             var f = [];
             $("#sortable .row_stand").each(function(key, e) {
                 // console.log($(this));

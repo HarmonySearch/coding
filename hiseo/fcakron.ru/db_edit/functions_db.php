@@ -78,14 +78,29 @@ function get_near_meet()
     return count($result) ? $result[0] : false;
 }
 
-function get_last_meet()
+function get_last_meet($limit = 1)
 {
     global $wpdb;
 
-    $sql = "SELECT * FROM meet WHERE completed = 1 AND NOT exclude ORDER BY date_meet DESC LIMIT 1";
+    $sql = "SELECT * FROM meet WHERE completed = 1 AND NOT exclude ORDER BY date_meet DESC LIMIT $limit";
     $result = $wpdb->get_results($sql, 'ARRAY_A');
-    return count($result) ? $result[0] : false;
+    return count($result) == 1 ? $result[0] : $result;
 }
+
+//  ★★★★ БУДУЩИЕ МАТЧИ ★★★★
+
+function get_new_match($limit = 1)
+// если время матча прошло
+{
+    global $wpdb;
+
+    $sql = "SELECT * FROM meet WHERE UNIX_TIMESTAMP(CONCAT(date_meet, ' ', time_meet)) + time_zone * 3600 - UNIX_TIMESTAMP(UTC_TIMESTAMP()) > 0 ORDER BY date_meet ASC LIMIT $limit";
+    $result = $wpdb->get_results($sql, 'ARRAY_A');
+    return count($result) == 1 ? $result[0] : $result;
+}
+
+
+
 
 // Является ли Акрон победителем в матче. -1/0/1. false - игра не закончилась или ее нет.
 function check_winner($meet_id)

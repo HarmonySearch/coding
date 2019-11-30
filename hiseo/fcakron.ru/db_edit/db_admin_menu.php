@@ -3,12 +3,18 @@
 //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ КВА ▰▰▰▰
 //  РЕДАКТИРОВАНИЕ БАЗЫ ДАННЫХ В АДМИНКЕ
 //  ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 
 
 add_action('admin_menu', 'my_admin_menu'); // это хук
 
 function my_admin_menu()
 {
+    require_once(dirname(__FILE__) . '/table_edit.php');
+
     add_menu_page('База данных футбольного клуба', 'База данных', 1, 'db_fcakron', 'db_fcakron', 'dashicons-welcome-widgets-menus');
     function db_fcakron()
     {

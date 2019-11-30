@@ -136,9 +136,8 @@ if (isset($_GET['add'])) { ?>
 
 
 
-//
-//  ★★★★ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ★★★★
-//
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ★★★★
+
 ?>
 <script src="https://fcakron.ru/wp-content/themes/fcakron/db_edit/js/jquery-ui.min.js"></script>
 <link rel="stylesheet" href="https://fcakron.ru/wp-content/themes/fcakron/db_edit/css/jquery-ui.css">
@@ -177,9 +176,8 @@ if (isset($_GET['add'])) { ?>
                     </td>
                     <td>Голы</td>
                     <td><input type="number" name="goal_1" value="<?= $rec['goal_1'] ?>"></td>
-                    <td>
-                        Матч окончен: <input type="checkbox" name="completed" value="<?= $rec['completed'] ?>" <? echo ($rec['completed'] == 1) ? 'checked' : ''; ?>>
-                    </td>
+                    <td><input type="checkbox" name="completed" value="<?= $rec['completed'] ?>" <? echo ($rec['completed'] == 1) ? 'checked' : ''; ?>>Матч окончен</td>
+                    <td><input type="checkbox" name="display_statistics" value="<?= $rec['display_statistics'] ?>" <? echo ($rec['display_statistics'] == 1) ? 'checked' : ''; ?>>Показать статистику</td>
                     <td> <button class="btn_schema">Схема игроков</button> </td>
                 </tr>
                 <tr>
@@ -196,7 +194,8 @@ if (isset($_GET['add'])) { ?>
                     </td>
                     <td>Голы</td>
                     <td><input type="number" name="goal_2" value="<?= $rec['goal_2'] ?>"></td>
-                    <td> Скрыть матч : <input type="checkbox" name="exclude" value="<?= $rec['exclude'] ?>" <? echo ($rec['exclude'] == 1) ? 'checked' : ''; ?>> </td>
+                    <td><input type="checkbox" name="exclude" value="<?= $rec['exclude'] ?>" <? echo ($rec['exclude'] == 1) ? 'checked' : ''; ?>>Скрыть матч</td>
+                    <td></td>
                     <td><button class="btn_statistics">События</button></td>
                 </tr>
             </table>
@@ -279,7 +278,13 @@ if (isset($_GET['add'])) { ?>
                                 <label class="button" for="poster<?= $code ?>">Загрузить афишу</label>
                                 <input class="poster" id="poster<?= $code ?>" type="file">
                             </td>
-                            <td rowspan="2"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/meet/<?= $rec['code'] ?>.jpg" alt="нет афиши">
+                            <?php
+                                $src = dirname(__FILE__) . '/../images/db/meet/' . $rec['code'] . 's.jpg';
+                                if (file_exists($src)) { ?>
+                                <td rowspan="2"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/meet/<?= $rec['code'] ?>s.jpg" alt="">
+                                <?php } else { ?>
+                                <td rowspan="2"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/meet/nofoto.png"></td>
+                            <?php } ?>
                         </tr>
                         <tr>
                             <td>
@@ -367,7 +372,7 @@ if (isset($_GET['add'])) { ?>
             let parent = $(this).closest(".meet");
             let code = parent.data("code");
             let img = parent.find('img');
-            let poster = parent.find('input[name="poster"]');
+            // let poster = parent.find('input[name="poster"]');
 
             form_data = new FormData();
             form_data.append('key', 'meet'); // ключ из ассоциативного массива на сервере
@@ -384,16 +389,14 @@ if (isset($_GET['add'])) { ?>
                 url: ajaxurl,
                 data: form_data,
             }).done(function(msg) {
-                if (msg != "") {
-                    alert(msg);
-                } else {
-                    // обновление img
-                    let src = img.attr('src') + '?t=' + Date.now();
+                if (msg[0] == '/') { // норм должно прилететь типа /images/db/meet/1.png
+                    src = 'https://fcakron.ru/wp-content/themes/fcakron' + msg + '?t=' + Date.now();
                     img.attr('src', src);
-                    // прописывем использование афишиw
-                    poster.attr("checked", "checked");
-                    poster.trigger('change');
+                } else {
+                    alert(msg);
                 }
+
+
             });
         });
     });

@@ -81,6 +81,7 @@ $res = get_meet($meet);
                     </select>
                 </td>
                 <td><input type="radio" name="capitan" value="1" <?= ($rec['capitan'] == '1') ? 'checked' : ''; ?>></td>
+                <td><input type="checkbox" name="best" value="player_1" <?= ($rec['best'] == $rec['player_1']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Позиция 2: </td>
@@ -93,6 +94,7 @@ $res = get_meet($meet);
                     </select>
                 </td>
                 <td><input type="radio" name="capitan" value="2" <?= ($rec['capitan'] == '2') ? 'checked' : ''; ?>></td>
+                <td><input type="checkbox" name="best" value="player_2" <?= ($rec['best'] == $rec['player_2']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Позиция 3: </td>
@@ -105,6 +107,7 @@ $res = get_meet($meet);
                     </select>
                 </td>
                 <td><input type="radio" name="capitan" value="3" <?= ($rec['capitan'] == '3') ? 'checked' : ''; ?>></td>
+                <td><input type="checkbox" name="best" value="player_3" <?= ($rec['best'] == $rec['player_3']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Позиция 4: </td>
@@ -117,6 +120,7 @@ $res = get_meet($meet);
                     </select>
                 </td>
                 <td><input type="radio" name="capitan" value="4" <?= ($rec['capitan'] == '4') ? 'checked' : ''; ?>></td>
+                <td><input type="checkbox" name="best" value="player_4" <?= ($rec['best'] == $rec['player_4']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Позиция 5: </td>
@@ -129,6 +133,7 @@ $res = get_meet($meet);
                     </select>
                 </td>
                 <td><input type="radio" name="capitan" value="5" <?= ($rec['capitan'] == '5') ? 'checked' : ''; ?>></td>
+                <td><input type="checkbox" name="best" value="player_5" <?= ($rec['best'] == $rec['player_5']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Позиция 6: </td>
@@ -141,6 +146,7 @@ $res = get_meet($meet);
                     </select>
                 </td>
                 <td><input type="radio" name="capitan" value="6" <?= ($rec['capitan'] == '6') ? 'checked' : ''; ?>></td>
+                <td><input type="checkbox" name="best" value="player_6" <?= ($rec['best'] == $rec['player_6']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Позиция 7: </td>
@@ -153,6 +159,7 @@ $res = get_meet($meet);
                     </select>
                 </td>
                 <td><input type="radio" name="capitan" value="7" <?= ($rec['capitan'] == '7') ? 'checked' : ''; ?>></td>
+                <td><input type="checkbox" name="best" value="player_7" <?= ($rec['best'] == $rec['player_7']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Позиция 8: </td>
@@ -165,6 +172,7 @@ $res = get_meet($meet);
                     </select>
                 </td>
                 <td><input type="radio" name="capitan" value="8" <?= ($rec['capitan'] == '8') ? 'checked' : ''; ?>></td>
+                <td><input type="checkbox" name="best" value="player_8" <?= ($rec['best'] == $rec['player_8']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Позиция 9: </td>
@@ -177,6 +185,7 @@ $res = get_meet($meet);
                     </select>
                 </td>
                 <td><input type="radio" name="capitan" value="9" <?= ($rec['capitan'] == '9') ? 'checked' : ''; ?>></td>
+                <td><input type="checkbox" name="best" value="player_9" <?= ($rec['best'] == $rec['player_9']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Позиция 10: </td>
@@ -189,6 +198,7 @@ $res = get_meet($meet);
                     </select>
                 </td>
                 <td><input type="radio" name="capitan" value="10" <?= ($rec['capitan'] == '10') ? 'checked' : ''; ?>></td>
+                <td><input type="checkbox" name="best" value="player_10" <?= ($rec['best'] == $rec['player_10']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Позиция 11: </td>
@@ -201,12 +211,13 @@ $res = get_meet($meet);
                     </select>
                 </td>
                 <td><input type="radio" name="capitan" value="11" <?= ($rec['capitan'] == '11') ? 'checked' : ''; ?>></td>
+                <td><input type="checkbox" name="best" value="player_11" <?= ($rec['best'] == $rec['player_11']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td> </td>
-                <td>
-                </td>
-                <td>Капитан: </td>
+                <td> </td>
+                <td>Кап.</td>
+                <td>Луч.</td>
             </tr>
 
         </table>
@@ -248,6 +259,7 @@ $res = get_meet($meet);
                         <? } ?>
                     </select>
                 </td>
+                <td><input type="checkbox" name="best" value="substitute_1" <?= ($rec['best'] == $rec['substitute_1']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Запасной игрок 2: </td>
@@ -259,6 +271,7 @@ $res = get_meet($meet);
                         <? } ?>
                     </select>
                 </td>
+                <td><input type="checkbox" name="best" value="substitute_2" <?= ($rec['best'] == $rec['substitute_2']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Запасной игрок 3: </td>
@@ -270,6 +283,7 @@ $res = get_meet($meet);
                         <? } ?>
                     </select>
                 </td>
+                <td><input type="checkbox" name="best" value="substitute_3" <?= ($rec['best'] == $rec['substitute_3']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Запасной игрок 4: </td>
@@ -281,6 +295,7 @@ $res = get_meet($meet);
                         <? } ?>
                     </select>
                 </td>
+                <td><input type="checkbox" name="best" value="substitute_4" <?= ($rec['best'] == $rec['substitute_4']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Запасной игрок 5: </td>
@@ -292,6 +307,7 @@ $res = get_meet($meet);
                         <? } ?>
                     </select>
                 </td>
+                <td><input type="checkbox" name="best" value="substitute_5" <?= ($rec['best'] == $rec['substitute_5']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Запасной игрок 6: </td>
@@ -303,6 +319,7 @@ $res = get_meet($meet);
                         <? } ?>
                     </select>
                 </td>
+                <td><input type="checkbox" name="best" value="substitute_6" <?= ($rec['best'] == $rec['substitute_6']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Запасной игрок 7: </td>
@@ -314,6 +331,7 @@ $res = get_meet($meet);
                         <? } ?>
                     </select>
                 </td>
+                <td><input type="checkbox" name="best" value="substitute_7" <?= ($rec['best'] == $rec['substitute_7']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Запасной игрок 8: </td>
@@ -325,6 +343,7 @@ $res = get_meet($meet);
                         <? } ?>
                     </select>
                 </td>
+                <td><input type="checkbox" name="best" value="substitute_8" <?= ($rec['best'] == $rec['substitute_8']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Запасной игрок 9: </td>
@@ -336,6 +355,7 @@ $res = get_meet($meet);
                         <? } ?>
                     </select>
                 </td>
+                <td><input type="checkbox" name="best" value="substitute_9" <?= ($rec['best'] == $rec['substitute_9']) ? 'checked' : ''; ?>></td>
             </tr>
             <tr>
                 <td>Запасной игрок 10: </td>
@@ -347,6 +367,12 @@ $res = get_meet($meet);
                         <? } ?>
                     </select>
                 </td>
+                <td><input type="checkbox" name="best" value="substitute_10" <?= ($rec['best'] == $rec['substitute_10']) ? 'checked' : ''; ?>></td>
+            </tr>
+            <tr>
+                <td> </td>
+                <td> </td>
+                <td>Луч.</td>
             </tr>
         </table>
 
@@ -628,7 +654,7 @@ $res = get_meet($meet);
 
         // });
 
-        //  ★★★★ ОБНОВИТЬ ПОЛЯ ★★★★
+        //  ★★★★ РЕДАКТИРОВАНИЕ ПОЛЕЙ ★★★★
         $(document).on('change', 'input, select', function(e) {
 
             let patern = $(this).closest(".root_table"); // корневой предок
@@ -637,6 +663,12 @@ $res = get_meet($meet);
             let name = $(this).attr("name"); // имя поля
             let value = $(this).val(); // значение поля
             console.log(table, code, name, value);
+
+            if (name=='best') {
+                value = $('[name='+value+']').val(); // код игрока
+                console.log(value);
+            }
+
             //return;
             let data_lib = {
                 action: 'data_change',

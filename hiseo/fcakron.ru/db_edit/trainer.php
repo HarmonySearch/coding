@@ -167,7 +167,15 @@ if (isset($_GET['add'])) { ?>
                     <td><input type="text" name="lastname" value="<?= $rec['lastname'] ?>"></td>
                     <td>Инстаграмм:</td>
                     <td><input type="text" name="instagram" value="<?= $rec['instagram'] ?>"></td>
-                    <td rowspan="3"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/trainer/<?= $rec['code'] ?>.png" alt="<?= $rec['name'] ?>"></td>
+                    <td>E-mail:</td>
+                    <td><input type="text" name="email" value="<?= $rec['email'] ?>"></td>
+                    <?php
+                        $src = dirname(__FILE__) . '/../images/db/trainer/' . $rec['code'] . 's.png';
+                        if (file_exists($src)) { ?>
+                        <td rowspan="3"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/trainer/<?= $rec['code'] ?>s.png" alt="">
+                        <?php } else { ?>
+                        <td rowspan="3"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/trainer/nofoto.png"></td>
+                    <?php } ?>
                 </tr>
 
                 <tr>
@@ -185,6 +193,8 @@ if (isset($_GET['add'])) { ?>
                     <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
                     <td>Фейсбук:</td>
                     <td><input type="text" name="facebook" value="<?= $rec['facebook'] ?>"></td>
+                    <td>Телефон:</td>
+                    <td><input type="text" name="phone" value="<?= $rec['phone'] ?>"></td>
                 </tr>
 
                 <tr>
@@ -194,13 +204,11 @@ if (isset($_GET['add'])) { ?>
                     <td>Дата рождения:</td>
                     <td><input type="date" name="birthday" value="<?= $rec['birthday'] ?>"></td>
                     <td>В контакте:</td>
-                    <td><input type="text" name="vc" value="<?= $rec['vc'] ?>"></td>
+                    <td><input type="text" name="vk" value="<?= $rec['vk'] ?>"></td>
                 </tr>
 
                 <tr>
                     <!-- 4 -->
-                    <td>Контакты:</td>
-                    <td><input type="text" name="contacts" value="<?= $rec['contacts'] ?>"></td>
                     <td>Гражданство: </td>
                     <td>
                         <select class="country" name="country">
@@ -209,6 +217,10 @@ if (isset($_GET['add'])) { ?>
                             <? } ?>
                         </select>
                     </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td style="text-align:center">
@@ -239,8 +251,8 @@ if (isset($_GET['add'])) { ?>
     } ?>
     <hr class="hr_db">
     <div>
-    <button class="btn_add_rec">Добавить сотрудника</button>
-</div>
+        <button class="btn_add_rec">Добавить сотрудника</button>
+    </div>
 
 </div>
 
@@ -261,8 +273,7 @@ if (isset($_GET['add'])) { ?>
             document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=trainer&add";
         });
 
-        //  ▰▰▰▰ РЕДАКТИРОВАНИЕ ФОРМЫ ▰▰▰▰
-
+        //  ★★★★ РЕДАКТИРОВАНИЕ ПОЛЕЙ ★★★★
         $(document).on('change', 'input:not([type=file]), select, textarea', function(e) {
 
             let patern = $(this).closest(".root"); // корневой предок
@@ -271,7 +282,15 @@ if (isset($_GET['add'])) { ?>
             let name = $(this).attr("name");
             let value = $(this).val();
             console.log(table, code, name, value);
-            //return;
+
+            if (name == 'vk' || name == 'instagram' || name == 'facebook') {
+                value = value.replace('https://', '');
+                if (value != '') {
+                    value = 'https://' + value;
+                }
+                $(this).val(value);
+            }
+
             let data_lib = {
                 action: 'data_change',
                 nonce_code: my_ajax_noncerr,
@@ -314,12 +333,11 @@ if (isset($_GET['add'])) { ?>
                 url: ajaxurl,
                 data: form_data,
             }).done(function(msg) {
-                if (msg != "") {
-                    alert(msg);
-                } else {
-                    // обновление img
-                    let src = img.attr('src') + '?t=' + Date.now();
+                if (msg[0] == '/') { // норм должно прилететь типа /images/db/player/1-1.png
+                    src = 'https://fcakron.ru/wp-content/themes/fcakron' + msg + '?t=' + Date.now();
                     img.attr('src', src);
+                } else {
+                    alert(msg);
                 }
             });
         });

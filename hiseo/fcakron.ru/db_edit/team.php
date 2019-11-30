@@ -30,7 +30,7 @@ if (isset($_GET['add'])) { ?>
                     <td>Город: <input type="text" name="city" value="" maxlength="32" required></td>
                 </tr>
                 <tr>
-                    <td>Логотип: ( PNG не более 100 Кбайт)<br>
+                    <td><br>
                         <input type="file">
                     </td>
                 </tr>
@@ -45,15 +45,15 @@ if (isset($_GET['add'])) { ?>
     <script>
         jQuery(function($) {
 
-        //  ▰▰▰▰ КНОПКА ЗАГРУЗИТЬ В БАЗУ ▰▰▰▰
-        $(document).on('click', '.load_rec', function() {
+            //  ▰▰▰▰ КНОПКА ЗАГРУЗИТЬ В БАЗУ ▰▰▰▰
+            $(document).on('click', '.load_rec', function() {
 
                 if ($('input[name="name"]').val() == '' ||
                     $('input[name="city"]').val() == '') {
                     alert("Не заполнены обязательные поля !");
                     return false;
                 }
-                
+
                 form_data = new FormData(); // создание формы
                 form_data.append('name', $('input[name="name"]').val());
                 form_data.append('city', $('input[name="city"]').val());
@@ -73,7 +73,7 @@ if (isset($_GET['add'])) { ?>
                     url: ajaxurl,
                     data: form_data,
                 }).done(function(msg) {
-                    console.log(msg); 
+                    console.log(msg);
                     if (msg != '') {
                         alert(msg);
                         if (msg[0] != ' ') {
@@ -119,8 +119,21 @@ $teams = $wpdb->get_results($sql, 'ARRAY_A');
                 <tr>
                     <td>Название&nbsp;команды: </td>
                     <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
-                    <td rowspan="2"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/team/<?= $rec['code'] ?>.png" alt="<?= $rec['name'] ?>"></td>
-                    <td><div style="width: 250px;">Логотип: ( PNG не более 100 Кбайт)</div></td>
+
+                    <?php
+                        $src = dirname(__FILE__) . '/../images/db/team/' . $rec['code'] . 's.png';
+                        if (file_exists($src)) { ?>
+                        <td rowspan="2"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/team/<?= $rec['code'] ?>s.png" alt="">
+                        <?php } else { ?>
+                        <td rowspan="2"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/meet/nofoto.png"></td>
+                    <?php } ?>
+
+
+
+
+                    <td>
+                        <div style="width: 250px;"></div>
+                    </td>
                 </tr>
                 <tr>
                     <td>Город: </td>
@@ -182,7 +195,7 @@ $teams = $wpdb->get_results($sql, 'ARRAY_A');
             let table = parent.data("table"); // у него прописана таблица
             let code = parent.data("code"); // и код
             let img = parent.find('img');
-
+console.log('-------------------');
             form_data = new FormData(); // создание формы
             form_data.append('key', table); // ключ из ассоциативного массива на сервере
             form_data.append('code', code);
@@ -198,12 +211,11 @@ $teams = $wpdb->get_results($sql, 'ARRAY_A');
                 url: ajaxurl,
                 data: form_data,
             }).done(function(msg) {
-                if (msg != "") {
-                    alert(msg);
-                } else {
-                    // обновление img
-                    let src = img.attr('src') + '?t=' + Date.now();
+                if (msg[0] == '/') { // норм должно прилететь типа /images/db/player/1-1.png
+                    src = 'https://fcakron.ru/wp-content/themes/fcakron' + msg + '?t=' + Date.now();
                     img.attr('src', src);
+                } else {
+                    alert(msg);
                 }
             });
         });

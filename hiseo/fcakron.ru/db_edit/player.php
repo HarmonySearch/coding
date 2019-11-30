@@ -214,15 +214,13 @@ $start = microtime(true);
 </div>
 
 <div class="player_table">
-    <?php
-    foreach ($players as $rec) {
+    <?php foreach ($players as $rec) {
         $code = $rec['code']; ?>
         <hr class="hr_db">
         <div class="player" data-code="<?= $code ?>">
-
-
             <table>
                 <tr>
+                    <td> Команда:</td>
                     <td>
                         <select name="team">
                             <? foreach ($code_team as $opt) { ?>
@@ -230,6 +228,43 @@ $start = microtime(true);
                             <? } ?>
                         </select>
                     </td>
+                    <td>Фамилия:</td>
+                    <td><input type="text" name="lastname" value="<?= $rec['lastname'] ?>"></td>
+                    <td> Первое гражданство: </td>
+                    <td>
+                        <select class="country" name="country">
+                            <option value="" <? echo ('' == $rec['country']) ? 'selected' : ''; ?>>не указано</option>
+                            <? foreach ($code_cry as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['country']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                            <? } ?>
+                        </select>
+                    </td>
+
+                    <?php  // если нет картинок на сервере, то и не загружаем
+                        $src = dirname(__FILE__) . '/../images/db/player/a' . $rec['code'] . 's.png';
+                        if (file_exists($src)) { ?>
+                        <td rowspan="3"><img class="img_1 photo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/player/a<?= $rec['code'] ?>s.png" alt=""></td>
+                    <?php
+                        } else { ?>
+                        <td rowspan="3"><img class="img_1 photo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/player/nofoto.png"></td>
+                    <?php
+                        }
+                        $src = dirname(__FILE__) . '/../images/db/player/b' . $rec['code'] . 's.png';
+                        if (file_exists($src)) { ?>
+                        <td rowspan="3"><img class="img_2 photo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/player/b<?= $rec['code'] ?>s.png" alt=""></td>
+                    <?php
+                        } else { ?>
+                        <td rowspan="3"><img class="img_2 photo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/player/nofoto.png"></td>
+                    <?php
+                        } ?>
+
+                    <td><button class="btn_career">Карьера</button></td>
+
+                </tr>
+
+                <tr>
+                    <!-- 2 -->
+                    <td>Позиция:</td>
                     <td>
                         <select class="position" name="position">
                             <option value="" <? echo ('' == $rec['position']) ? 'selected' : ''; ?>>не указана</option>
@@ -238,61 +273,9 @@ $start = microtime(true);
                             <? } ?>
                         </select>
                     </td>
-                    <td style="text-align:center">
-                        Номер: <input class="digit_only" type="text" name="number" value="<?= $rec['number'] ?>">
-                    </td style="text-align:center">
-                    <td>
-                        Капитан: <input type="checkbox" name="capitan" value="<?= $rec['capitan'] ?>" <? echo ($rec['capitan'] == 1) ? 'checked' : ''; ?>>
-                    </td>
-                    <td><button class="btn_career">Карьера</button></td>
-
-                </tr>
-                <tr>
-                    <td><input type="text" name="lastname" value="<?= $rec['lastname'] ?>"></td>
-                    <td>
-                        Первое гражданство:
-                    </td>
-                    <?php  // если нет картинок на сервере, то и не загружаем
-                        $src = dirname(__FILE__) . '/../images/db/player/' . $rec['code'] . '-1.png';
-                        if (file_exists($src)) { ?>
-                        <td rowspan="3"><img class="img_1 photo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/player/<?= $rec['code'] ?>-1.png" alt="<?= $rec['lastname'] ?>"></td>
-                    <?php
-                        } else { ?>
-                        <td rowspan="3"></td>
-                    <?php
-                        }
-                        $src = dirname(__FILE__) . '/../images/db/player/' . $rec['code'] . '-2.png';
-                        if (file_exists($src)) { ?>
-                        <td rowspan="3"><img class="img_2 photo" src="https://fcakron.ru/wp-content/themes/fcakron/images/db/player/<?= $rec['code'] ?>-2.png" alt="<?= $rec['lastname'] ?>"></td>
-                    <?php
-                        } else { ?>
-                        <td rowspan="3"></td>
-                    <?php
-                        } ?>
-                </tr>
-                <tr>
+                    <td>Имя:</td>
                     <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
-                    <td>
-                        <select class="country" name="country">
-                            <option value="" <? echo ('' == $rec['country']) ? 'selected' : ''; ?>>не указано</option>
-                            <? foreach ($code_cry as $opt) { ?>
-                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['country']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
-                            <? } ?>
-                        </select>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td>д.р.: <input type="date" name="birthday" value="<?= $rec['birthday'] ?>"></td>
-                    <td>
-                        Второе гражданство:
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Рост: <input class="digit_only" type="text" name="growing" value="<?= $rec['growing'] ?>">
-                        Вес: <input class="digit_only" type="text" name="weight" value="<?= $rec['weight'] ?>">
-                    </td>
+                    <td> Второе гражданство: </td>
                     <td>
                         <select name="country_2">
                             <option value="" <? echo ('' == $rec['country_2']) ? 'selected' : ''; ?>>не указано</option>
@@ -301,6 +284,30 @@ $start = microtime(true);
                             <? } ?>
                         </select>
                     </td>
+                </tr>
+
+                <tr>
+                    <!-- 3 -->
+                    <td>Номер:</td>
+                    <td>
+                        <input class="digit_only" type="text" name="number" value="<?= $rec['number'] ?>">
+                    </td>
+                    <td>Дата рождения:</td>
+                    <td><input type="date" name="birthday" value="<?= $rec['birthday'] ?>"></td>
+                    <td>vk:</td>
+                    <td><input type="text" name="vc" value="<?= $rec['vc'] ?>"></td>
+                </tr>
+
+                <tr>
+                    <!-- 4 -->
+                    <td> Капитан: </td>
+                    <td><input type="checkbox" name="capitan" value="<?= $rec['capitan'] ?>" <? echo ($rec['capitan'] == 1) ? 'checked' : ''; ?>> </td>
+
+                    <td>Рост: <input class="digit_only" type="text" name="growing" value="<?= $rec['growing'] ?>"></td>
+                    <td>Вес: <input class="digit_only" type="text" name="weight" value="<?= $rec['weight'] ?>">
+                    </td>
+                    <td>instagram:</td>
+                    <td><input type="text" name="instagram" value="<?= $rec['instagram'] ?>"></td>
                     <td style="text-align:center">
                         <label for="file_1<?= $code ?>" class="button">Загрузить</label>
                         <input id="file_1<?= $code ?>" data-num="1" type="file">
@@ -309,6 +316,8 @@ $start = microtime(true);
                         <label for="file_2<?= $code ?>" class="button">Загрузить</label>
                         <input id="file_2<?= $code ?>" data-num="2" type="file">
                     </td>
+                </tr>
+                <tr>
                 </tr>
             </table>
 
@@ -370,16 +379,16 @@ $start = microtime(true);
                     </tr>
                 </table>
             </div>
-        <?php
-        } ?>
-        <hr class="hr_db">
         </div>
-        <div>
-            <button class="btn_add_rec">Добавить игрока</button>
-        </div>
+    <?php } ?>
+    <hr class="hr_db">
+    <div>
+        <button class="btn_add_rec">Добавить игрока</button>
+    </div>
+</div>
 
-        <script>
-            jQuery(function($) {
+<script>
+    jQuery(function($) {
 
         //  ★★★★ кнопка СТАТИСТИКА ★★★★
         $(document).on('click', '.btn_career', function() {
@@ -387,101 +396,113 @@ $start = microtime(true);
             document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=career&player=" + code;
         });
 
-                $(function() {
-                    $(".stat1").accordion({
-                        collapsible: true,
-                        active: false,
-                        animate: false
-                    });
-                });
-
-                //  ★★★★ ВВОДИТЬ ТОЛЬКО ЦИФРЫ ★★★★
-                $(document).ready(function() {
-                    $('.digit_only').on("change keyup input click", function() {
-                        if (this.value.match(/[^0-9]/g)) { // g ищет все совпадения, без него – только первое.
-                            this.value = this.value.replace(/[^0-9]/g, '');
-                        }
-                    });
-                });
-
-                //  ★★★★ ДОБАВИТЬ ЗАПИСЬ ★★★★
-                $(document).on('click', '.btn_add_rec', function() { // кнопка "добавить игрока"
-                    document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=player&add";
-                });
-
-                //  ★★★★ ФИЛЬТР ★★★★
-                $(".team_filter").change(function() {
-                    team = $(this).val();
-                    href = "https://fcakron.ru/wp-admin/admin.php?page=player&team=" + team;
-                    console.log(href);
-                    document.location.href = href;
-                });
-
-                //  ★★★★ РЕДАКТИРОВАТЬ ЗАПИСЬ ★★★★
-                $("input, select").change(function() {
-
-                    let table = 'player';
-                    let name = $(this).attr("name");
-                    let code = $(this).closest(".player").data("code");
-                    let value;
-                    if ($(this).attr("type") == 'checkbox') {
-                        value = ($(this).prop("checked") ? 1 : 0);
-                    } else {
-                        value = $(this).val();
-                    }
-
-                    let data_lib = {
-                        action: 'data_change',
-                        nonce_code: my_ajax_noncerr,
-                        table: table,
-                        code: code,
-                        name: name,
-                        value: value
-                    };
-
-                    jQuery.ajax({
-                        method: "POST",
-                        url: ajaxurl,
-                        data: data_lib
-                    }).done(function(data) {});
-                    console.log(data);
-                });
-
-                //  ★★★★★★★★★★★★★★★★★★★★★★★★ ЗАГРУЗКА ФАЙЛА ★★★★
-                // нужны: код записи, номер фото (первое или второе),
-                // ссылки на файл для загрузки, на img для обновления после загрузки 
-
-                $(document).on('change', 'input[type="file"]', function() {
-
-                    let parent = $(this).closest(".player");
-                    let code = parent.data("code"); // код записи
-                    let num = $(this).data("num"); // номер фото
-                    let file_data = $(this).prop('files')[0]; // ссылки на файл
-                    let img = parent.find('.img_' + num); // ссылка на картинку
-
-                    form_data = new FormData();
-                    form_data.append('key', 'player_' + num); // ключ из ассоциативного массива на сервере
-                    form_data.append('code', code);
-                    form_data.append('file', file_data);
-                    form_data.append('action', 'load_file'); // функция обработки 
-                    form_data.append('nonce_code', my_ajax_noncerr); // ключ
-
-                    $.ajax({
-                        method: "POST",
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        url: ajaxurl,
-                        data: form_data,
-                    }).done(function(msg) {
-                        if (msg != "") {
-                            alert(msg);
-                        } else {
-                            // обновление img
-                            let src = img.attr('src') + '?t=' + Date.now();
-                            img.attr('src', src);
-                        }
-                    });
-                });
+        $(function() {
+            $(".stat1").accordion({
+                collapsible: true,
+                active: false,
+                animate: false
             });
-        </script>
+        });
+
+        //  ★★★★ ВВОДИТЬ ТОЛЬКО ЦИФРЫ ★★★★
+        $(document).ready(function() {
+            $('.digit_only').on("change keyup input click", function() {
+                if (this.value.match(/[^0-9]/g)) { // g ищет все совпадения, без него – только первое.
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                }
+            });
+        });
+
+        //  ★★★★ ДОБАВИТЬ ЗАПИСЬ ★★★★
+        $(document).on('click', '.btn_add_rec', function() { // кнопка "добавить игрока"
+            document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=player&add";
+        });
+
+        //  ★★★★ ФИЛЬТР ★★★★
+        $(".team_filter").change(function() {
+            team = $(this).val();
+            href = "https://fcakron.ru/wp-admin/admin.php?page=player&team=" + team;
+            console.log(href);
+            document.location.href = href;
+        });
+
+        //  ★★★★ РЕДАКТИРОВАНИЕ ПОЛЕЙ ★★★★
+        // кроме загрузки файлов
+        $(document).on('change', 'input:not([type=file]), select, textarea', function(e) {
+
+            let table = 'player'; // таблица
+            let name = $(this).attr("name"); // имя поля
+            let code = $(this).closest(".player").data("code"); // код строки
+
+
+            let value;
+            if ($(this).attr("type") == 'checkbox') {
+                value = ($(this).prop("checked") ? 1 : 0);
+            } else {
+                value = $(this).val();
+            }
+            if (name == 'vk' || name == 'instagram') {
+                value = value.replace('https://', '');
+                if (value != '') {
+                    value = 'https://' + value;
+                }
+                $(this).val(value);
+            }
+            console.log(name, value);
+
+            let data_lib = {
+                action: 'data_change',
+                nonce_code: my_ajax_noncerr,
+                table: table,
+                code: code,
+                name: name,
+                value: value
+            };
+
+            jQuery.ajax({
+                method: "POST",
+                url: ajaxurl,
+                data: data_lib
+            }).done(function(data) {});
+            console.log(data);
+        });
+
+        //  ★★★★★★★★★★★★★★★★★★★★★★★★ ЗАГРУЗКА ФОТОГРАФИЙ ★★★★
+        // нужны: код записи, номер фото (первое или второе),
+        // два фото 
+        // ссылки на файл для загрузки, на img для обновления после загрузки 
+
+        $(document).on('change', 'input[type="file"]', function() {
+
+            let parent = $(this).closest(".player");
+            let code = parent.data("code"); // код записи
+            let num = $(this).data("num"); // номер фото
+            let file_data = $(this).prop('files')[0]; // ссылки на файл
+            let img = parent.find('.img_' + num); // ссылка на картинку
+
+            form_data = new FormData();
+            form_data.append('key', 'player_' + num); // ключ из ассоциативного массива на сервере
+            form_data.append('code', code);
+            form_data.append('file', file_data);
+            form_data.append('action', 'load_file'); // функция обработки 
+            form_data.append('nonce_code', my_ajax_noncerr); // ключ
+
+            $.ajax({
+                method: "POST",
+                cache: false,
+                contentType: false,
+                processData: false,
+                url: ajaxurl,
+                data: form_data,
+            }).done(function(msg) {
+                if (msg[0] == '/') { // норм должно прилететь типа /images/db/player/1-1.png
+                    src = 'https://fcakron.ru/wp-content/themes/fcakron' + msg + '?t=' + Date.now();
+                    console.log('+++++++++++++' + src);
+                    img.attr('src', src);
+                } else {
+                    alert(msg);
+                }
+            });
+        });
+    });
+</script>

@@ -70,7 +70,7 @@ button.load_rec {
 
 .matches_table .div_accordion {
     display: grid;
-    grid-template-columns: 20% 55% 25%;
+    grid-template-columns: 20% 55% 22%;
     grid-column-gap: 10px;
 }
 /* числовые поля */
@@ -138,6 +138,10 @@ button.load_rec {
 {
     width: 40px; 
 }
+.player_table .player{
+	border-bottom: 4px dashed #d88990;     
+	margin: 10px 0;
+}
 .player_table select[name="team"] 
 { 
     width: 230px; 
@@ -155,7 +159,7 @@ button.load_rec {
 }
 .player_table input[type="file"] { display: none; }
 
-/*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ТРЕНЕРСКИЙ СОСТАВ ★★★★ */
+/*  ★★★★★★★★★★★★★★★★★★★★★★★★ ТРЕНЕРСКИЙ СОСТАВ и АДМИНИСТРАЦИЯ ★★★★ */
 /*  ★★★★ ДОБАВЛЕНИЕ ЗАПИСИ ★★★★ */
 
 .trainer_add select[name="country"],
@@ -171,10 +175,15 @@ button.load_rec {
 
 .trainer_table select[name="country"],
 .trainer_table select[name="group"],
+.trainer_table input[name="phone"],
 .trainer_table input[name="contacts"],
 .trainer_table input[name="position"]
 {
     width: 100%;
+}
+.trainer_table input[name="email"]
+{
+    width: 220px; 
 }
 
 /*  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ СХЕМЫ ★★★★ */

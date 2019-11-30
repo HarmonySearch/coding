@@ -4,39 +4,43 @@
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
 
-
 //  CSS стили для админ-панели
-add_action( 'admin_enqueue_scripts', function(){
-  wp_enqueue_style( 'db-wp-admin', get_template_directory_uri() .'/db_edit/style.css' );
+add_action('admin_enqueue_scripts', function () {
+    wp_enqueue_style( 'db-wp-admin', get_template_directory_uri() .'/db_edit/style.css' );
 });
 
-add_action( 'admin_enqueue_scripts', 'myajax_data', 99 ); // событие 'admin_enqueue_scripts'только на админку
+add_action('admin_enqueue_scripts', 'myajax_data', 99); // событие 'admin_enqueue_scripts'только на админку
 
-function myajax_data(){  //Создает уникальный защитный ключ на короткий промежуток времени	?>
-    <script> var my_ajax_noncerr = '<?= wp_create_nonce( 'my_ajax_nonce' ); ?>'</script>
-<?php   
+function myajax_data()
+{  //Создает уникальный защитный ключ на короткий промежуток времени	
+    ?>
+    <script>
+        var my_ajax_noncerr = '<?= wp_create_nonce('my_ajax_nonce'); ?>'
+    </script>
+<?php
 }
 // проверка условия разрешения редактирования информации
-if( wp_doing_ajax() ){ 
-	// if(current_user_can('edit_user_data')){ 
-		add_action('wp_ajax_data_change', 'data_change_callback');
-		add_action('wp_ajax_row_delete', 'row_delete_callback');
-		add_action('wp_ajax_load_file', 'load_file_callback');
-		add_action('wp_ajax_load_tourney', 'load_tourney_callback');
-		add_action('wp_ajax_load_meet', 'load_meet_callback');
-		add_action('wp_ajax_load_team', 'load_team_callback');
-		add_action('wp_ajax_load_player', 'load_player_callback');
-		add_action('wp_ajax_load_trainer', 'load_trainer_callback');
-		add_action('wp_ajax_statistics_add', 'statistics_add_callback');
-		add_action('wp_ajax_career_add', 'career_add_callback');
-		add_action('wp_ajax_standings_load', 'standings_load_callback');
-	// }
+if (wp_doing_ajax()) {
+    // if(current_user_can('edit_user_data')){ 
+    add_action('wp_ajax_data_change', 'data_change_callback');
+    add_action('wp_ajax_row_delete', 'row_delete_callback');
+    add_action('wp_ajax_load_file', 'load_file_callback');
+    add_action('wp_ajax_load_tourney', 'load_tourney_callback');
+    add_action('wp_ajax_load_meet', 'load_meet_callback');
+    add_action('wp_ajax_load_team', 'load_team_callback');
+    add_action('wp_ajax_load_player', 'load_player_callback');
+    add_action('wp_ajax_load_trainer', 'load_trainer_callback');
+    add_action('wp_ajax_statistics_add', 'statistics_add_callback');
+    add_action('wp_ajax_career_add', 'career_add_callback');
+    add_action('wp_ajax_standings_load', 'standings_load_callback');
+    // }
 }
 /*
  * 
  */
 
-function clean($var = ""){
+function clean($var = "")
+{
     $var = trim($var);
     $var = stripslashes($var);
     $var = strip_tags($var);
@@ -49,16 +53,17 @@ function clean($var = ""){
 //  ЗАГРУЗКА ТУРНИРНОЙ ТАБЛИЦЫ
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
-function standings_load_callback(){
+function standings_load_callback()
+{
 
     global $wpdb;
 
-    if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
-    if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
+    if (!wp_verify_nonce($_POST['nonce_code'], 'my_ajax_nonce')) die('Stop!'); // Проверяем защитный ключ
+    if (!is_user_logged_in()) die('Stop! No login'); // юзверь не залогонин
 
     $sql = "TRUNCATE TABLE standings;";
     $wpdb->query($sql);
-    foreach ($_POST['json'] as $rec ) {
+    foreach ($_POST['json'] as $rec) {
         //echo($rec['meet']);
         $data_a = array(
             'tourney' => $rec['tourney'],
@@ -75,7 +80,6 @@ function standings_load_callback(){
         if ($result <= 0) {
             wp_die('Ошибка записи в базу данных.');
         }
-    
     };
 
     die();
@@ -85,33 +89,34 @@ function standings_load_callback(){
 //  UPDATE FIELD
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
-function data_change_callback(){
+function data_change_callback()
+{
     /*
      * Получаем 4 параметра
      * Проверяем актуальность
      */
 
-    $tables = ['team', 'player','tourney', 'meet', 'trainer','player_scheme','statistics','career']; // список допустымых таблиц
+    $tables = ['team', 'player', 'tourney', 'meet', 'trainer', 'player_scheme', 'statistics', 'career']; // список допустымых таблиц
 
-	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
-	if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
+    if (!wp_verify_nonce($_POST['nonce_code'], 'my_ajax_nonce')) die('Stop!'); // Проверяем защитный ключ
+    if (!is_user_logged_in()) die('Stop! No login'); // юзверь не залогонин
 
     $table = clean($_POST['table']);
-    if (! in_array($table, $tables)) die('Stop! No table'); // нет такой таблицы
+    if (!in_array($table, $tables)) die('Stop! No table'); // нет такой таблицы
     $code = clean($_POST['code']);
     $field = clean($_POST['name']);
     $value = clean($_POST['value']);
 
     global $wpdb;
-    
-    $result = 
+
+    $result =
         $wpdb->update(
-        $table, 
-        array($field => $value),
-        array('code' => intVal($code))
+            $table,
+            array($field => $value),
+            array('code' => intVal($code))
         );
     echo $result;
-	wp_die();
+    wp_die();
 }
 
 
@@ -119,78 +124,113 @@ function data_change_callback(){
 //  УДАЛЕНИЕ СТРОКИ
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
-function row_delete_callback(){
+function row_delete_callback()
+{
     /*
      * Получаем 2 параметра: таблицу и код строки
      */
 
-    $tables = ['team', 'player','tourney', 'meet', 'trainer','player_scheme','statistics','career']; // список допустымых таблиц
+    $tables = ['team', 'player', 'tourney', 'meet', 'trainer', 'player_scheme', 'statistics', 'career']; // список допустымых таблиц
 
-	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
-	if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
+    if (!wp_verify_nonce($_POST['nonce_code'], 'my_ajax_nonce')) die('Stop!'); // Проверяем защитный ключ
+    if (!is_user_logged_in()) die('Stop! No login'); // юзверь не залогонин
 
     $table = clean($_POST['table']);
-    if (! in_array($table, $tables)) die('Stop! No table'); // нет такой таблицы
-    
+    if (!in_array($table, $tables)) die('Stop! No table'); // нет такой таблицы
+
     $code = clean($_POST['code']);
 
     $where = array('code' => $code);
 
     global $wpdb;
 
-    $result = $wpdb->delete( $table, $where);
+    $result = $wpdb->delete($table, $where);
 
     echo $result;
     // echo $table, $code, $where;
 
-	wp_die();
+    wp_die();
 }
 
 
 
 $rule_file = array(
     'meet' => array('type' => 'image/jpeg', 'size' => 500000,  'dir' => '/images/db/meet/', 'ext' => '.jpg'),
-    'team' => array('type' => 'image/png', 'size' => 100000,  'dir' => '/images/db/team/', 'ext' => '.png'),
+    'team' => array('type' => 'image/png', 'size' => 500000,  'dir' => '/images/db/team/', 'ext' => '.png'),
     'tourney' => array('type' => 'image/png', 'size' => 100000, 'dir' => '/images/db/tourney/', 'ext' => '.png'),
-    'player_1' => array('type' => 'image/png', 'size' => 200000, 'dir' => '/images/db/player/', 'ext' => '-1.png'),
-    'player_2' => array('type' => 'image/png', 'size' => 200000, 'dir' => '/images/db/player/', 'ext' => '-2.png'),
-    'trainer' => array('type' => 'image/png', 'size' => 200000, 'dir' => '/images/db/trainer/', 'ext' => '.png')
+    'player_1' => array('type' => 'image/png', 'size' => 1000000, 'dir' => '/images/db/player/a', 'ext' => '.png'),
+    'player_2' => array('type' => 'image/png', 'size' => 1000000, 'dir' => '/images/db/player/b', 'ext' => '.png'),
+    'trainer' => array('type' => 'image/png', 'size' => 1000000, 'dir' => '/images/db/trainer/', 'ext' => '.png')
 );
 
-//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-//  ЗАГРУЗКА ФАЙЛОВ
-//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ЗАГРУЗКА ФАЙЛОВ ★★★★
+// - безопасность
+// - ошибки загрузки на клиент -> сервер
+// - проверка типа и размера файла
+// - (пока нет) масштабирование фалов + два размера
+// - ошибки загрузки файла в каталог
+// - возвращаем ошибку или кусок src, если все в норме 
 
 function load_file_callback()
 {
-    global $rule_file;
-
-    if (!wp_verify_nonce($_POST['nonce_code'], 'my_ajax_nonce')) die('Stop!'); // Проверяем защитный ключ
-    if (!is_user_logged_in()) die('Stop! No login'); // пользователь не залогонился
+    if (!wp_verify_nonce($_POST['nonce_code'], 'my_ajax_nonce')) die('Ошибка защитного ключа!');
+    if (!is_user_logged_in()) die('Пользователь не залогонился!');
 
     //wp_die('вход');
 
-    // ошибки процесса загрузки
     if ($_FILES['file']['error'] < 0) {
-        wp_die('Ошибка: ' . $_FILES['file']['error']);
+        wp_die('Ошибка закрузки на сервер файла: ' . $_FILES['file']['error']);
     }
 
+    global $rule_file;
     $param = $rule_file[$_POST['key']];
 
-    if ( $_FILES['file']['type'] != $param['type'] ) {
-        wp_die('Тип файла не: '. $param['type']);
+    if ($_FILES['file']['type'] != $param['type']) {
+        wp_die('Нужен тип файла: ' . $param['type']);
     }
 
-    if ( $_FILES['file']['size'] > $param['size'] ) {
-        wp_die('Размер файла больше: '. $param['size']);
+    if ($_FILES['file']['size'] > $param['size']) {
+        wp_die('Размер файла больше: ' . $param['size']);
     }
-
+    // префикс + каталог + код записи + пасширение
     $pach = get_template_directory() . $param['dir'] . $_POST['code'] . $param['ext'];
     //wp_die($pach);
     $result = move_uploaded_file($_FILES['file']['tmp_name'], $pach);
-    if( ! $result )
-        echo 'ошибка загрузки файла: ', $pach;
-	wp_die();
+    if (!$result)
+        echo 'Ошибка загрузки файла в каталог: ', $pach;
+
+    // для png и jpg разный алгоритм
+    if ($param['ext'] == '.png') { // png
+        $img = imagecreatefrompng($pach); // исходник
+        list($width, $height) = getimagesize($pach);
+        $sizes = array('s' => 100, 'm' =>  250, 'l' =>  500);
+        foreach ($sizes as $key => $size) {
+            $newHeight = $size;
+            if ($newHeight > $height) { $newHeight = $height; } // увеличивать нельзя
+            $newWidth = ($width / $height) * $newHeight;
+            $tmp = imagecreatetruecolor($newWidth, $newHeight);
+            imagealphablending($tmp, false); //Отключаем режим сопряжения цветов
+            imagesavealpha($tmp, true); //Включаем сохранение альфа канала
+            imagecopyresampled($tmp, $img, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+            $pach = get_template_directory() . $param['dir'] . $_POST['code'] . $key . $param['ext'];
+            $write = imagepng($tmp, $pach);
+        }
+    } else { // jpg
+        $img = imagecreatefromjpeg($pach);
+        list($width, $height) = getimagesize($pach);
+
+        $sizes = array('s' => 100, 'm' =>  330);
+        foreach ($sizes as $key => $size) {
+            $newHeight = $size; // 100
+            $newWidth = ($width / $height) * $newHeight;
+            $tmp = imagecreatetruecolor($newWidth, $newHeight);
+            imagecopyresampled($tmp, $img, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+            $pach = get_template_directory() . $param['dir'] . $_POST['code'] . $key . $param['ext'];
+            $write = imagejpeg($tmp, $pach); // качество 75%
+        }
+    }
+    wp_die($param['dir'] . $_POST['code'] . 's' . $param['ext']);
 }
 
 
@@ -199,12 +239,13 @@ function load_file_callback()
 //  ДОБАВИТЬ ЗАПИСЬ ТУРНИРА
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
-function load_tourney_callback(){
+function load_tourney_callback()
+{
 
     global $rule_file;
 
-	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
-	if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
+    if (!wp_verify_nonce($_POST['nonce_code'], 'my_ajax_nonce')) die('Stop!'); // Проверяем защитный ключ
+    if (!is_user_logged_in()) die('Stop! No login'); // юзверь не залогонин
 
     // проверяем файлы если они существуют
     if (isset($_FILES['file'])) {
@@ -294,7 +335,7 @@ function load_team_callback()
         wp_die('Ошибка записи в базу данных.');
     }
 
-    // грузим файлы если он существуют
+    // грузим файл если есть
     if (isset($_FILES['file'])) {
         $id = $wpdb->insert_id; // код новой записи
         $pach = get_template_directory() . "/images/db/team/" . $id . ".png";
@@ -359,7 +400,7 @@ function statistics_add_callback()
     if (!is_user_logged_in()) die('Stop! No login'); // юзверь не залогонин
 
     $data_a = array(
-        'meet' => (int)clean($_POST['meet'])
+        'meet' => (int) clean($_POST['meet'])
     );
     $format = array('%d');
 
@@ -386,7 +427,7 @@ function career_add_callback()
     if (!is_user_logged_in()) die('Stop! No login'); // юзверь не залогонин
 
     $data_a = array(
-        'player' => (int)clean($_POST['player'])
+        'player' => (int) clean($_POST['player'])
     );
     $format = array('%d');
 
@@ -406,12 +447,13 @@ function career_add_callback()
 //  ДОБАВИТЬ ЗАПИСЬ ИГРОКА
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
-function load_player_callback(){
+function load_player_callback()
+{
 
     global $rule_file;
-    
-	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
-	if(!is_user_logged_in()) die('Stop! No login'); // юзверь не залогонин
+
+    if (!wp_verify_nonce($_POST['nonce_code'], 'my_ajax_nonce')) die('Stop!'); // Проверяем защитный ключ
+    if (!is_user_logged_in()) die('Stop! No login'); // юзверь не залогонин
 
     // начинаем с проверки файлов фотографий
     if (isset($_FILES['file_1'])) {
@@ -452,40 +494,47 @@ function load_player_callback(){
         'growing' => clean($_POST['growing']),
         'weight' => clean($_POST['weight']),
         'vc' => clean($_POST['vc']),
-        'instagram' => clean($_POST['instagram']));
+        'instagram' => clean($_POST['instagram'])
+    );
 
     $birthday = clean($_POST['birthday']);
-    if (($birthday)=='') {
+    if (($birthday) == '') {
         $data_a['birthday'] = '1900-01-01';
     } else {
         $data_a['birthday'] = $birthday;
     }
 
-    $team = (int)clean($_POST['team']);
+    $team = (int) clean($_POST['team']);
     $data_a['team'] = $team;
-    
+
     $position = clean($_POST['position']);
-    if (is_numeric($position)) { $data_a['position'] = (int)$position; }
-    
+    if (is_numeric($position)) {
+        $data_a['position'] = (int) $position;
+    }
+
     $country = clean($_POST['country']);
-    if ( is_numeric ($country)) { $data_a['country'] = (int)$country; }
-    
+    if (is_numeric($country)) {
+        $data_a['country'] = (int) $country;
+    }
+
     $capitan = clean($_POST['capitan']);
-    if (is_numeric($capitan)) { $data_a['capitan'] = (int)$capitan; }
-    
+    if (is_numeric($capitan)) {
+        $data_a['capitan'] = (int) $capitan;
+    }
+
 
     global $wpdb;
-    $format = array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d' );
+    $format = array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d');
     $result = $wpdb->insert('player', $data_a, $format);
     if ($result <= 0) {
         wp_die('ошибка записи');
     }
 
     $id = $wpdb->insert_id; // код новой записи
-    
+
     // грузим файлы если они существуют
-    
-    if(isset($_FILES['file_1'])) {
+
+    if (isset($_FILES['file_1'])) {
         $pach = get_template_directory() . "/images/db/player/" . $id . "-1.png";
         $result = move_uploaded_file($_FILES['file_1']['tmp_name'], $pach);
         if (!$result)
@@ -500,19 +549,20 @@ function load_player_callback(){
         }
     }
 
-	wp_die();
+    wp_die();
 }
 
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 //  ДОБАВИТЬ ЗАПИСЬ СОТРУДНИКА
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
-function load_trainer_callback(){ 
+function load_trainer_callback()
+{
 
     global $rule_file;
 
-	if( ! wp_verify_nonce( $_POST['nonce_code'], 'my_ajax_nonce' ) ) die( 'Stop!'); // Проверяем защитный ключ
-	if(! is_user_logged_in()) die( 'Stop! No login'); // юзверь не залогонин
+    if (!wp_verify_nonce($_POST['nonce_code'], 'my_ajax_nonce')) die('Stop!'); // Проверяем защитный ключ
+    if (!is_user_logged_in()) die('Stop! No login'); // юзверь не залогонин
 
     // проверяем файлы если они существуют
     if (isset($_FILES['file'])) {
@@ -539,9 +589,11 @@ function load_trainer_callback(){
         'group' => clean($_POST['group'])  // должность
     );
     $country = clean($_POST['country']);
-    if ( is_numeric ($country)) { $data_a['country'] = (int)$country; }
-    
-    $team = (int)clean($_POST['team']);
+    if (is_numeric($country)) {
+        $data_a['country'] = (int) $country;
+    }
+
+    $team = (int) clean($_POST['team']);
     $data_a['team'] = $team;
 
     global $wpdb;
