@@ -16,6 +16,18 @@ CREATE TABLE `player_positions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='позиция игрока';
 
 
+
+CREATE TABLE `team_group` (
+  code INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'уникальный код',
+  `name` varchar(50) NOT NULL COMMENT 'группа',
+  
+    PRIMARY KEY (code),
+    UNIQUE INDEX name (name)
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='группа команды';
+
+
+
 --
 -- Дамп данных таблицы `player_positions`
 --
