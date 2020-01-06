@@ -9,6 +9,7 @@ error_reporting(E_ALL);
 
 $code_team = get_team_select();  // код --> команда (для select)
 $code_tourney = get_tourney_code();  // код --> турнир (для select)
+$code_ticket = get_ticket();
 
 //  ★★★★ ДОБАВЛЕНИЕ ЗАПИСИ ★★★★
 //
@@ -221,10 +222,15 @@ if (isset($_GET['add'])) { ?>
                                 Зона: <input type="number" name="time_zone" value="<?= $rec['time_zone'] ?>">
                             </td>
                         <tr>
-                            <td></td>
-                            <td>Вход&nbsp;свободый: <input type="checkbox" name="free" value="<?= $rec['free'] ?>" <? echo ($rec['free'] == 1) ? 'checked' : ''; ?>></td>
-
-                        </tr>
+                        <td>Билет:</td>
+                            <td>
+                                <select name="ticket">
+                                    <option value="" <? echo ('' == $rec['ticket']) ? 'selected' : ''; ?>>выбрать</option>
+                                    <? foreach ($code_ticket as $opt) { ?>
+                                        <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['ticket']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                                    <? } ?>
+                                </select>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -233,40 +239,71 @@ if (isset($_GET['add'])) { ?>
                     <b>Cтатистика</b>
                     <table>
                         <tr>
-                            <td>Процент владения мячом:</td>
-                            <td><input class="digit_only" type="text" name="ball_poss" value="<?= $rec['ball_poss'] ?>"></td>
+                            <td></td>
+                            <td>1 ком.</td>
+                            <td>2 ком.</td>
+                            <td></td>
+                            <td>1 ком.</td>
+                            <td>2 ком.</td>
+                            <td></td>
+                            <td>1 ком.</td>
+                            <td>2 ком.</td>
+                            <td></td>
+                            <td>1 ком.</td>
+                            <td>2 ком.</td>
+                        </tr>
+                        <tr>
+                            <td>% владения мячом:</td>
+                            <td><input class="digit_only" type="text" name="ball_poss_1" value="<?= $rec['ball_poss_1'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="ball_poss_2" value="<?= $rec['ball_poss_2'] ?>"></td>
                             <td>Офсайды:</td>
-                            <td><input class="digit_only" type="text" name="offside_1" value="<?= $rec['offside_1'] ?>">
-                                <input class="digit_only" type="text" name="offside_2" value="<?= $rec['offside_2'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="offside_1" value="<?= $rec['offside_1'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="offside_2" value="<?= $rec['offside_2'] ?>"></td>
                             <td>Угловые:</td>
-                            <td><input class="digit_only" type="text" name="corner_1" value="<?= $rec['corner_1'] ?>">
-                                <input class="digit_only" type="text" name="corner_2" value="<?= $rec['corner_2'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="corner_1" value="<?= $rec['corner_1'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="corner_2" value="<?= $rec['corner_2'] ?>"></td>
                             <td>Голевые моменты:</td>
-                            <td><input class="digit_only" type="text" name="goal_moment_1" value="<?= $rec['goal_moment_1'] ?>">
-                                <input class="digit_only" type="text" name="goal_moment_2" value="<?= $rec['goal_moment_2'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="goal_moment_1" value="<?= $rec['goal_moment_1'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="goal_moment_2" value="<?= $rec['goal_moment_2'] ?>"></td>
                         </tr>
                         <tr>
                             <td>Удары по воротам:</td>
-                            <td><input class="digit_only" type="text" name="kick_goal_1" value="<?= $rec['kick_goal_1'] ?>">
-                                <input class="digit_only" type="text" name="kick_goal_2" value="<?= $rec['kick_goal_2'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="kick_goal_1" value="<?= $rec['kick_goal_1'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="kick_goal_2" value="<?= $rec['kick_goal_2'] ?>"></td>
                             <td>Удары в створ:</td>
-                            <td><input class="digit_only" type="text" name="kick_target_1" value="<?= $rec['kick_target_1'] ?>">
-                                <input class="digit_only" type="text" name="kick_target_2" value="<?= $rec['kick_target_2'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="kick_target_1" value="<?= $rec['kick_target_1'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="kick_target_2" value="<?= $rec['kick_target_2'] ?>"></td>
                             <td>Штанги:</td>
-                            <td><input class="digit_only" type="text" name="goalpost_1" value="<?= $rec['goalpost_1'] ?>">
-                                <input class="digit_only" type="text" name="goalpost_2" value="<?= $rec['goalpost_2'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="goalpost_1" value="<?= $rec['goalpost_1'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="goalpost_2" value="<?= $rec['goalpost_2'] ?>"></td>
                             <td>Фолы:</td>
-                            <td><input class="digit_only" type="text" name="foul_1" value="<?= $rec['foul_1'] ?>">
-                                <input class="digit_only" type="text" name="foul_2" value="<?= $rec['foul_2'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="foul_1" value="<?= $rec['foul_1'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="foul_2" value="<?= $rec['foul_2'] ?>"></td>
                         </tr>
-                        <td>Предупреждения:</td>
-                        <td><input class="digit_only" type="text" name="warning_1" value="<?= $rec['warning_1'] ?>">
-                            <input class="digit_only" type="text" name="warning_2" value="<?= $rec['warning_2'] ?>"></td>
-                        <td>Удаления:</td>
-                        <td><input class="digit_only" type="text" name="sending_off_1" value="<?= $rec['sending_off_1'] ?>">
-                            <input class="digit_only" type="text" name="sending_off_2" value="<?= $rec['sending_off_2'] ?>"></td>
                         <tr>
-
+                            <td>Предупреждения:</td>
+                            <td><input class="digit_only" type="text" name="warning_1" value="<?= $rec['warning_1'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="warning_2" value="<?= $rec['warning_2'] ?>"></td>
+                            <td>Удаления:</td>
+                            <td><input class="digit_only" type="text" name="sending_off_1" value="<?= $rec['sending_off_1'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="sending_off_2" value="<?= $rec['sending_off_2'] ?>"></td>
+                            <td>Успешные передачи:</td>
+                            <td><input class="digit_only" type="text" name="success_pass_1" value="<?= $rec['success_pass_1'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="success_pass_2" value="<?= $rec['success_pass_2'] ?>"></td>
+                            <td>Выигранные единоборства:</td>
+                            <td><input class="digit_only" type="text" name="combat_1" value="<?= $rec['combat_1'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="combat_2" value="<?= $rec['combat_2'] ?>"></td>
+                        </tr>
+                        <tr>
+                            <td>Быстрые атаки (% успешных):</td>
+                            <td><input class="digit_only" type="text" name="fast_attacks_1" value="<?= $rec['fast_attacks_1'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="fast_attacks_2" value="<?= $rec['fast_attacks_2'] ?>"></td>
+                            <td>Обводки (% успешных) :</td>
+                            <td><input class="digit_only" type="text" name="stroke_1" value="<?= $rec['stroke_1'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="stroke_2" value="<?= $rec['stroke_2'] ?>"></td>
+                            <td>Отборы (% успешных) :</td>
+                            <td><input class="digit_only" type="text" name="take_away_1" value="<?= $rec['take_away_1'] ?>"></td>
+                            <td><input class="digit_only" type="text" name="take_away_2" value="<?= $rec['take_away_2'] ?>"></td>
                         </tr>
                     </table>
                 </div>

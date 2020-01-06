@@ -214,7 +214,8 @@ $start = microtime(true);
 </div>
 
 <div class="player_table">
-    <?php foreach ($players as $rec) {
+    <?php
+    foreach ($players as $rec) {
         $code = $rec['code']; ?>
         <hr class="hr_db">
         <div class="player" data-code="<?= $code ?>">
@@ -284,6 +285,7 @@ $start = microtime(true);
                             <? } ?>
                         </select>
                     </td>
+                    <td><a href="https://fcakron.ru/komanda/igrok/?person=<?= $code ?>" target="_blank">Посмотреть игрока на сайте</a></td>
                 </tr>
 
                 <tr>

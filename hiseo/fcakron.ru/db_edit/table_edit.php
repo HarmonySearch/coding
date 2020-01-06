@@ -4,51 +4,6 @@
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
 
-//  CSS стили для админ-панели
-add_action('admin_enqueue_scripts', function () {
-    wp_enqueue_style( 'db-wp-admin', get_template_directory_uri() .'/db_edit/style.css' );
-});
-
-add_action('admin_enqueue_scripts', 'myajax_data', 99); // событие 'admin_enqueue_scripts'только на админку
-
-function myajax_data()
-{  //Создает уникальный защитный ключ на короткий промежуток времени	
-    ?>
-    <script>
-        var my_ajax_noncerr = '<?= wp_create_nonce('my_ajax_nonce'); ?>'
-    </script>
-<?php
-}
-// проверка условия разрешения редактирования информации
-if (wp_doing_ajax()) {
-    // if(current_user_can('edit_user_data')){ 
-    add_action('wp_ajax_data_change', 'data_change_callback');
-    add_action('wp_ajax_row_delete', 'row_delete_callback');
-    add_action('wp_ajax_load_file', 'load_file_callback');
-    add_action('wp_ajax_load_tourney', 'load_tourney_callback');
-    add_action('wp_ajax_load_meet', 'load_meet_callback');
-    add_action('wp_ajax_load_team', 'load_team_callback');
-    add_action('wp_ajax_load_player', 'load_player_callback');
-    add_action('wp_ajax_load_trainer', 'load_trainer_callback');
-    add_action('wp_ajax_statistics_add', 'statistics_add_callback');
-    add_action('wp_ajax_career_add', 'career_add_callback');
-    add_action('wp_ajax_standings_load', 'standings_load_callback');
-    // }
-}
-/*
- * 
- */
-
-function clean($var = "")
-{
-    $var = trim($var);
-    $var = stripslashes($var);
-    $var = strip_tags($var);
-    $var = htmlspecialchars($var);
-    return $var;
-}
-
-
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 //  ЗАГРУЗКА ТУРНИРНОЙ ТАБЛИЦЫ
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
@@ -551,6 +506,43 @@ function load_player_callback()
 
     wp_die();
 }
+
+// ----------------------------------------------------------------------------
+// РЕДАКТИРОВАНИЕ СОБЫТИЙ МАТЧА
+// 
+// получаем переменную для изменения. если событие относится к игроку, то 
+// запускаем вычисление соответствующей статистики для данного турнира и для
+// данного игрока
+// ----------------------------------------------------------------------------
+
+function edit_match_events_callback()
+{
+    // нам нужны: code, name, value. таблицу мы и так знаем. 
+    // сначала записываем информацию в таблицу
+
+    if (!wp_verify_nonce($_POST['nonce_code'], 'my_ajax_nonce')) die('Stop!'); // Проверяем защитный ключ
+    if (!is_user_logged_in()) die('Stop! No login'); // юзверь не залогонин
+
+    $code = clean($_POST['code']);
+    $field = clean($_POST['field']);
+    $value = clean($_POST['value']);
+
+    wp_die(''.$code.$field.$value);
+    
+    // global $wpdb;
+
+    // $result =
+    //     $wpdb->update(
+    //         $table,
+    //         array($field => $value),
+    //         array('code' => intVal($code))
+    //     );
+    // echo $result;
+    // wp_die();
+
+
+}
+
 
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 //  ДОБАВИТЬ ЗАПИСЬ СОТРУДНИКА

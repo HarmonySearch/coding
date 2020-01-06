@@ -7,10 +7,12 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once(dirname(__FILE__) . '/functions_db.php');  // функции для работы с базой данных
+// require_once(dirname(__FILE__) . '/functions_db.php');  // функции для работы с базой данных
+
+$code_team_group = get_team_group();  // для команды select
 
 
-//  ▰▰▰▰ ДОБАВИТЬ ЗАПИСЬ ▰▰▰▰
+//  ---- ДОБАВИТЬ ЗАПИСЬ ----------------------------------------------------
 //
 //  GET запрос наличие переменной add без значения
 //  https://fcakron.ru/wp-admin/admin.php?page=team&add
@@ -91,11 +93,10 @@ if (isset($_GET['add'])) { ?>
 
 
 
-//
-//  ▰▰▰▰ РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ▰▰▰▰
-//
+// ------------------------------------------------ РЕДАКТИРОВАНИЕ ЗАПИСЕЙ ----
 
 $fields = array('name', 'city', 'website');
+
 
 
 global $wpdb;
@@ -105,7 +106,6 @@ $teams = $wpdb->get_results($sql, 'ARRAY_A');
 ?>
 
 <h1>Таблица команд</h1>
-<h3>(информация используется на сайте)</h3>
 <div><button class="btn_add_rec">Добавить команду</button></div>
 
 <div class="teams_table">
@@ -116,10 +116,21 @@ $teams = $wpdb->get_results($sql, 'ARRAY_A');
         <div class="root_table" data-table="team" data-code="<?= $code ?>">
 
             <table>
-                <tr>
+                <tr> <!-- 1 -->
+                    <td>Группа: </td>
+                    <td>
+                    <select name="group">
+                            <option value="" <? echo ('' == $rec['group']) ? 'selected' : ''; ?>>не указано</option>
+                            <? foreach ($code_team_group as $opt) { ?>
+                                <option value="<?= $opt['code'] ?>" <? echo ($opt['code'] == $rec['group']) ? 'selected' : ''; ?>><?= $opt['name'] ?></option>
+                            <? } ?>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr> <!-- 2 -->
                     <td>Название&nbsp;команды: </td>
                     <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
-
                     <?php
                         $src = dirname(__FILE__) . '/../images/db/team/' . $rec['code'] . 's.png';
                         if (file_exists($src)) { ?>
@@ -128,20 +139,20 @@ $teams = $wpdb->get_results($sql, 'ARRAY_A');
                         <td rowspan="2"><img src="https://fcakron.ru/wp-content/themes/fcakron/images/db/meet/nofoto.png"></td>
                     <?php } ?>
 
-
-
-
                     <td>
                         <div style="width: 250px;"></div>
                     </td>
                 </tr>
-                <tr>
+
+                <tr> <!-- 3 -->
                     <td>Город: </td>
                     <td><input type="text" name="city" value="<?= $rec['city'] ?>"></td>
                     <td><label class="button" for="logo<?= $code ?>">Загрузить</label>
                         <input id="logo<?= $code ?>" type="file" name="logo"></td>
                 </tr>
+
             </table>
+
         </div>
     <?php
     } ?>
@@ -158,7 +169,7 @@ $teams = $wpdb->get_results($sql, 'ARRAY_A');
         });
 
         //  ▰▰▰▰ РЕДАКТИРОВАТЬ ЗАПИСЬ ▰▰▰▰
-        $("input[type=text]").change(function() { // значение поля изменилось
+        $(document).on('change', 'input:not([type=file]), select, textarea', function() {
 
             let patern = $(this).closest(".root_table"); // корневой предок
             let table = patern.data("table"); // у него прописан код

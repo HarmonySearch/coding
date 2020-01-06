@@ -70,7 +70,7 @@ button.load_rec {
 
 .matches_table .div_accordion {
     display: grid;
-    grid-template-columns: 20% 55% 22%;
+    grid-template-columns: 18% 60% 22%;
     grid-column-gap: 10px;
 }
 /* числовые поля */

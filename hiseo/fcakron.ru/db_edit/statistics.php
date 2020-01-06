@@ -1,8 +1,8 @@
 <?php
-// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+// ----------------------------------------------------------------------------
 // РЕДАКТИРОВАНИЕ ТАБЛИЦЫ СТАСТИСТИКИ
 // https://fcakron.ru/wp-admin/admin.php?page=statistics&meet=15
-// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+// ----------------------------------------------------------------------------
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -49,6 +49,10 @@ if (!$res) {
         display: none;
     }
 
+    .event7 select[name=player] {
+        display: none;
+    }
+
     .event13 select[name=player] {
         display: none;
     }
@@ -64,6 +68,7 @@ if (!$res) {
     .event18 select[name=player] {
         display: none;
     }
+
     .event20 select[name=player] {
         display: none;
     }
@@ -73,8 +78,8 @@ if (!$res) {
     }
 </style>
 
-<h1>Таблица статистики</h1>
-<h3>(информация пока не используется на сайте)</h3>
+<h1>Таблица событий матча</h1>
+
 <div>
     <button class="btn_add_rec" data-meet="<?= $meet ?>">Добавить событие</button>
 </div>
@@ -91,7 +96,7 @@ if (!$res) {
         } else {
             $css = 0;
         }
-        ?>
+    ?>
         <div class="row <?= 'event' . $css ?>" data-table="statistics" data-code="<?= $code ?>">
 
             <button class="btn_delete" data-meet="<?= $meet ?>"><img src="http://fcakron.ru/wp-content/themes/fcakron/images/db/delete.png"></button>
@@ -125,6 +130,7 @@ if (!$res) {
     <button class="btn_add_rec" data-meet="<?= $meet ?>">Добавить событие</button>
 </div>
 
+// ---------------------------------------------------------------------------- JS ----
 
 <script>
     jQuery(function($) {
@@ -194,7 +200,38 @@ if (!$res) {
 
         });
 
-        //  ★★★★ РЕДАКТИРОВАНИЕ ФОРМЫ ★★★★
+        //  ---- РЕДАКТИРОВАНИЕ ФОРМЫ ----------------------------
+
+        function send_data(action, table, code, field, value) {
+
+            let data_lib = {
+                nonce_code: my_ajax_noncerr,
+                action: action,
+                table: table,
+                code: code,
+                field: field,
+                value: value
+            };
+            let data;
+            jQuery.ajax({
+                method: "POST",
+                url: ajaxurl,
+                data: data_lib
+            }).done(function(data) {
+                console.log(data);
+                return data;
+            });
+        }
+
+        $(document).on('change', 'input+, select+', function(e) {
+
+            let code = $(this).parent().data("code"); // код записи
+            let field = $(this).attr("name"); // название поля
+            let value = $(this).val(); // значение
+            console.log(code, field, value);
+            let text = send_data('edit_match_events', 'statistics', code, field, value)
+            console.log(text);
+        });
 
         $(document).on('change', 'input, select', function(e) {
 

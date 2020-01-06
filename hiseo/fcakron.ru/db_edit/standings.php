@@ -31,7 +31,7 @@ $code_team = get_team_select();  // команда select
     <span></span>
     <span>Команда</span>
     <span>И</span>
-    <span>П</span>
+    <span>В</span>
     <span>Н</span>
     <span>П</span>
     <span>О</span>
