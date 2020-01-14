@@ -99,6 +99,7 @@ if (isset($_GET['add'])) { ?>
                 <tr>
                     <td>Название: </td>
                     <td><input type="text" name="name" value="<?= $rec['name'] ?>"></td>
+                    <td><button class="btn_statistics">Статистика игроков</button></td>
                 </tr>
                 <tr>
                     <?php
@@ -128,6 +129,13 @@ if (isset($_GET['add'])) { ?>
         $(document).on('click', '.btn_add_rec', function() { // кнопка добавления записи
             document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=tourney&add";
         });
+
+        //  ---- кнопка СТАТИСТИКА ИГРОКОВ ------------------------------------
+        $(document).on('click', '.btn_statistics', function() {
+            let code = $(this).closest(".tourney").data("code");
+            document.location.href = "https://fcakron.ru/wp-admin/admin.php?page=player_stat&team=1&tourney=" + code;
+        });
+
 
         //  ▰▰▰▰ РЕДАКТИРОВАНИЕ ФОРМЫ ▰▰▰▰
 

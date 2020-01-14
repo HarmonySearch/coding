@@ -1,7 +1,7 @@
 <?php
-//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+//  ----------------------------------------------------------------------------
 //  РЕДАКТИРОВАНИЕ ТАБЛИЦЫ ИГРОКОВ
-//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+//  ----------------------------------------------------------------------------
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -12,7 +12,7 @@ $code_pos = get_position();  // позиция select
 $code_team = get_team_select();  // команда select
 
 
-player_stat();
+// player_stat();
 
 //  ★★★★ ДОБАВИТЬ ЗАПИСЬ ★★★★
 //
@@ -171,7 +171,6 @@ if (isset($_GET['add'])) { ?>
     wp_die();
 }
 
-//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ТАБЛИЦА ИГРОКОВ ★★★★
 
 
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ТАБЛИЦА ИГРОКОВ ★★★★
@@ -340,6 +339,8 @@ $start = microtime(true);
                             <td><input class="digit_only" type="text" name="stroke" value="<?= $rec['stroke'] ?>"></td>
                             <td class="count">Выигранные единоборства:</td>
                             <td><input class="digit_only" type="text" name="combat" value="<?= $rec['combat'] ?>"></td>
+                            <td class="count">InstatIndex ср.: </td>
+                            <td><input class="digit_only" type="text" name="instat" value="<?= $rec['instat'] ?>"></td>
                         </tr>
                     </table>
                 </div>
@@ -352,6 +353,10 @@ $start = microtime(true);
                     <tr>
                         <td class="count">Сыгранные матчи: </td>
                         <td class="count"><input class="digit_only" type="text" name="matches" readonly value="<?= $rec['matches'] ?>"></td>
+                        <td class="count">Выходы на старте: </td>
+                        <td class="count"><input class="digit_only" type="text" name="output_start" readonly value="<?= $rec['output_start'] ?>"></td>
+                        <td class="count">Выходы на замене: </td>
+                        <td class="count"><input class="digit_only" type="text" name="output_in_game" readonly value="<?= $rec['output_in_game'] ?>"></td>
                         <td class="count">Минуты на поле: </td>
                         <td class="count"><input class="digit_only" type="text" name="minute" readonly value="<?= $rec['minute'] ?>"></td>
                         <td class="count">Желтые карточки: </td>

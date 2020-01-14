@@ -33,6 +33,11 @@ function my_admin_menu()
     {
         require_once(dirname(__FILE__) . '/player.php');
     }
+    add_submenu_page('NULL', 'Статистика игроков', 'Статистика игроков', 1, 'player_stat', 'player_statistics');
+    function player_statistics()
+    {
+        require_once(dirname(__FILE__) . '/player_stat.php');
+    }
     add_submenu_page('NULL', 'Схема игроков', 'Схема', 1, 'scheme', 'scheme_edit');
     function scheme_edit()
     {

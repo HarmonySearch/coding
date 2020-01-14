@@ -27,9 +27,9 @@ if (wp_doing_ajax() && is_admin()) {
 //  ФУНКЦИИ РАБОТЫ С БАЗОЙ ДАННЫХ
 //  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
-//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ТУРНИРЫ ★★★★
+//  ---- ТУРНИРЫ ----------------------------------------------------------------
 
-//  ★★★★ ВЫБОРКА ПО КОДУ 
+//  ---- ВЫБОРКА ПО КОДУ ----
 function get_tourney($code = 0)
 {
     global $wpdb;
@@ -44,7 +44,7 @@ function get_tourney($code = 0)
     return $result;
 };
 
-//  ★★★★ ВЫБОРКА КОДОВ ДЛЯ СЕЛЕКТОРА 
+//  ---- ВЫБОРКА КОДОВ ДЛЯ select ----
 function get_tourney_code()
 {
     global $wpdb;
@@ -371,99 +371,204 @@ function get_event()
     $result = $wpdb->get_results($sql, 'ARRAY_A');
     return $result;
 };
+//  ---- СТАТИСТИКА ИГРОКОВ ----------------------------------------------------
 
-//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-//  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ РАСЧЁТ СТАТИСТИКИ ИГРОКОВ ★★★★
-//  статистика должна подсчитываться по турнирам, по не работает
-
-function player_stat($tourney = 0)
+function get_player_stat($player=1, $tourney = 3)
 {
     global $wpdb;
-    // все схемы игроков в матчах
-    $sql = "SELECT * FROM `player_scheme`";
+
+    $sql = "SELECT * 
+            FROM `player_stat`
+            WHERE `player` = $player AND `tourney` = $tourney";
+    $result = $wpdb->get_results($sql, 'ARRAY_A');
+    return $result;
+};
+
+function get_players_stat($team = 1, $tourney = 3)
+{
+    global $wpdb;
+
+    $sql = "SELECT ps.player as id, ps.* 
+            FROM `player_stat` ps
+            INNER JOIN `player` p
+                ON ps.player = p.code 
+                    WHERE p.team = $team AND ps.tourney = $tourney";
+    $result = $wpdb->get_results($sql, 'OBJECT_K');
+    return $result;
+};
+
+//  --------------------------------------------------------------------------------
+//  РАСЧЁТ СТАТИСТИКИ ИГРОКОВ (в разработке)
+//  должна записываться в новую таблицу player_stat
+//
+//  --------------------------------------------------------------------------------
+
+// $tourney = 3 (первый турнир), $team = 1 (команда акрон)
+function player_stat($tourney = 3, $team = 1)
+{
+    global $wpdb;
+
+    // все схемы игроков в матчах турнира
+    $sql = "SELECT * 
+            FROM `player_scheme` ps 
+            INNER JOIN `meet` m 
+                ON ps.meet = m.code 
+                    WHERE m.tourney = $tourney";
+    // $sql = "SELECT * FROM `player_scheme`";
     $schemes = $wpdb->get_results($sql, 'ARRAY_N');
 
 
-    // все игроки акрона
-    $sql = "SELECT * FROM `player` WHERE `team` = 1";
+    // все игроки команды
+    $sql = "SELECT * FROM `player` WHERE `team` = $team "; //+
     $players = $wpdb->get_results($sql, 'ARRAY_A');
+
+    // расчет статистики по каждому игроку команды
     foreach ($players as $player) {
+        $code_player = $player["code"]; //+
         $code = $player["code"];
 
+        // нужен запись игрока в статитике. если записи нет, то создаем её и запрашиваем код новой записи 
+        $code_stat =  $wpdb->get_var("SELECT `code` FROM `player_stat` WHERE `player` = $code_player AND `tourney` = $tourney");
+        if (!$code_stat) {
+            $wpdb->insert('player_stat', array('player' => $code_player, 'tourney' => $tourney), array('%d', '%d'));
+            $code_stat = $wpdb->insert_id;    
+        }
 
-        // ---- ИГР СЫГРАНО ------------------------------------------------------------
-        // перебирать все поля стартового состава в player_scheme. есть, занчит выходил
-        $match_count = 0;
-        // echo (count($schemes));
-        // echo '<br>';
+        // ---- ВЫХОДЫ НА СТАРТЕ ------------------------
+        // сколько раз завявлен в стартовом составе
+
+        // перебирать всех игроков стартового состава в player_scheme
+        // 4-14 поля заявленные игроки
+        $output_start = 0; // счетчик выходов
         foreach ($schemes as $scheme) {
             for ($i = 4; $i <= 14; $i++) {
                 if ($code == $scheme[$i]) {
-                    $match_count++;
-                    // echo 'заявлен<br>';
+                    $output_start++;
                     break;
                 }
             }
         }
-        // сколько раз в играх он выходил на замену
+        $wpdb->update('player', array('output_start' => $output_start), array('code' => $code_player), array('%d')); // в таблицу игрока
+        $wpdb->update('player_stat', array('output_start' => $output_start), array('code' => $code_stat), array('%d')); // в таблицу статистики
+
+        // ---- ЗАМЕНЫ В ХОДЕ МАТЧА ------------------------
+        // сколько раз заменяли игрока (событие 6 - игрок первый)
+
         $sql = "SELECT count(event) 
-                FROM statistics 
-                WHERE (`player_2` = " . $code . ") AND (`event` = 6);";
-        $count = $wpdb->get_var($sql);
-        // echo 'стартовый '. $match_count . 'на замене '. $count . '<br>';
-        $match_count += $count;
-        $wpdb->update('player', array('matches' => $match_count), array('code' => $code), array('%d'));
+                FROM `statistics` s 
+                INNER JOIN `meet` m 
+                    ON s.meet = m.code 
+                        WHERE m.tourney = $tourney AND s.player = $code_player AND s.event = 6";
+        $output_in_game = $wpdb->get_var($sql);
+        $wpdb->update('player', array('exchange' => $output_in_game), array('code' => $code_player), array('%d'));
+        $wpdb->update('player_stat', array('exchange' => $output_in_game), array('code' => $code_stat), array('%d'));
 
+        // ---- ВЫХОДЫ НА ЗАМЕНЕ ------------------------
+        // сколько раз выходил на замену  (событие 6 - игрок второй)
 
-        // ---- ГОЛОВ ЗАБИЛ ------------------------------------------------------------
+        // $sql = "SELECT count(event) 
+        //         FROM statistics 
+        //         WHERE (`player_2` = " . $code . ") AND (`event` = 6);";
         $sql = "SELECT count(event) 
-                FROM statistics 
-                WHERE (`player` = " . $code . ") AND (`event` = 3);";
-        $count = $wpdb->get_var($sql);
-        $wpdb->update('player', array('goal' => $count), array('code' => $code), array('%d'));
+                FROM `statistics` s 
+                INNER JOIN `meet` m 
+                    ON s.meet = m.code 
+                        WHERE m.tourney = $tourney AND s.player_2 = $code_player AND s.event = 6";
+        $output_in_game = $wpdb->get_var($sql);
+        $wpdb->update('player', array('output_in_game' => $output_in_game), array('code' => $code_player), array('%d'));
+        $wpdb->update('player_stat', array('output_in_game' => $output_in_game), array('code' => $code_stat), array('%d'));
 
-        // ★★★★ ГОЛОВ С ПЕНАЛЬТИ
+        // ---- ИГР СЫГРАНО -----------------------------
+        // выходы на старте + выходы на замену
+
+        $matches = $output_start + $output_in_game;
+        $wpdb->update('player', array('matches' => $matches), array('code' => $code_player), array('%d'));
+        $wpdb->update('player_stat', array('matches' => $matches), array('code' => $code_stat), array('%d'));
+
+        // ---- ГОЛЫ С ПЕНАЛЬТИ -------------------------
+
         $sql = "SELECT count(event) 
                 FROM statistics 
                 WHERE (`player` = " . $code . ") AND (`event` = 9);";
-        $count = $wpdb->get_var($sql);
-        $wpdb->update('player', array('penalty' => $count), array('code' => $code), array('%d'));
+        $penalty = $wpdb->get_var($sql);
+        $wpdb->update('player', array('penalty' => $penalty), array('code' => $code_player), array('%d'));
+        $wpdb->update('player_stat', array('penalty' => $penalty), array('code' => $code_stat), array('%d'));
 
-        // ★★★★ желтая карточка
+        // ---- ГОЛОВ ЗАБИЛ -----------------------------
+        // голы обычные + голы с пенальти
+
+        $sql = "SELECT count(event) 
+                FROM statistics 
+                WHERE (`player` = " . $code . ") AND (`event` = 3);";
+        $goal = $wpdb->get_var($sql) + $penalty;
+        $wpdb->update('player', array('goal' => $goal), array('code' => $code_player), array('%d'));
+        $wpdb->update('player_stat', array('goal' => $goal), array('code' => $code_stat), array('%d'));
+
+
+        // ---- ЖЁЛТЫЕ КАРТОЧКИ -----------------------------
+        
         $sql = "SELECT count(event) 
                 FROM statistics 
                 WHERE (`player` = " . $code . ") AND (`event` = 2);";
-        $count = $wpdb->get_var($sql);
-        $wpdb->update('player', array('cart_yellow' => $count), array('code' => $code), array('%d'));
+        $cart_yellow = $wpdb->get_var($sql);
+        $wpdb->update('player', array('cart_yellow' => $cart_yellow), array('code' => $code_player), array('%d'));
+        $wpdb->update('player_stat', array('cart_yellow' => $cart_yellow), array('code' => $code_stat), array('%d'));
 
-        // ★★★★ красная карточка
+        // ---- КРАСНЫЕ КАРТОЧКИ -----------------------------
         $sql = "SELECT count(event) 
                 FROM statistics 
                 WHERE (`player` = " . $code . ") AND (`event` = 1);";
-        $count = $wpdb->get_var($sql);
-        $wpdb->update('player', array('cart_red' => $count), array('code' => $code), array('%d'));
+        $cart_red = $wpdb->get_var($sql);
+        $wpdb->update('player', array('cart_red' => $cart_red), array('code' => $code_player), array('%d'));
+        $wpdb->update('player_stat', array('cart_red' => $cart_red), array('code' => $code_stat), array('%d'));
 
-        // ★★★★ голевая передача
+        // ---- ГОЛЕВЫЕ ПЕРЕДАЧИ -----------------------------
+        
         $sql = "SELECT count(event) 
                 FROM statistics 
                 WHERE (`player` = " . $code . ") AND (`event` = 4);";
-        $count = $wpdb->get_var($sql);
-        $wpdb->update('player', array('pass' => $count), array('code' => $code), array('%d'));
+        $pass = $wpdb->get_var($sql);
+        $wpdb->update('player', array('pass' => $pass), array('code' => $code_player), array('%d'));
+        $wpdb->update('player_stat', array('pass' => $pass), array('code' => $code_stat), array('%d'));
 
-        //  ★★★★ СЕЙВ
-        $sql = "SELECT count(event) 
-                FROM statistics 
-                WHERE (`player` = " . $code . ") AND (`event` = 19);";
-        $count = $wpdb->get_var($sql);
-        $wpdb->update('player', array('save' => $count), array('code' => $code), array('%d'));
-
+        // ---- СЕЙВЫ -----------------------------------------
+        
+        // $sql = "SELECT count(event) 
+        //         FROM statistics 
+        //         WHERE (`player` = " . $code . ") AND (`event` = 19);";
+        // $save = $wpdb->get_var($sql);
+        // $wpdb->update('player', array('save' => $save), array('code' => $code_player), array('%d'));
+        // $wpdb->update('player_stat', array('save' => $save), array('code' => $code_stat), array('%d'));
 
         // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
         // ★★★★ ДЛЯ ВРАТАРЕЙ ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ НАЧАЛО ★★★★
 
         if ($player["position"] == 1) {
 
-            // ★★★★ ГОЛОВ ПРОПУЩЕНО ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+            // ---- СУХИЕ МАТЧИ -----------------------------------------
+            // берём сухие матчи. проверяем игрока на наличие в схеме матча
+
+            $shutout = 0; // счетчик сухих матчей
+            $sql = "SELECT * FROM `meet` WHERE `completed` = 1 AND `team_1` = $team AND goal_2 = 0 UNION 
+            SELECT * FROM `meet` WHERE `completed` = 1 AND `team_2` = $team AND goal_1 = 0" ; // все сухие матчи
+            $meets = $wpdb->get_results($sql, 'ARRAY_A');
+            foreach ($meets as $meet) { // по каждой встрече
+
+                $sql = "SELECT * FROM `player_scheme` WHERE `meet` = " . $meet['code'];  // берём схему игроков
+                $player_scheme = $wpdb->get_results($sql, 'ARRAY_N');
+                foreach ($player_scheme as $scheme) {
+                    for ($i = 4; $i <= 14; $i++) {
+                        if ($code == $scheme[$i]) {
+                            $shutout++;
+                        }
+                    }
+                }
+            }
+            $wpdb->update('player', array('shutout' => $shutout), array('code' => $code_player), array('%d'));
+            $wpdb->update('player_stat', array('shutout' => $shutout), array('code' => $code_stat), array('%d'));
+
+            // ---- ГОЛОВ ПРОПУЩЕНО -----------------------------------------
+
             // если сухая, то дальше. если нет замены то пишем dhtvz 0 код1 код1  если был замена то запоминаем время замены Ч код1 код2
             // смотреть по статистике когда (массив минут) были забиты голы (запрос на все голы, если они были не нами забиты) гол.
             // перебираем массив минут. если <= Ч код1 счет++, если больше >= Ч код2 счет++.
@@ -471,16 +576,12 @@ function player_stat($tourney = 0)
             $goal_count = 0; // сброс счетчика голов
             $sql = "SELECT * FROM `meet` WHERE `completed` = 1"; // все сыгранные матчи
             $meets = $wpdb->get_results($sql, 'ARRAY_A');
-            // echo (count($meets));
             foreach ($meets as $meet) { // по каждому матчу
                 if ($meet['team_1'] == 1) { // сколько нам забили
                     $goal = $meet['goal_2'];
                 } else {
                     $goal = $meet['goal_1'];
                 };
-
-                // echo ('<br>' . $meet['name'] . '<br>');
-                // echo ('Нам забили' . $goal . '<br>');
 
                 if ($goal == 0) continue; // в сухую следующий матч
 
@@ -504,17 +605,13 @@ function player_stat($tourney = 0)
                     $g2 = $player_scheme[4];
                 }
 
-                // echo ('замена на минуте:' . $t .' игрок А '. $g1 .' игрок Б ' . $g2  . '<br>');
 
                 // в событиях не указано команда забившая гол. берём все голы и пенальти. Ищем код игрока забившего гол в схеме своих игроков.
                 // если не найден, то гол нам.
                 $sql = "SELECT `minute`, `player` FROM `statistics` WHERE `meet` = " . $meet['code'] . " AND (`event` = 3 OR `event` = 9)"; // 3 гол или гол с пенальти 9
                 $goals = $wpdb->get_results($sql, 'ARRAY_A');
-                // echo('всего голов: '. count($goals).'<br>');
-                // echo($sql.'---------------'.count($player_scheme).'<br>');
                 if ($player_scheme) { // есть ли  схема игроков
                      foreach ($goals as $goal) { // по каждому голу
-                        // echo('минута: '. $goal['minute'].' игрок: '. $goal['player'].'<br>');
                         $find = 0;
                         for ($i = 4; $i <= 24; $i++) { // ищем среди своих игроков
                             if ($goal['player'] == $player_scheme[$i]) {
@@ -531,7 +628,6 @@ function player_stat($tourney = 0)
                             }
                         }
                     }
-                    // echo($goal1.'+'.$goal2.'<br>');
                     if ($code == $g1) {
                         $goal_count += $goal1;
                     } // суммируем голы
@@ -540,42 +636,17 @@ function player_stat($tourney = 0)
                     }
                 }
             }
-            $wpdb->update('player', array('goal_allow' => $goal_count), array('code' => $code), array('%d'));
+//            echo("Пропущено голов $goal_count<br>");
+            $wpdb->update('player', array('goal_overlook' => $goal_count), array('code' => $code_player), array('%d'));
+            $wpdb->update('player_stat', array('goal_overlook' => $goal_count), array('code' => $code_stat), array('%d'));
 
-            // ★★★★ СУХИЕ МАТЧИ ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-            // это вратарь?
-            $shutout = 0;
-            $sql = "SELECT * FROM `meet` WHERE `completed` = 1"; // все сыгранные матчи
-            $meets = $wpdb->get_results($sql, 'ARRAY_A');
-            foreach ($meets as $meet) { // по каждой встрече
-                //echo $meet["name"];
-
-                $sql = "SELECT * FROM `player_scheme` WHERE `meet` = " . $meet['code'];  // берём схему игроков
-                $player_scheme = $wpdb->get_results($sql, 'ARRAY_N');
-                $main = false;
-                foreach ($player_scheme as $scheme) { // он основной игрок?
-                    for ($i = 4; $i <= 14; $i++) {
-                        if ($code == $scheme[$i]) {
-                            $main = true;
-                        }
-                    }
-                }
-                if ($main) {
-                    if ($meet['team_1'] != 1) { // сколько нам забили голов
-                        $goal = $meet['goal_1'];
-                    } else {
-                        $goal = $meet['goal_2'];
-                    }
-                    if ($goal) $shutout++; // если счет всухую
-                }
-            }
-            $wpdb->update('player', array('shutout' => $shutout), array('code' => $code), array('%d'));
-        }
-        // ★★★★ ДЛЯ ВРАТАРЕЙ ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ КОНЕЦ ★★★★
-        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+        } // БЛОГ ДЛЯ ВРАТАРЕЙ ЗАКОНЧИЛИ
 
 
-        // ★★★★ МИНУТЫ НА ПОЛЕ
+
+
+        // ---- МИНУТЫ НА ПОЛЕ ----------------------------------------------------
+
         $sql = "SELECT * FROM `meet` WHERE completed;"; // все сыгранные матчи
         $meets = $wpdb->get_results($sql, 'ARRAY_A');
         $time = 0;
@@ -631,7 +702,8 @@ function player_stat($tourney = 0)
                 }
             }
         }
-        $wpdb->update('player', array('minute' => $time), array('code' => $code), array('%d'));
+        $wpdb->update('player', array('minute' => $time), array('code' => $code_player), array('%d'));
+        $wpdb->update('player_stat', array('minute' => $time), array('code' => $code_stat), array('%d'));
     }
 };
 

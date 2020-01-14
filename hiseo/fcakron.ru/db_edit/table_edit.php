@@ -51,7 +51,7 @@ function data_change_callback()
      * Проверяем актуальность
      */
 
-    $tables = ['team', 'player', 'tourney', 'meet', 'trainer', 'player_scheme', 'statistics', 'career']; // список допустымых таблиц
+    $tables = ['team', 'player', 'tourney', 'meet', 'trainer', 'player_scheme', 'statistics', 'career', 'player_stat']; // список допустымых таблиц
 
     if (!wp_verify_nonce($_POST['nonce_code'], 'my_ajax_nonce')) die('Stop!'); // Проверяем защитный ключ
     if (!is_user_logged_in()) die('Stop! No login'); // юзверь не залогонин
@@ -64,13 +64,18 @@ function data_change_callback()
 
     global $wpdb;
 
-    $result =
+    $row =
         $wpdb->update(
             $table,
             array($field => $value),
             array('code' => intVal($code))
         );
-    echo $result;
+    echo ("$row");
+
+    if (isset($_POST['tourney'])) {
+        $tourney = $_POST['tourney'];
+        player_stat($tourney);
+    }
     wp_die();
 }
 
@@ -508,20 +513,21 @@ function load_player_callback()
 }
 
 // ----------------------------------------------------------------------------
-// РЕДАКТИРОВАНИЕ СОБЫТИЙ МАТЧА
-// 
-// получаем переменную для изменения. если событие относится к игроку, то 
-// запускаем вычисление соответствующей статистики для данного турнира и для
-// данного игрока
+// РЕДАКТИРОВАНИЕ ТАБЛИЦЫ СОБЫТИЙ МАТЧА и ВЫЧИСЛЕНИЕ СТАТИСТИКА ИГРОКА
+//
+// при изменении событие записываются в таблицу событий. затем вычисляется статистика
+// игрока. для этого вычисления необходимы: код игрока, код турнира, код события.
+// для каждого события запускается свой алгоритм вычисления статистики. Результат 
+// записывается в твблицу.
 // ----------------------------------------------------------------------------
 
 function edit_match_events_callback()
 {
-    // нам нужны: code, name, value. таблицу мы и так знаем. 
-    // сначала записываем информацию в таблицу
+    // безопасность. Проверяем защитный ключ. проверка регистрации пользователя
+    if (!wp_verify_nonce($_POST['nonce_code'], 'my_ajax_nonce')) die('Stop!');  
+    if (!is_user_logged_in()) die('Stop! No login');  
 
-    if (!wp_verify_nonce($_POST['nonce_code'], 'my_ajax_nonce')) die('Stop!'); // Проверяем защитный ключ
-    if (!is_user_logged_in()) die('Stop! No login'); // юзверь не залогонин
+    // сначала записываем информацию в таблицу событий матча
 
     $code = clean($_POST['code']);
     $field = clean($_POST['field']);

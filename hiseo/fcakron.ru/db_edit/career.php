@@ -123,7 +123,7 @@ if (!$res) {
 
         //  ★★★★ РЕДАКТИРОВАНИЕ ФОРМЫ ★★★★
 
-        $(document).on('change', 'textarea', function(e) {
+        $(document).on('change', 'input:not([type=file]), select', function() {
 
             let parent = $(this).parent(); // родитель
             let code = parent.data("code"); // код записи
@@ -144,8 +144,8 @@ if (!$res) {
                 method: "POST",
                 url: ajaxurl,
                 data: data_lib
-            }).done(function(data) {
-                console.log(data);
+            }).done(function(msg) {
+                console.log(msg);
             });
         });
 

@@ -8,7 +8,16 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+
 $meet = $_GET['meet']; // код матча
+
+global $wpdb;
+
+$sql = "SELECT `tourney`
+        FROM `meet` 
+        WHERE `code` =  $meet";
+$tourney = $wpdb->get_var($sql);
+// echo($tourney);
 
 // select игрока. выборка игроков только из списка команд участвующих в игре
 
@@ -18,7 +27,6 @@ $sql = "SELECT `code`,`lastname`, (SELECT name FROM team WHERE code = `team`) AS
             SELECT `team_1` FROM `meet` WHERE `code` = $meet 
             union 
             SELECT `team_2` FROM `meet` WHERE `code` = $meet)";
-global $wpdb;
 $code_player = $wpdb->get_results($sql, 'ARRAY_A');
 $code_event = get_event();  // select события
 
@@ -84,7 +92,7 @@ if (!$res) {
     <button class="btn_add_rec" data-meet="<?= $meet ?>">Добавить событие</button>
 </div>
 
-<div class="statistics_table">
+<div class="statistics_table" data-tourney="<?= $tourney ?>">
     <hr class="hr_db">
     <b>Время, событие, игроки, комметарий</b>
     <?php
@@ -130,7 +138,7 @@ if (!$res) {
     <button class="btn_add_rec" data-meet="<?= $meet ?>">Добавить событие</button>
 </div>
 
-// ---------------------------------------------------------------------------- JS ----
+
 
 <script>
     jQuery(function($) {
@@ -202,49 +210,20 @@ if (!$res) {
 
         //  ---- РЕДАКТИРОВАНИЕ ФОРМЫ ----------------------------
 
-        function send_data(action, table, code, field, value) {
-
-            let data_lib = {
-                nonce_code: my_ajax_noncerr,
-                action: action,
-                table: table,
-                code: code,
-                field: field,
-                value: value
-            };
-            let data;
-            jQuery.ajax({
-                method: "POST",
-                url: ajaxurl,
-                data: data_lib
-            }).done(function(data) {
-                console.log(data);
-                return data;
-            });
-        }
-
-        $(document).on('change', 'input+, select+', function(e) {
-
-            let code = $(this).parent().data("code"); // код записи
-            let field = $(this).attr("name"); // название поля
-            let value = $(this).val(); // значение
-            console.log(code, field, value);
-            let text = send_data('edit_match_events', 'statistics', code, field, value)
-            console.log(text);
-        });
-
-        $(document).on('change', 'input, select', function(e) {
+        $(document).on('change', 'input, select', function() {
 
             let parent = $(this).parent(); // родитель
+            let tourney = $('.statistics_table').data("tourney"); // турнир
             let code = parent.data("code"); // код записи
             let name = $(this).attr("name");
             let value = $(this).val();
-            console.log(name, code, value);
+            console.log(tourney,name, code, value);
             //return;
             let data_lib = {
                 action: 'data_change',
                 nonce_code: my_ajax_noncerr,
                 table: "statistics",
+                tourney: tourney,
                 code: code,
                 name: name,
                 value: value
@@ -254,8 +233,8 @@ if (!$res) {
                 method: "POST",
                 url: ajaxurl,
                 data: data_lib
-            }).done(function(data) {
-                console.log(data);
+            }).done(function(msg) {
+                console.log(msg);
             });
         });
 
